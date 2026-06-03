@@ -391,6 +391,24 @@ body.player .modechk{opacity:.6;cursor:default}
 .fw-cell .fw-amt{font-family:var(--serif);font-weight:800;font-size:25px;color:var(--ink);line-height:1.1}
 @media(max-width:820px){.fw-headrow{display:none}.fw-row{grid-template-columns:1fr;gap:12px}}
 
+/* ===== Roster (sortable) ===== */
+table.roster{width:100%;min-width:760px;border-collapse:collapse;font-family:var(--sans)}
+table.roster thead th{position:sticky;top:0;background:#0e3a2b;color:var(--ink);text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;padding:13px 14px;border-bottom:2px solid var(--line);cursor:pointer;user-select:none;white-space:nowrap}
+table.roster thead th:hover{background:#12503a;color:#fff}
+table.roster thead th .ar{color:var(--brass);margin-left:6px;font-size:11px;opacity:.4}
+table.roster thead th.sorted{color:#fff}
+table.roster thead th.sorted .ar{opacity:1}
+table.roster thead th.num,table.roster td.num{text-align:center}
+table.roster tbody td{padding:12px 14px;border-bottom:1px solid #ffffff10;font-size:15px;color:var(--ink-2)}
+table.roster tbody tr:nth-child(even){background:#ffffff05}
+table.roster tbody tr:hover{background:#ffffff0d}
+table.roster td.nm{color:var(--ink);font-weight:600}
+table.roster td .hc{color:var(--ink-3);font-weight:600;font-size:13px;margin-left:5px}
+table.roster td.thcp{font-family:var(--serif);font-weight:800;color:var(--brass-soft);font-size:16px;text-align:center}
+table.roster td.flt{font-weight:700}
+table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+@media(max-width:760px){ table.roster thead th,table.roster tbody td{padding:11px 10px;font-size:14px} }
+
 /* ===== Graphical Print report ===== */
 #printArea{display:none}
 /* ============ MOBILE LAYER — only applies on small screens; laptop view is untouched ============ */
@@ -559,6 +577,7 @@ body.player .modechk{opacity:.6;cursor:default}
     <button data-page="flightpay">If Flights Pay</button>
     <button data-page="analytics">Analytics</button>
     <button data-page="results">Results</button>
+    <button data-page="roster">Roster</button>
   </div>
   <div class="topright">
     <button class="lockbtn" id="adminBtn" title="Toggle edit access"></button>
@@ -702,12 +721,25 @@ body.player .modechk{opacity:.6;cursor:default}
   </div>
 </div>
 
+<div class="page" id="rosterpage">
+  <div class="dashwrap">
+    <div class="dashhead">
+      <div>
+        <div class="dash-eyebrow">Field</div>
+        <h2 class="dash-title">Team Roster</h2>
+      </div>
+      <div class="dashtotals" id="rosterTotals"></div>
+    </div>
+    <div class="tablecard"><div class="scroll"><table class="roster" id="rosterTable"></table></div></div>
+  </div>
+</div>
+
 <div id="printArea"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
-const SEED = [{"card": 301, "team": 1, "p1": "Tom Watson", "p2": "William Wood", "flight": 4, "draw": 337, "drawPos": 33, "h1": "17.3", "h2": "20.0"}, {"card": 302, "team": 2, "p1": "John Gray", "p2": "Jeff Yeakle", "flight": 3, "draw": 304, "drawPos": 36, "h1": "15.0", "h2": "11.5"}, {"card": 303, "team": 3, "p1": "Brian Grimes", "p2": "Matthew Honacki", "flight": 2, "draw": 318, "drawPos": 8, "h1": "6.5", "h2": "6.0"}, {"card": 304, "team": 4, "p1": "Cyrus Fordyce", "p2": "Rick Meade", "flight": 1, "draw": 309, "drawPos": 2, "h1": "3.1", "h2": "5.3"}, {"card": 305, "team": 5, "p1": "Mike Althouse", "p2": "Chris Convey", "flight": 1, "draw": 330, "drawPos": 30, "h1": "4.8", "h2": "1.9"}, {"card": 306, "team": 6, "p1": "Alex Hinson", "p2": "Dale Williams", "flight": 1, "draw": 311, "drawPos": 23, "h1": "1.4", "h2": "4.8"}, {"card": 307, "team": 7, "p1": "Marty More", "p2": "Jim Muir, III", "flight": 4, "draw": 313, "drawPos": 13, "h1": "20.8", "h2": "12.0"}, {"card": 308, "team": 8, "p1": "Steve Craver", "p2": "Jim Harvey", "flight": 4, "draw": 303, "drawPos": 12, "h1": "12.5", "h2": "15.3"}, {"card": 309, "team": 9, "p1": "Clark Kunkle", "p2": "Will Paul", "flight": 3, "draw": 332, "drawPos": 4, "h1": "10.5", "h2": "12.6"}, {"card": 310, "team": 10, "p1": "Ken Sanquist", "p2": "Cody Stewart", "flight": 3, "draw": 320, "drawPos": 27, "h1": "10.7", "h2": "11.5"}, {"card": 311, "team": 11, "p1": "Austin Sanquist", "p2": "Thomas Vyskocil", "flight": 1, "draw": 327, "drawPos": 6, "h1": "1.0", "h2": "7.9"}, {"card": 312, "team": 12, "p1": "Jake Silverman", "p2": "Sam Silverman", "flight": 2, "draw": 308, "drawPos": 32, "h1": "2.6", "h2": "8.2"}, {"card": 313, "team": 13, "p1": "Tom Steffes", "p2": "Robert Sundell", "flight": 3, "draw": 307, "drawPos": 7, "h1": "12.0", "h2": "15.1"}, {"card": 314, "team": 14, "p1": "John McCarthy", "p2": "D.J. Park", "flight": 4, "draw": 314, "drawPos": 14, "h1": "13.6", "h2": "19.8"}, {"card": 315, "team": 15, "p1": "Todd Williams", "p2": "Scott Wilson", "flight": 1, "draw": 325, "drawPos": 37, "h1": "3.2", "h2": "4.3"}, {"card": 316, "team": 16, "p1": "Timothy Jeffery", "p2": "Douglas McPherson", "flight": 2, "draw": 319, "drawPos": 22, "h1": "7.3", "h2": "7.6"}, {"card": 317, "team": 17, "p1": "Raul Chacon", "p2": "Ryan Chacon", "flight": 2, "draw": 317, "drawPos": 17, "h1": "11.5", "h2": "+0.6"}, {"card": 318, "team": 18, "p1": "Rodolfo Camacho", "p2": "Mark Shank", "flight": 4, "draw": 334, "drawPos": 3, "h1": "17.5", "h2": "16.8"}, {"card": 319, "team": 19, "p1": "Anthony Blaszczyk", "p2": "Steve Middleton", "flight": 3, "draw": 326, "drawPos": 16, "h1": "4.4", "h2": "13.8"}, {"card": 320, "team": 20, "p1": "Christopher Andrews", "p2": "William Barrett", "flight": 1, "draw": 329, "drawPos": 10, "h1": "6.9", "h2": "2.9"}, {"card": 321, "team": 21, "p1": "Bob Latos", "p2": "Jeff Sarris", "flight": 2, "draw": 321, "drawPos": 21, "h1": "8.3", "h2": "7.9"}, {"card": 322, "team": 22, "p1": "James Carroll", "p2": "Ray Sanchez", "flight": 4, "draw": 316, "drawPos": 28, "h1": "18.3", "h2": "26.8"}, {"card": 323, "team": 23, "p1": "Bill Balster", "p2": "Kevin Duffy", "flight": 2, "draw": 306, "drawPos": 26, "h1": "8.5", "h2": "3.8"}, {"card": 324, "team": 24, "p1": "Grant LaGasse", "p2": "Jeff Sandusky", "flight": 2, "draw": 331, "drawPos": 31, "h1": "9.5", "h2": "8.3"}, {"card": 325, "team": 25, "p1": "Jared Friend", "p2": "Devin Grimaldi", "flight": 2, "draw": 335, "drawPos": 15, "h1": "6.4", "h2": "5.5"}, {"card": 326, "team": 26, "p1": "Carl Cutright", "p2": "Tim McNichol", "flight": 4, "draw": 323, "drawPos": 19, "h1": "21.6", "h2": "8.3"}, {"card": 327, "team": 27, "p1": "Britt Musser", "p2": "Joel Sandler", "flight": 1, "draw": 310, "drawPos": 11, "h1": "2.7", "h2": "6.8"}, {"card": 328, "team": 28, "p1": "Brent Davis", "p2": "Timothy Gilchrist", "flight": 1, "draw": 322, "drawPos": 38, "h1": "0.0", "h2": "3.3"}, {"card": 329, "team": 29, "p1": "Bob Chase", "p2": "Jim Weiskopf", "flight": 4, "draw": 333, "drawPos": 20, "h1": "15.0", "h2": "12.7"}, {"card": 330, "team": 30, "p1": "Chris Allen", "p2": "Joey Tominovich", "flight": 3, "draw": 305, "drawPos": 5, "h1": "5.4", "h2": "12.7"}, {"card": 331, "team": 31, "p1": "Steven Weiss", "p2": "Jeff Williams", "flight": 1, "draw": 324, "drawPos": 24, "h1": "2.7", "h2": "+0.3"}, {"card": 332, "team": 32, "p1": "Kevin Scudder", "p2": "Jacob Seiter", "flight": 2, "draw": 312, "drawPos": 9, "h1": "13.3", "h2": "1.2"}, {"card": 333, "team": 33, "p1": "Andrew Divver", "p2": "George Divver", "flight": 4, "draw": 301, "drawPos": 29, "h1": "13.1", "h2": "17.8"}, {"card": 334, "team": 34, "p1": "Jang Lee", "p2": "Chip Mace", "flight": 3, "draw": 336, "drawPos": 18, "h1": "11.1", "h2": "7.2"}, {"card": 335, "team": 35, "p1": "Eric Cloutier", "p2": "Daniel Woo", "flight": 3, "draw": 302, "drawPos": 25, "h1": "14.2", "h2": "6.9"}, {"card": 336, "team": 36, "p1": "Andrew Dexter", "p2": "Brendan Spellman", "flight": 3, "draw": 315, "drawPos": 35, "h1": "4.1", "h2": "19.0"}, {"card": 337, "team": 37, "p1": "Phil Murray", "p2": "Duane Robbins", "flight": 3, "draw": 328, "drawPos": 1, "h1": "11.8", "h2": "11.4"}, {"card": 338, "team": 38, "p1": "Cesar Rodas", "p2": "Chris Windsor", "flight": 4, "draw": 338, "drawPos": 34, "h1": "8.1", "h2": "19.2"}];
+const SEED = [{"card": 36, "team": 1, "p1": "Tom Watson", "p2": "William Wood", "flight": 4, "draw": 337, "drawPos": 33, "h1": "17.3", "h2": "20.0"}, {"card": 37, "team": 2, "p1": "John Gray", "p2": "Jeff Yeakle", "flight": 3, "draw": 304, "drawPos": 36, "h1": "15.0", "h2": "11.5"}, {"card": 38, "team": 3, "p1": "Brian Grimes", "p2": "Matthew Honacki", "flight": 2, "draw": 318, "drawPos": 8, "h1": "6.5", "h2": "6.0"}, {"card": 39, "team": 4, "p1": "Cyrus Fordyce", "p2": "Rick Meade", "flight": 1, "draw": 309, "drawPos": 2, "h1": "3.1", "h2": "5.3"}, {"card": 40, "team": 5, "p1": "Mike Althouse", "p2": "Chris Convey", "flight": 1, "draw": 330, "drawPos": 30, "h1": "4.8", "h2": "1.9"}, {"card": 41, "team": 6, "p1": "Alex Hinson", "p2": "Dale Williams", "flight": 1, "draw": 311, "drawPos": 23, "h1": "1.4", "h2": "4.8"}, {"card": 42, "team": 7, "p1": "Marty More", "p2": "Jim Muir, III", "flight": 4, "draw": 313, "drawPos": 13, "h1": "20.8", "h2": "12.0"}, {"card": 43, "team": 8, "p1": "Steve Craver", "p2": "Jim Harvey", "flight": 4, "draw": 303, "drawPos": 12, "h1": "12.5", "h2": "15.3"}, {"card": 44, "team": 9, "p1": "Clark Kunkle", "p2": "Will Paul", "flight": 3, "draw": 332, "drawPos": 4, "h1": "10.5", "h2": "12.6"}, {"card": 45, "team": 10, "p1": "Ken Sanquist", "p2": "Cody Stewart", "flight": 3, "draw": 320, "drawPos": 27, "h1": "10.7", "h2": "11.5"}, {"card": 46, "team": 11, "p1": "Austin Sanquist", "p2": "Thomas Vyskocil", "flight": 1, "draw": 327, "drawPos": 6, "h1": "1.0", "h2": "7.9"}, {"card": 47, "team": 12, "p1": "Jake Silverman", "p2": "Sam Silverman", "flight": 2, "draw": 308, "drawPos": 32, "h1": "2.6", "h2": "8.2"}, {"card": 48, "team": 13, "p1": "Tom Steffes", "p2": "Robert Sundell", "flight": 3, "draw": 307, "drawPos": 7, "h1": "12.0", "h2": "15.1"}, {"card": 49, "team": 14, "p1": "John McCarthy", "p2": "D.J. Park", "flight": 4, "draw": 314, "drawPos": 14, "h1": "13.6", "h2": "19.8"}, {"card": 50, "team": 15, "p1": "Todd Williams", "p2": "Scott Wilson", "flight": 1, "draw": 325, "drawPos": 37, "h1": "3.2", "h2": "4.3"}, {"card": 51, "team": 16, "p1": "Timothy Jeffery", "p2": "Douglas McPherson", "flight": 2, "draw": 319, "drawPos": 22, "h1": "7.3", "h2": "7.6"}, {"card": 52, "team": 17, "p1": "Raul Chacon", "p2": "Ryan Chacon", "flight": 2, "draw": 317, "drawPos": 17, "h1": "11.5", "h2": "+0.6"}, {"card": 53, "team": 18, "p1": "Rodolfo Camacho", "p2": "Mark Shank", "flight": 4, "draw": 334, "drawPos": 3, "h1": "17.5", "h2": "16.8"}, {"card": 54, "team": 19, "p1": "Anthony Blaszczyk", "p2": "Steve Middleton", "flight": 3, "draw": 326, "drawPos": 16, "h1": "4.4", "h2": "13.8"}, {"card": 55, "team": 20, "p1": "Christopher Andrews", "p2": "William Barrett", "flight": 1, "draw": 329, "drawPos": 10, "h1": "6.9", "h2": "2.9"}, {"card": 56, "team": 21, "p1": "Bob Latos", "p2": "Jeff Sarris", "flight": 2, "draw": 321, "drawPos": 21, "h1": "8.3", "h2": "7.9"}, {"card": 57, "team": 22, "p1": "James Carroll", "p2": "Ray Sanchez", "flight": 4, "draw": 316, "drawPos": 28, "h1": "18.3", "h2": "26.8"}, {"card": 58, "team": 23, "p1": "Bill Balster", "p2": "Kevin Duffy", "flight": 2, "draw": 306, "drawPos": 26, "h1": "8.5", "h2": "3.8"}, {"card": 59, "team": 24, "p1": "Grant LaGasse", "p2": "Jeff Sandusky", "flight": 2, "draw": 331, "drawPos": 31, "h1": "9.5", "h2": "8.3"}, {"card": 60, "team": 25, "p1": "Jared Friend", "p2": "Devin Grimaldi", "flight": 2, "draw": 335, "drawPos": 15, "h1": "6.4", "h2": "5.5"}, {"card": 61, "team": 26, "p1": "Carl Cutright", "p2": "Tim McNichol", "flight": 4, "draw": 323, "drawPos": 19, "h1": "21.6", "h2": "8.3"}, {"card": 62, "team": 27, "p1": "Britt Musser", "p2": "Joel Sandler", "flight": 1, "draw": 310, "drawPos": 11, "h1": "2.7", "h2": "6.8"}, {"card": 63, "team": 28, "p1": "Brent Davis", "p2": "Timothy Gilchrist", "flight": 1, "draw": 322, "drawPos": 38, "h1": "0.0", "h2": "3.3"}, {"card": 64, "team": 29, "p1": "Bob Chase", "p2": "Jim Weiskopf", "flight": 4, "draw": 333, "drawPos": 20, "h1": "15.0", "h2": "12.7"}, {"card": 65, "team": 30, "p1": "Chris Allen", "p2": "Joey Tominovich", "flight": 3, "draw": 305, "drawPos": 5, "h1": "5.4", "h2": "12.7"}, {"card": 66, "team": 31, "p1": "Steven Weiss", "p2": "Jeff Williams", "flight": 1, "draw": 324, "drawPos": 24, "h1": "2.7", "h2": "+0.3"}, {"card": 67, "team": 32, "p1": "Kevin Scudder", "p2": "Jacob Seiter", "flight": 2, "draw": 312, "drawPos": 9, "h1": "13.3", "h2": "1.2"}, {"card": 68, "team": 33, "p1": "Andrew Divver", "p2": "George Divver", "flight": 4, "draw": 301, "drawPos": 29, "h1": "13.1", "h2": "17.8"}, {"card": 69, "team": 34, "p1": "Jang Lee", "p2": "Chip Mace", "flight": 3, "draw": 336, "drawPos": 18, "h1": "11.1", "h2": "7.2"}, {"card": 70, "team": 35, "p1": "Eric Cloutier", "p2": "Daniel Woo", "flight": 3, "draw": 302, "drawPos": 25, "h1": "14.2", "h2": "6.9"}, {"card": 71, "team": 36, "p1": "Andrew Dexter", "p2": "Brendan Spellman", "flight": 3, "draw": 315, "drawPos": 35, "h1": "4.1", "h2": "19.0"}, {"card": 72, "team": 37, "p1": "Phil Murray", "p2": "Duane Robbins", "flight": 3, "draw": 328, "drawPos": 1, "h1": "11.8", "h2": "11.4"}, {"card": 73, "team": 38, "p1": "Cesar Rodas", "p2": "Chris Windsor", "flight": 4, "draw": 338, "drawPos": 34, "h1": "8.1", "h2": "19.2"}];
 </script>
 <script>
 const KEY='mmcalcutta_v2';
@@ -824,6 +856,7 @@ function renderCurrent(){
   else if(page==='flightpay')renderFlightPay();
   else if(page==='analytics')renderAnalytics();
   else if(page==='results')renderResults();
+  else if(page==='roster')renderRoster();
   updatePayTabFlag(); renderModeHeader();
   measureChrome();
 }
@@ -850,6 +883,7 @@ document.getElementById('pagetabs').onclick=e=>{
   document.getElementById('flightpaypage').classList.toggle('show',page==='flightpay');
   document.getElementById('analyticspage').classList.toggle('show',page==='analytics');
   document.getElementById('resultspage').classList.toggle('show',page==='results');
+  document.getElementById('rosterpage').classList.toggle('show',page==='roster');
   try{window.scrollTo(0,0);}catch(e){}
   renderCurrent();
   updateCounter();
@@ -1492,7 +1526,7 @@ function applyMode(){
   if(!ADMIN && (page==='deck'||page==='bet')){
     page='dash';
     document.querySelectorAll('#pagetabs button').forEach(x=>x.classList.toggle('on',x.dataset.page==='dash'));
-    ['deckpage','betpage','dashpage','flightspage','payoutpage','flightpaypage','analyticspage','resultspage'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('show',id==='dashpage');});
+    ['deckpage','betpage','dashpage','flightspage','payoutpage','flightpaypage','analyticspage','resultspage','rosterpage'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('show',id==='dashpage');});
   }
 }
 
@@ -1625,6 +1659,49 @@ function renderResults(){
     ${flightSection}`;
 
   bindResSelects(document.getElementById('resultsBody'));
+}
+
+/* ===== ROSTER (sortable, read-only, everyone can see) ===== */
+function parseHcp(v){ if(v==null) return 0; v=String(v).trim(); if(v.startsWith('+')) return -parseFloat(v.slice(1))||0; const n=parseFloat(v); return isNaN(n)?0:n; }
+function fmtHcpVal(n){ const r=Math.round(n*10)/10; return r<0 ? '+'+Math.abs(r).toFixed(1) : r.toFixed(1); }
+function teamHcp(t){ return parseHcp(t.h1)+parseHcp(t.h2); }
+let rosterSort={ key:'card', dir:1 };  // default: card ascending
+function renderRoster(){
+  const cols=[
+    {key:'p1',    label:'Player 1', num:false},
+    {key:'p2',    label:'Player 2', num:false},
+    {key:'flight',label:'Flight',   num:true},
+    {key:'card',  label:'Card #',   num:true},
+    {key:'team',  label:'Team ID',  num:true},
+    {key:'thcp',  label:'Team HCP', num:true},
+  ];
+  const val=(t,k)=> k==='thcp'?teamHcp(t) : (k==='p1'?t.p1.toLowerCase() : k==='p2'?t.p2.toLowerCase() : t[k]);
+  const rows=teams.slice().sort((a,b)=>{
+    let av=val(a,rosterSort.key), bv=val(b,rosterSort.key);
+    if(av<bv) return -1*rosterSort.dir; if(av>bv) return 1*rosterSort.dir;
+    return (a.card-b.card); // stable secondary
+  });
+  const arrow=k=> rosterSort.key===k ? (rosterSort.dir===1?'\u25B2':'\u25BC') : '\u25B5';
+  const thead='<thead><tr>'+cols.map(c=>
+    `<th data-key="${c.key}" class="${c.num?'num ':''}${rosterSort.key===c.key?'sorted':''}">${c.label}<span class="ar">${arrow(c.key)}</span></th>`).join('')+'</tr></thead>';
+  const tbody='<tbody>'+rows.map(t=>`<tr>
+      <td class="nm">${t.p1}<span class="hc">(${fmtH(t.h1)})</span></td>
+      <td class="nm">${t.p2}<span class="hc">(${fmtH(t.h2)})</span></td>
+      <td class="flt num"><span class="fdotR" style="background:${FC[t.flight]}"></span>${t.flight}</td>
+      <td class="num">${t.card}</td>
+      <td class="num">${t.team}</td>
+      <td class="thcp">${fmtHcpVal(teamHcp(t))}</td>
+    </tr>`).join('')+'</tbody>';
+  const tbl=document.getElementById('rosterTable');
+  tbl.innerHTML=thead+tbody;
+  tbl.querySelectorAll('thead th').forEach(th=>th.onclick=()=>{
+    const k=th.dataset.key;
+    if(rosterSort.key===k) rosterSort.dir*=-1; else { rosterSort.key=k; rosterSort.dir=1; }
+    renderRoster();
+  });
+  document.getElementById('rosterTotals').innerHTML=
+    `<div class="dt"><div class="v">${teams.length}</div><div class="l">Teams</div></div>`+
+    `<div class="dt"><div class="v">${teams.length*2}</div><div class="l">Players</div></div>`;
 }
 
 /* export/import */

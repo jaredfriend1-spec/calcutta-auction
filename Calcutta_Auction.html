@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member-Member Calcutta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;0,9..144,900;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --felt-0:#0a2a20;--felt-edge:#061a13;
+  --ivory:#f4ecd6;--ivory-dim:#cbc6ad;--ivory-faint:#8f9b86;
+  --brass:#c8a951;--brass-soft:#e8d49a;--brass-deep:#a8862f;
+  --good:#5fbf8f;
+  --line:#ffffff1a;--line-strong:#c8a95140;
+  --f1:#7fb3d5;--f2:#9ccfa0;--f3:#e8c27a;--f4:#d59b9b;
+  --staff:#e0884f;
+  --sans:'Hanken Grotesk',-apple-system,sans-serif;--serif:'Fraunces',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  font-family:var(--sans);color:var(--ivory);
+  background:radial-gradient(130% 100% at 50% -5%,#15503a 0%,var(--felt-0) 55%,var(--felt-edge) 100%);
+  background-attachment:fixed;min-height:100vh;-webkit-font-smoothing:antialiased;
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");mix-blend-mode:overlay}
+
+/* Top bar */
+.topbar{position:relative;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px clamp(18px,3vw,40px);border-bottom:1px solid var(--line);background:#08231b66;backdrop-filter:blur(4px)}
+.brand{font-family:var(--serif);font-weight:600;font-size:clamp(16px,2vw,21px);letter-spacing:.01em;white-space:nowrap}
+.brand em{font-style:italic;color:var(--brass-soft)}
+.pagetabs{display:flex;flex-wrap:wrap;justify-content:center;background:#0a2820;border:1px solid var(--line);border-radius:13px;padding:5px;gap:4px}
+.pagetabs button{background:none;border:none;color:var(--ivory-dim);font-family:var(--sans);font-weight:700;font-size:clamp(13px,1.4vw,16px);padding:9px 22px;border-radius:9px;cursor:pointer;transition:.18s;letter-spacing:.02em}
+.pagetabs button:hover{color:var(--ivory)}
+.pagetabs button.on{background:linear-gradient(160deg,#185a41,#114631);color:var(--brass-soft);box-shadow:inset 0 1px 0 #ffffff1a}
+.counter{font-size:clamp(11px,1.2vw,13px);letter-spacing:.24em;text-transform:uppercase;color:var(--brass);font-weight:700;white-space:nowrap}
+
+.page{display:none}
+.page.show{display:block}
+
+/* ============ ON DECK ============ */
+#deckpage{position:relative;z-index:2}
+.deckwrap{height:calc(100vh - 66px);display:flex;align-items:center;justify-content:center;padding:24px clamp(40px,8vw,120px);position:relative}
+.cardface{width:100%;max-width:1300px;text-align:center;animation:rise .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(26px) scale(.99)}to{opacity:1;transform:none}}
+.eyebrow{display:flex;align-items:center;justify-content:center;gap:clamp(14px,2vw,26px);margin-bottom:14px;flex-wrap:wrap}
+.flightpill{display:inline-flex;align-items:center;gap:12px;font-weight:700;font-size:clamp(18px,2vw,26px);letter-spacing:.03em;padding:11px 26px;border-radius:999px;border:1px solid var(--line);background:#0b2c2180}
+.flightpill .dot{width:18px;height:18px;border-radius:50%}
+.cardnum{font-family:var(--serif);font-weight:600;font-size:clamp(18px,2vw,26px);color:var(--brass-soft);letter-spacing:.03em}
+.teamline{font-size:clamp(15px,1.7vw,20px);letter-spacing:.36em;text-transform:uppercase;color:var(--ivory-faint);font-weight:700;margin:clamp(20px,4vh,46px) 0 10px}
+.players{font-family:var(--serif);font-weight:900;letter-spacing:-.02em;line-height:1.0;font-size:clamp(56px,11vw,168px)}
+.players .amp{display:block;font-style:italic;font-weight:500;color:var(--brass);font-size:.4em;margin:.12em 0;letter-spacing:0}
+.players .pl{display:block}
+.players .hc{display:block;font-family:var(--sans);font-weight:700;font-size:.2em;letter-spacing:.16em;color:var(--ivory-faint);text-transform:uppercase;margin-top:.18em}
+.players .hc::before{content:"Index ";color:var(--brass-deep);font-weight:600}
+.divider{height:1px;width:clamp(220px,34vw,520px);margin:clamp(26px,5vh,52px) auto 0;background:linear-gradient(90deg,transparent,var(--brass),transparent);opacity:.55}
+.hint{margin-top:clamp(18px,3vh,34px);font-size:clamp(14px,1.5vw,17px);color:var(--ivory-faint);font-style:italic;font-family:var(--serif)}
+.hint b{color:var(--ivory-dim);font-style:normal;font-family:var(--sans);font-weight:700}
+.nav{position:fixed;top:66px;height:calc(100vh - 66px);width:11%;max-width:150px;z-index:4;border:none;background:transparent;cursor:pointer;color:#ffffff00;transition:.2s;display:flex;align-items:center;justify-content:center}
+.nav:hover{background:linear-gradient(90deg,#0000003a,transparent);color:#ffffffbb}
+.nav.r{right:0}.nav.r:hover{background:linear-gradient(270deg,#0000003a,transparent)}
+.nav svg{width:46px;height:46px;filter:drop-shadow(0 2px 6px #000)}
+.deckbtns{position:fixed;bottom:20px;right:26px;z-index:5;display:flex;gap:9px}
+.tb{background:#0e352799;border:1px solid var(--line);color:var(--ivory-dim);border-radius:10px;padding:10px 14px;font-family:var(--sans);font-weight:700;font-size:13px;cursor:pointer;transition:.18s}
+.tb:hover{color:var(--ivory);border-color:var(--brass)}
+
+/* ============ BETTING ============ */
+.betwrap{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:24px clamp(16px,3vw,30px) 70px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.stat{background:linear-gradient(160deg,#0f3b2c,#0b2c21);border:1px solid var(--line);border-top:1px solid #ffffff22;border-radius:15px;padding:20px 22px;position:relative;overflow:hidden;box-shadow:0 14px 30px -18px #000,inset 0 1px 0 #ffffff10}
+.stat::after{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--brass);opacity:.55}
+.stat .label{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ivory-faint);font-weight:700}
+.stat .value{font-family:var(--serif);font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:1.05;margin-top:9px;letter-spacing:-.02em}
+.stat .value .dollarpre{color:var(--ivory-faint);margin-right:1px}
+.staffin{font-family:var(--serif);font-weight:800;font-size:clamp(30px,3.6vw,46px);line-height:1.05;letter-spacing:-.02em;color:var(--ivory);background:transparent;border:none;border-bottom:2px dashed #ffffff3a;outline:none;width:calc(100% - 22px);padding:0 0 2px;max-width:170px}
+.staffin::placeholder{color:var(--brass-soft);font-style:italic;font-weight:500}
+.staffin:hover{border-bottom-color:#ffffff66}
+.staffin:focus{border-bottom-color:var(--brass)}
+.staffin::-webkit-outer-spin-button,.staffin::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.stat .sub{font-size:13.5px;color:var(--ivory-dim);margin-top:6px}
+.stat.accent .value{color:var(--brass-soft)}
+.barwrap{height:6px;border-radius:4px;background:#ffffff12;margin-top:11px;overflow:hidden}
+.barwrap>i{display:block;height:100%;background:linear-gradient(90deg,var(--brass-deep),var(--brass));border-radius:4px;transition:width .4s}
+
+.controls{display:flex;flex-wrap:wrap;gap:11px;align-items:center;margin-bottom:16px}
+.flightchips{display:flex;gap:7px}
+.flightcards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.flcard{position:relative;cursor:pointer;text-align:left;background:#0b2c2199;border:1px solid var(--line);border-radius:14px;padding:16px 18px;transition:.18s;overflow:hidden}
+.flcard:hover{border-color:#ffffff33;transform:translateY(-1px)}
+.flcard::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--fcol);opacity:.85}
+.flcard.dim{opacity:.4}
+.flcard.sel{border-color:var(--fcol);background:#10402f;box-shadow:0 0 0 1px var(--fcol),0 12px 26px -16px #000}
+.flcard .fhead{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;letter-spacing:.02em}
+.flcard .fhead .dot{width:12px;height:12px;border-radius:50%;background:var(--fcol)}
+.flcard .fpot{font-family:var(--serif);font-weight:800;font-size:clamp(24px,2.8vw,34px);line-height:1;margin:11px 0 4px;letter-spacing:-.02em}
+.flcard .fmeta{font-size:12.5px;color:var(--ivory-dim)}
+.flcard .fmeta b{color:var(--good);font-weight:600}
+.showall{display:none}
+.showall.show{display:inline-block}
+.chip{cursor:pointer;border:1px solid var(--line);background:#0a2820;color:var(--ivory-dim);font-weight:700;font-size:14px;padding:9px 15px;border-radius:10px;transition:.18s;display:flex;align-items:center;gap:8px}
+.chip:hover{color:var(--ivory)}
+.chip .dot{width:10px;height:10px;border-radius:50%}
+.chip.on{color:var(--ivory);border-color:var(--line-strong);background:#0e3527}
+.search{flex:1;min-width:200px;position:relative}
+.search input{width:100%;background:#0a2820;border:1px solid var(--line);border-radius:12px;color:var(--ivory);font-family:var(--sans);font-size:16px;padding:13px 16px 13px 42px;outline:none;transition:.18s}
+.search input:focus{border-color:var(--line-strong);background:#0c2d23}
+.search svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);opacity:.5}
+.toggle{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:15px;color:var(--ivory-dim);font-weight:700;user-select:none;padding:8px 4px}
+.toggle input{width:18px;height:18px;accent-color:var(--brass)}
+
+.tablecard{background:#0b2c2165;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 24px 50px -28px #000}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:860px}
+thead th{position:sticky;top:0;z-index:3;background:#0c3325;color:var(--brass-soft);font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;text-align:left;padding:16px 16px;border-bottom:1px solid var(--line-strong);white-space:nowrap}
+thead th.mid{text-align:center}thead th.rt{text-align:right}
+tbody td{padding:14px 16px;border-bottom:1px solid #ffffff0d;font-size:17px;vertical-align:middle}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:#ffffff08}
+tbody tr.sold{box-shadow:inset 4px 0 0 var(--brass)}
+tbody tr.collected{background:#0e3a2a55}
+tbody tr.collected:hover{background:#114631}
+.drawpos{font-family:var(--serif);font-weight:800;color:var(--brass-soft);font-size:24px;line-height:1}
+.drawpos span{display:block;color:var(--ivory-faint);font-size:11px;font-weight:600;font-family:var(--sans);letter-spacing:.08em;margin-top:2px}
+.players-cell{line-height:1.3}
+.players-cell .p{font-weight:700;font-size:17px}
+.players-cell .amp{color:var(--ivory-faint);margin:0 7px;font-style:italic;font-family:var(--serif)}
+.players-cell .phc{font-size:13px;color:var(--brass-soft);font-weight:600;font-variant-numeric:tabular-nums}
+.players-cell .sub{font-size:12.5px;color:var(--ivory-faint);margin-top:2px}
+.fl{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:16px}
+.fl .dot{width:13px;height:13px;border-radius:50%}
+
+/* clearer inputs */
+.field{width:100%;background:#08231b;border:1.5px solid #ffffff26;border-radius:10px;color:var(--ivory);font-family:var(--sans);font-size:17px;padding:12px 14px;transition:.15s;outline:none}
+.field::placeholder{color:#ffffff3a}
+.field:hover{border-color:#ffffff44}
+.field:focus{border-color:var(--brass);background:#0a2a20;box-shadow:0 0 0 3px #c8a9512e}
+.field.buyer{min-width:170px}
+.field.buyer.invalid{border-color:#d9744f;background:#2a140e}
+.field.buyer.invalid:focus{box-shadow:0 0 0 3px #d9744f33}
+.dollar{position:relative;max-width:150px;margin-left:auto}
+.dollar::before{content:"$";position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ivory-faint);font-size:16px;pointer-events:none;font-weight:600}
+.field.amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;padding-left:26px}
+.chk{appearance:none;width:30px;height:30px;border-radius:9px;border:2px solid #ffffff38;cursor:pointer;position:relative;transition:.15s;background:#08231b}
+.chk:hover{border-color:var(--brass)}
+.chk:checked{background:var(--good);border-color:var(--good)}
+.chk:checked::after{content:"";position:absolute;left:10px;top:4px;width:7px;height:13px;border:solid #06241a;border-width:0 3px 3px 0;transform:rotate(45deg)}
+
+.actions{display:flex;flex-wrap:wrap;gap:11px;align-items:center;margin-top:22px}
+.btn{background:#0e3527;border:1px solid var(--line-strong);color:var(--ivory);font-family:var(--sans);font-weight:700;font-size:14px;padding:12px 18px;border-radius:11px;cursor:pointer;transition:.18s}
+.btn:hover{background:#13452f;border-color:var(--brass)}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.danger:hover{border-color:#d9744f;color:#d9744f}
+.savenote{margin-left:auto;font-size:13px;color:var(--ivory-faint);font-style:italic;font-family:var(--serif)}
+.savenote b{color:var(--good);font-style:normal;font-family:var(--sans)}
+.empty{text-align:center;color:var(--ivory-faint);font-style:italic;font-family:var(--serif);padding:42px;font-size:17px}
+@media(max-width:880px){.stats{grid-template-columns:repeat(2,1fr)}.flightcards{grid-template-columns:repeat(2,1fr)}}
+
+/* ===== Dashboard ===== */
+.dashwrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:30px clamp(16px,3vw,30px) 70px}
+.dashhead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:24px;flex-wrap:wrap}
+.dash-eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--brass);font-weight:700}
+.dash-title{font-family:var(--serif);font-weight:800;font-size:clamp(26px,3.4vw,40px);letter-spacing:-.02em;margin-top:6px}
+.dashtotals{display:flex;gap:26px}
+.dashtotals .dt{text-align:right}
+.dashtotals .dt .v{font-family:var(--serif);font-weight:800;font-size:clamp(20px,2.4vw,30px);color:var(--brass-soft);line-height:1}
+.dashtotals .dt .l{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ivory-faint);font-weight:600;margin-top:4px}
+.dashtotals .dt.staff{background:#3a2114;border:1px solid #e0884f55;border-radius:11px;padding:9px 15px}
+.dashtotals .dt.staff .v{color:var(--staff)}
+.dashtotals .dt.staff .l{color:#e0a884}
+.stat.staffcard::after{background:var(--staff) !important;opacity:.85 !important}
+.stat.staffcard .value{color:var(--staff)}
+.board-rows{display:flex;flex-direction:column;gap:8px}
+.lb{display:flex;align-items:center;gap:16px;background:#0b2c2199;border:1px solid var(--line);border-radius:13px;padding:13px 18px;position:relative;overflow:hidden;transition:.18s;animation:fade .3s ease}
+.lb .lbbar{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--fcol),transparent);opacity:.16;border-radius:13px;z-index:0}
+.lb>*{position:relative;z-index:1}
+.lb .rank{font-family:var(--serif);font-weight:800;font-size:22px;color:var(--ivory-faint);min-width:42px;text-align:center}
+.lb .fdot{width:13px;height:13px;border-radius:50%;background:var(--fcol);flex-shrink:0}
+.lb .who{flex:1;min-width:0}
+.lb .who .nm{font-weight:700;font-size:17px;line-height:1.2}
+.lb .who .meta{font-size:12.5px;color:var(--ivory-faint);margin-top:2px}
+.lb .who .meta .by{color:var(--ivory-dim)}
+.lb .amt{font-family:var(--serif);font-weight:800;font-size:24px;letter-spacing:-.01em;text-align:right;min-width:120px}
+.lb .amt small{display:block;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.06em;margin-top:1px}
+.lb .amt .paid{color:var(--good)}.lb .amt .owed{color:#e0a84b}
+.lb.unsold{opacity:.5}
+.lb.unsold .amt{color:var(--ivory-faint)}
+.lb.top1{border-color:var(--brass);box-shadow:0 0 0 1px var(--brass)}
+.lb.top1 .rank,.lb.top1 .amt{color:var(--brass-soft)}
+.lb.top2 .rank,.lb.top3 .rank{color:var(--ivory-dim)}
+.lb-empty{text-align:center;color:var(--ivory-faint);font-style:italic;font-family:var(--serif);padding:50px;font-size:17px}
+
+/* ===== Flights summary ===== */
+.flsec{background:#0b2c2199;border:1px solid var(--line);border-radius:15px;padding:0;margin-bottom:18px;overflow:hidden;animation:fade .3s ease}
+.flsec-head{display:flex;align-items:center;gap:14px;padding:16px 20px;background:#0e3a2b;border-bottom:1px solid var(--line);position:relative}
+.flsec-head::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--fcol);opacity:.9}
+.flsec-head .fdot{width:16px;height:16px;border-radius:50%;background:var(--fcol)}
+.flsec-head .ftitle{font-family:var(--serif);font-weight:800;font-size:21px}
+.flsec-head .fstats{margin-left:auto;display:flex;gap:22px;text-align:right}
+.flsec-head .fstats .v{font-family:var(--serif);font-weight:700;font-size:18px;color:var(--brass-soft);line-height:1}
+.flsec-head .fstats .l{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ivory-faint);font-weight:600;margin-top:3px}
+.frow{display:flex;align-items:center;gap:14px;padding:11px 20px;border-bottom:1px solid #ffffff0b;font-size:15px}
+.frow:last-child{border-bottom:none}
+.frow:hover{background:#ffffff06}
+.frow.fsold{box-shadow:inset 3px 0 0 var(--fcol)}
+.frow .fteam{flex:1;min-width:0}
+.frow .fteam .tn{font-weight:700}
+.frow .fteam .tsub{font-size:12px;color:var(--ivory-faint);margin-top:1px}
+.frow .fbidder{width:30%;min-width:120px;color:var(--ivory-dim);font-weight:600}
+.frow .fbidder.none{color:var(--ivory-faint);font-style:italic;font-weight:400}
+.frow .famt{width:120px;text-align:right;font-family:var(--serif);font-weight:800;font-size:18px}
+.frow .famt small{display:block;font-family:var(--sans);font-size:9.5px;font-weight:600;letter-spacing:.06em;margin-top:1px}
+.frow .famt .paid{color:var(--good)}.frow .famt .owed{color:#e0a84b}
+.frow.funsold{opacity:.5}
+.frow.funsold .famt{color:var(--ivory-faint)}
+
+/* ===== Payout ===== */
+.po-panel{background:#0b2c2199;border:1px solid var(--line);border-radius:15px;padding:20px 22px;margin-bottom:16px}
+.po-panel h3{font-family:var(--serif);font-weight:700;font-size:19px;margin-bottom:3px}
+.po-panel .ph{font-size:12px;color:var(--ivory-faint);text-transform:uppercase;letter-spacing:.13em;margin-bottom:16px;font-weight:600}
+.po-split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.po-share{display:flex;align-items:center;gap:14px;background:#0e3a2b;border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+.po-share .sh-l{font-weight:700;font-size:15px;flex:1}
+.po-share .sh-l small{display:block;color:var(--ivory-faint);font-weight:500;font-size:12px;margin-top:2px}
+.po-pctin{width:84px;background:#08231b;border:1.5px solid #ffffff26;border-radius:9px;color:var(--ivory);font-family:var(--serif);font-weight:800;font-size:22px;text-align:right;padding:7px 26px 7px 10px;outline:none}
+.po-pctin:focus{border-color:var(--brass);box-shadow:0 0 0 3px #c8a9512e}
+.po-pctin::-webkit-outer-spin-button,.po-pctin::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.po-pctwrap{position:relative}
+.po-pctwrap::after{content:"%";position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--ivory-faint);font-weight:600;pointer-events:none}
+.po-share .sh-amt{font-family:var(--serif);font-weight:800;font-size:22px;min-width:110px;text-align:right;color:var(--brass-soft)}
+.po-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.po-secthead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px}
+.po-secthead .pool{font-family:var(--serif);font-weight:800;font-size:20px;color:var(--brass-soft)}
+.po-count{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ivory-dim);font-weight:600}
+.po-count input{width:54px;background:#08231b;border:1.5px solid #ffffff26;border-radius:8px;color:var(--ivory);font-family:var(--sans);font-weight:700;font-size:15px;text-align:center;padding:6px;outline:none}
+.po-count input:focus{border-color:var(--brass)}
+.po-place{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #ffffff0d}
+.po-place:last-child{border-bottom:none}
+.po-place .pl-rank{font-family:var(--serif);font-weight:800;font-size:16px;color:var(--brass);min-width:64px}
+.po-place .pl-in{width:80px;background:#08231b;border:1.5px solid #ffffff26;border-radius:8px;color:var(--ivory);font-weight:700;font-size:15px;text-align:right;padding:7px 22px 7px 8px;outline:none}
+.po-place .pl-in:focus{border-color:var(--brass);box-shadow:0 0 0 3px #c8a9512e}
+.po-place .pl-in::-webkit-outer-spin-button,.po-place .pl-in::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.po-place .pl-amt{flex:1;text-align:right;font-family:var(--serif);font-weight:800;font-size:19px}
+.po-sum{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-size:13px;font-weight:600;color:var(--ivory-dim)}
+.po-sum .ok{color:var(--good)}.po-sum .bad{color:#e0884f}
+.po-distbtn{background:transparent;border:1px solid var(--line);color:var(--ivory-dim);border-radius:8px;font-family:var(--sans);font-weight:600;font-size:12px;padding:6px 11px;cursor:pointer;transition:.15s}
+.po-distbtn:hover{border-color:var(--brass);color:var(--ivory)}
+.po-balance{display:flex;flex-wrap:wrap;gap:22px;align-items:center;background:#0e3a2b;border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin-top:4px}
+.po-balance .bl{text-align:left}
+.po-balance .bl .v{font-family:var(--serif);font-weight:800;font-size:24px;line-height:1}
+.po-balance .bl .l{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ivory-faint);font-weight:600;margin-top:4px}
+.po-balance .bl.staff .v{color:var(--staff)}
+.po-balance .verdict{margin-left:auto;text-align:right;font-family:var(--serif);font-weight:800;font-size:20px}
+.po-balance .verdict.good{color:var(--good)}
+.po-balance .verdict.bad{color:#e0884f}
+.po-balance .verdict small{display:block;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ivory-dim);margin-top:3px}
+@media(max-width:760px){.po-split,.po-cols{grid-template-columns:1fr}}
+
+/* ===== If Flights Pay ===== */
+.fp-table{width:100%;border-collapse:collapse;margin-top:4px}
+.fp-table th{text-align:right;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--brass-soft);font-weight:700;padding:10px 14px;border-bottom:1px solid var(--line-strong)}
+.fp-table th:first-child{text-align:left}
+.fp-table td{padding:12px 14px;border-bottom:1px solid #ffffff0d;text-align:right;font-variant-numeric:tabular-nums;font-size:15px}
+.fp-table td:first-child{text-align:left;font-weight:700}
+.fp-table td .fdot{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:9px;vertical-align:middle}
+.fp-table .money{font-family:var(--serif);font-weight:700;color:var(--brass-soft)}
+.fp-table tr.tot td{border-top:2px solid var(--line-strong);border-bottom:none;font-weight:800;font-family:var(--serif);font-size:17px}
+.fp-table tr.fp-sec td{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);font-weight:700;padding:14px 14px 7px;border-bottom:1px solid var(--line-strong)}
+.fp-impact{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+.fp-card{border-radius:14px;padding:20px 22px;border:1px solid var(--line)}
+.fp-card.before{background:#0b2c2199}
+.fp-card.after{background:#0e3a2b;border-color:var(--line-strong)}
+.fp-card h4{font-family:var(--serif);font-weight:700;font-size:17px;margin-bottom:14px}
+.fp-line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #ffffff0d;font-size:14px}
+.fp-line:last-child{border-bottom:none}
+.fp-line .lbl{color:var(--ivory-dim)}
+.fp-line .val{font-weight:700;font-variant-numeric:tabular-nums}
+.fp-line.divert .val{color:var(--staff)}
+.fp-line.big{margin-top:6px;padding-top:12px;border-top:1px solid var(--line)}
+.fp-line.big .lbl{color:var(--ivory);font-weight:700}
+.fp-line.big .val{font-family:var(--serif);font-weight:800;font-size:20px;color:var(--brass-soft)}
+.fp-note{font-size:13px;color:var(--ivory-faint);font-style:italic;font-family:var(--serif);margin-top:14px}
+@media(max-width:760px){.fp-impact{grid-template-columns:1fr}}
+
+/* ===== Print report ===== */
+#printArea{display:none}
+@media print{
+  @page{margin:14mm}
+  body{background:#fff !important;color:#111}
+  body::before{display:none}
+  body>*{display:none !important}
+  #printArea{display:block !important;position:static;color:#111;font-family:'Hanken Grotesk',Arial,sans-serif}
+  .pr-h1{font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:800;margin:0;color:#0d3427}
+  .pr-sub{color:#555;font-size:12px;margin:2px 0 14px}
+  .pr-summary{display:flex;gap:26px;border:1px solid #ccc;border-radius:8px;padding:12px 16px;margin-bottom:22px}
+  .pr-summary div{font-size:12px;color:#555}
+  .pr-summary b{display:block;font-family:'Fraunces',serif;font-size:20px;color:#0d3427;font-weight:800}
+  .pr-sec{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:#0d3427;margin:20px 0 8px;border-bottom:2px solid #0d3427;padding-bottom:4px}
+  table.pr{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:6px}
+  table.pr th{text-align:left;background:#0d3427;color:#fff;padding:6px 9px;font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+  table.pr th.r{text-align:right}table.pr th.c{text-align:center}
+  table.pr td{padding:6px 9px;border-bottom:1px solid #e2e2e2}
+  table.pr td.r{text-align:right;font-variant-numeric:tabular-nums}
+  table.pr td.c{text-align:center}
+  .pr-buyer{break-inside:avoid;page-break-inside:avoid;margin-bottom:14px}
+  .pr-buyer h3{font-size:13px;margin:0 0 4px;color:#0d3427;display:flex;justify-content:space-between;border-bottom:1px solid #bbb;padding-bottom:3px}
+  .pr-buyer h3 span{font-weight:600}
+  .pr-owed{color:#b5471f}
+  .pr-paid{color:#197a4e}
+  tr.pr-tot td{font-weight:800;border-top:2px solid #0d3427;border-bottom:none}
+  .pr-foot{margin-top:18px;font-size:10px;color:#888;border-top:1px solid #ddd;padding-top:8px}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">Member&ndash;Member <em>Calcutta</em></div>
+  <div class="pagetabs" id="pagetabs">
+    <button data-page="deck" class="on">On Deck</button>
+    <button data-page="bet">Betting</button>
+    <button data-page="dash">Dashboard</button>
+    <button data-page="flights">Flights</button>
+    <button data-page="payout">Payout</button>
+    <button data-page="flightpay">If Flights Pay</button>
+  </div>
+  <div class="counter" id="counter"></div>
+</div>
+
+<!-- ON DECK -->
+<div class="page show" id="deckpage">
+  <button class="nav l" id="prev" title="Previous (←)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+  <button class="nav r" id="next" title="Next (→ / Space)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button>
+  <div class="deckwrap" id="deckwrap"></div>
+  <div class="deckbtns">
+    <button class="tb" id="fs">&#9974; Fullscreen</button>
+    <button class="tb" id="restart">&#8635; Restart</button>
+  </div>
+</div>
+
+<!-- BETTING -->
+<div class="page" id="betpage">
+  <div class="betwrap">
+    <div class="stats" id="stats"></div>
+    <div class="flightcards" id="flightcards"></div>
+    <div class="controls">
+      <button class="btn ghost showall" id="showAll">Show all flights</button>
+      <div class="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="search" placeholder="Search player or buyer&hellip;">
+      </div>
+    </div>
+    <div class="tablecard">
+      <div class="scroll">
+        <table>
+          <thead><tr>
+            <th class="mid">Draw&nbsp;#</th>
+            <th>Team</th>
+            <th>Flight</th>
+            <th>Bought By</th>
+            <th class="rt">Amount</th>
+            <th class="mid">Collected</th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="exportPdf">&#9112; Export PDF Record</button>
+      <button class="btn ghost" id="exportCsv">&#8595; Export CSV</button>
+      <button class="btn ghost" id="exportJson">&#8595; Backup (JSON)</button>
+      <button class="btn ghost" id="importBtn">&#8593; Restore backup</button>
+      <input type="file" id="importFile" accept=".json" style="display:none">
+      <button class="btn danger ghost" id="resetBtn">Reset entries</button>
+      <div class="savenote" id="savenote">Ready</div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page" id="dashpage">
+  <div class="dashwrap">
+    <div class="dashhead">
+      <div>
+        <div class="dash-eyebrow">Auction Leaderboard</div>
+        <h2 class="dash-title">Teams by Hammer Price</h2>
+      </div>
+      <div class="dashtotals" id="dashtotals"></div>
+    </div>
+    <div class="board-rows" id="leaderboard"></div>
+  </div>
+</div>
+
+<!-- FLIGHTS SUMMARY -->
+<div class="page" id="flightspage">
+  <div class="dashwrap">
+    <div class="dashhead">
+      <div>
+        <div class="dash-eyebrow">Results by Flight</div>
+        <h2 class="dash-title">Winning Bids by Flight</h2>
+      </div>
+      <div class="dashtotals" id="flightsTotals"></div>
+    </div>
+    <div id="flightsBody"></div>
+  </div>
+</div>
+
+<!-- PAYOUT -->
+<div class="page" id="payoutpage">
+  <div class="dashwrap">
+    <div class="dashhead">
+      <div>
+        <div class="dash-eyebrow">Prize Allocation</div>
+        <h2 class="dash-title">Payout Calculator</h2>
+      </div>
+      <div class="dashtotals" id="payoutTotals"></div>
+    </div>
+    <div id="payoutBody"></div>
+  </div>
+</div>
+
+<!-- IF FLIGHTS PAY -->
+<div class="page" id="flightpaypage">
+  <div class="dashwrap">
+    <div class="dashhead">
+      <div>
+        <div class="dash-eyebrow">What-If Scenario</div>
+        <h2 class="dash-title">If We Pay Out Flights</h2>
+      </div>
+      <div class="dashtotals" id="flightpayTotals"></div>
+    </div>
+    <div id="flightpayBody"></div>
+  </div>
+</div>
+
+<div id="printArea"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+const SEED = [{"card": 301, "team": 1, "p1": "Tom Watson", "p2": "William Wood", "flight": 4, "draw": 337, "drawPos": 33, "h1": "17.3", "h2": "20.0"}, {"card": 302, "team": 2, "p1": "John Gray", "p2": "Jeff Yeakle", "flight": 3, "draw": 304, "drawPos": 35, "h1": "15.0", "h2": "11.5"}, {"card": 303, "team": 3, "p1": "Brian Grimes", "p2": "Matthew Honacki", "flight": 2, "draw": 318, "drawPos": 8, "h1": "6.5", "h2": "6.0"}, {"card": 304, "team": 4, "p1": "Cyrus Fordyce", "p2": "Rick Meade", "flight": 1, "draw": 309, "drawPos": 2, "h1": "3.1", "h2": "5.3"}, {"card": 305, "team": 5, "p1": "Mike Althouse", "p2": "Chris Convey", "flight": 1, "draw": 330, "drawPos": 30, "h1": "4.8", "h2": "1.9"}, {"card": 306, "team": 6, "p1": "Alex Hinson", "p2": "Dale Williams", "flight": 1, "draw": 311, "drawPos": 23, "h1": "1.4", "h2": "4.8"}, {"card": 307, "team": 7, "p1": "Marty More", "p2": "Jim Muir, III", "flight": 4, "draw": 313, "drawPos": 13, "h1": "20.8", "h2": "12.0"}, {"card": 308, "team": 8, "p1": "Steve Craver", "p2": "Jim Harvey", "flight": 4, "draw": 303, "drawPos": 12, "h1": "12.5", "h2": "15.3"}, {"card": 309, "team": 9, "p1": "Clark Kunkle", "p2": "Will Paul", "flight": 3, "draw": 332, "drawPos": 4, "h1": "10.5", "h2": "12.6"}, {"card": 310, "team": 10, "p1": "Ken Sanquist", "p2": "Cody Stewart", "flight": 3, "draw": 320, "drawPos": 27, "h1": "10.7", "h2": "11.5"}, {"card": 311, "team": 11, "p1": "Austin Sanquist", "p2": "Thomas Vyskocil", "flight": 1, "draw": 327, "drawPos": 6, "h1": "1.0", "h2": "7.9"}, {"card": 312, "team": 12, "p1": "Jake Silverman", "p2": "Sam Silverman", "flight": 2, "draw": 308, "drawPos": 32, "h1": "2.6", "h2": "8.2"}, {"card": 313, "team": 13, "p1": "Tom Steffes", "p2": "Robert Sundell", "flight": 4, "draw": 307, "drawPos": 7, "h1": "12.0", "h2": "15.1"}, {"card": 314, "team": 14, "p1": "John McCarthy", "p2": "D.J. Park", "flight": 4, "draw": 314, "drawPos": 14, "h1": "13.6", "h2": "19.8"}, {"card": 315, "team": 15, "p1": "Todd Williams", "p2": "Scott Wilson", "flight": 1, "draw": 325, "drawPos": 36, "h1": "3.2", "h2": "4.3"}, {"card": 316, "team": 16, "p1": "Timothy Jeffery", "p2": "Douglas McPherson", "flight": 2, "draw": 319, "drawPos": 22, "h1": "7.3", "h2": "7.6"}, {"card": 317, "team": 17, "p1": "Raul Chacon", "p2": "Ryan Chacon", "flight": 2, "draw": 317, "drawPos": 17, "h1": "11.5", "h2": "+0.6"}, {"card": 318, "team": 18, "p1": "Rodolfo Camacho", "p2": "Mark Shank", "flight": 4, "draw": 334, "drawPos": 3, "h1": "17.5", "h2": "16.8"}, {"card": 319, "team": 19, "p1": "Anthony Blaszczyk", "p2": "Steve Middleton", "flight": 3, "draw": 326, "drawPos": 16, "h1": "4.4", "h2": "13.8"}, {"card": 320, "team": 20, "p1": "Christopher Andrews", "p2": "WIlliam Barrett", "flight": 1, "draw": 329, "drawPos": 10, "h1": "6.9", "h2": "2.9"}, {"card": 321, "team": 21, "p1": "Bob Latos", "p2": "Jeff Sarris", "flight": 2, "draw": 321, "drawPos": 21, "h1": "8.3", "h2": "7.9"}, {"card": 322, "team": 22, "p1": "James Carroll", "p2": "Ray Sanchez", "flight": 4, "draw": 316, "drawPos": 28, "h1": "18.3", "h2": "26.8"}, {"card": 323, "team": 23, "p1": "Bill Balster", "p2": "Kevin Duffy", "flight": 2, "draw": 306, "drawPos": 26, "h1": "8.5", "h2": "3.8"}, {"card": 324, "team": 24, "p1": "Grant LaGasse", "p2": "Jeff Sandusky", "flight": 2, "draw": 331, "drawPos": 31, "h1": "9.5", "h2": "8.3"}, {"card": 325, "team": 25, "p1": "Jared Friend", "p2": "Devin Grimaldi", "flight": 2, "draw": 335, "drawPos": 15, "h1": "6.4", "h2": "5.5"}, {"card": 326, "team": 26, "p1": "Carl Cutright", "p2": "Tim McNichol", "flight": 4, "draw": 323, "drawPos": 19, "h1": "21.6", "h2": "8.3"}, {"card": 327, "team": 27, "p1": "Britt Musser", "p2": "Joel Sandler", "flight": 1, "draw": 310, "drawPos": 11, "h1": "2.7", "h2": "6.8"}, {"card": 328, "team": 28, "p1": "Brent Davis", "p2": "Timothy Gilchrist", "flight": 1, "draw": 322, "drawPos": 37, "h1": "0.0", "h2": "3.3"}, {"card": 329, "team": 29, "p1": "Bob Chase", "p2": "Jim Weiskopf", "flight": 4, "draw": 333, "drawPos": 20, "h1": "15.0", "h2": "12.7"}, {"card": 330, "team": 30, "p1": "Chris Allen", "p2": "Joey Tominovich", "flight": 3, "draw": 305, "drawPos": 5, "h1": "5.4", "h2": "12.7"}, {"card": 331, "team": 31, "p1": "Steven Weiss", "p2": "Jeff Williams", "flight": 1, "draw": 324, "drawPos": 24, "h1": "2.7", "h2": "+0.3"}, {"card": 332, "team": 32, "p1": "Kevin Scudder", "p2": "Jacob Seiter", "flight": 2, "draw": 312, "drawPos": 9, "h1": "13.3", "h2": "1.2"}, {"card": 333, "team": 33, "p1": "Andrew Divver", "p2": "George Divver", "flight": 4, "draw": 301, "drawPos": 29, "h1": "13.1", "h2": "17.8"}, {"card": 334, "team": 34, "p1": "Jang Lee", "p2": "Chip Mace", "flight": 3, "draw": 336, "drawPos": 18, "h1": "11.1", "h2": "7.2"}, {"card": 335, "team": 35, "p1": "Eric Cloutier", "p2": "Daniel Woo", "flight": 3, "draw": 302, "drawPos": 25, "h1": "14.2", "h2": "6.9"}, {"card": 336, "team": 36, "p1": "Andrew Dexter", "p2": "Brendan Spellman", "flight": 3, "draw": 315, "drawPos": 34, "h1": "4.1", "h2": "19.0"}, {"card": 337, "team": 37, "p1": "Phil Murray", "p2": "Duane Robbins", "flight": 3, "draw": 328, "drawPos": 1, "h1": "11.8", "h2": "11.4"}];
+</script>
+<script>
+const KEY='mmcalcutta_v2';
+
+/* ============================================================
+   FIREBASE REALTIME DATABASE  —  paste your project config below.
+   Until you do, the app runs on this browser's local storage (offline, single device).
+   Once the databaseURL is filled in, it switches to live sync across all devices.
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "PASTE_API_KEY",
+  authDomain: "PASTE_PROJECT.firebaseapp.com",
+  databaseURL: "https://PASTE_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "PASTE_PROJECT",
+  storageBucket: "PASTE_PROJECT.appspot.com",
+  messagingSenderId: "PASTE_SENDER_ID",
+  appId: "PASTE_APP_ID"
+};
+const EVENT_PATH = "calcutta/2026";   // change the year for a new event; old years stay intact
+/* ============================================================ */
+
+let db=null, root=null, useCloud=false;
+try{
+  useCloud = !!firebaseConfig.databaseURL && firebaseConfig.databaseURL.indexOf('PASTE')<0 && typeof firebase!=='undefined';
+  if(useCloud){ firebase.initializeApp(firebaseConfig); db=firebase.database(); root=db.ref(EVENT_PATH); }
+}catch(e){ console.warn('Firebase init failed, using local storage:',e); useCloud=false; }
+
+const FC={1:'var(--f1)',2:'var(--f2)',3:'var(--f3)',4:'var(--f4)'};
+const fmt=n=>'$'+(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+const fmtC=n=>'$'+(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtH=h=>(h===null||h===undefined||h==='')?'\u2014':String(h);
+
+// random draw order — fixed, never re-sorted
+const order=SEED.slice().sort((a,b)=>a.drawPos-b.drawPos);
+const STAFF_PCT=0.05; // staff payout = 5% of the total pot, off the top
+const staffCut=pot=>Math.round(pot*STAFF_PCT);
+// every player in the field — buyers must be playing
+const lastName=n=>String(n).trim().split(' ').slice(-1)[0].replace(',','');
+const PLAYERS=[...new Set(SEED.flatMap(t=>[t.p1,t.p2]))].sort((a,b)=>lastName(a).localeCompare(lastName(b))||a.localeCompare(b));
+const validP=new Set(PLAYERS.map(p=>p.trim()));
+
+// ---- betting state ----
+let teams=[];
+let payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:20,flightGrossPct:50};
+const blankTeams=()=>order.map(s=>({...s,bought:'',amount:null,collected:false}));
+function normalizePayout(){ if(payout.flightPct==null)payout.flightPct=20; if(payout.flightGrossPct==null)payout.flightGrossPct=50; }
+
+function note(msg){ const n=document.getElementById('savenote'); if(n) n.innerHTML=msg+' &middot; <b>'+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'</b>'; }
+
+// ---- LOCAL fallback ----
+function loadLocal(){
+  let saved=null; try{saved=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+  const m={}; if(Array.isArray(saved)) saved.forEach(s=>m[s.card]=s);
+  teams=order.map(s=>{const e=m[s.card]||{};return {...s,bought:e.bought||'',amount:(e.amount===0||e.amount)?e.amount:null,collected:!!e.collected};});
+  try{const p=JSON.parse(localStorage.getItem(KEY+'_payout_v2')); if(p&&p.gross&&p.net)payout=p;}catch(e){}
+  normalizePayout();
+}
+function saveLocal(){
+  try{localStorage.setItem(KEY,JSON.stringify(teams.map(t=>({card:t.card,bought:t.bought,amount:t.amount,collected:t.collected}))));localStorage.setItem(KEY+'_payout_v2',JSON.stringify(payout));}catch(e){}
+  note('Saved locally');
+}
+
+// ---- CLOUD (Firebase RTDB) ----
+function applySnapshot(val){
+  val=val||{};
+  const tmap=val.teams||{};
+  teams=order.map(s=>{const e=tmap[s.card]||{};return {...s,bought:e.bought||'',amount:(e.amount===0||e.amount)?e.amount:null,collected:!!e.collected};});
+  if(val.payout&&val.payout.gross&&val.payout.net) payout=val.payout;
+  normalizePayout();
+}
+let persistTimers={};
+function persistTeamField(card,field,value){
+  if(useCloud){
+    const k=card+'/'+field; clearTimeout(persistTimers[k]);
+    persistTimers[k]=setTimeout(()=>{ root.child('teams/'+card+'/'+field).set(value===undefined?null:value); note('Synced'); },200);
+  } else { clearTimeout(persistTimers.local); persistTimers.local=setTimeout(saveLocal,250); }
+}
+function savePayout(){
+  if(useCloud){ root.child('payout').set(payout); note('Synced'); }
+  else { try{localStorage.setItem(KEY+'_payout_v2',JSON.stringify(payout));}catch(e){} note('Saved locally'); }
+}
+function persistAll(){
+  if(useCloud){
+    const obj={}; teams.forEach(t=>{ obj[t.card]={bought:t.bought||'',amount:t.amount,collected:!!t.collected}; });
+    root.child('teams').set(obj); root.child('payout').set(payout); note('Synced');
+  } else saveLocal();
+}
+// focus-safe refresh when a remote change arrives
+function onRemoteUpdate(){
+  const a=document.activeElement, editing=a&&a.tagName==='INPUT';
+  if(editing){
+    if(page==='bet') syncTeamsToDOM();
+    else if(page==='payout') payoutRecompute();
+    else if(page==='flightpay') fpRecompute();
+    else renderCurrent();
+  } else renderCurrent();
+}
+function syncTeamsToDOM(){
+  document.querySelectorAll('#tbody .field, #tbody .chk').forEach(el=>{
+    if(el===document.activeElement) return;
+    const card=+el.dataset.card, f=el.dataset.f, t=teams.find(x=>x.card===card); if(!t) return;
+    if(f==='amount') el.value=(t.amount==null?'':t.amount);
+    else if(f==='collected') el.checked=t.collected;
+    else { el.value=t.bought||''; el.classList.toggle('invalid', t.bought&&!validP.has(t.bought.trim())); }
+    const tr=el.closest('tr'); if(tr){ tr.classList.toggle('sold',t.amount>0); tr.classList.toggle('collected',t.collected); }
+  });
+  renderStats();
+}
+function renderCurrent(){
+  renderTable();
+  if(page==='deck')renderDeck();
+  else if(page==='dash')renderDashboard();
+  else if(page==='flights')renderFlights();
+  else if(page==='payout')renderPayout();
+  else if(page==='flightpay')renderFlightPay();
+}
+const potTotal=()=>teams.reduce((s,t)=>s+(t.amount||0),0);
+let st=null;
+
+// ---- page switching ----
+let page='deck';
+document.getElementById('pagetabs').onclick=e=>{
+  if(!e.target.dataset.page)return;
+  page=e.target.dataset.page;
+  document.querySelectorAll('#pagetabs button').forEach(b=>b.classList.toggle('on',b===e.target));
+  document.getElementById('deckpage').classList.toggle('show',page==='deck');
+  document.getElementById('betpage').classList.toggle('show',page==='bet');
+  document.getElementById('dashpage').classList.toggle('show',page==='dash');
+  document.getElementById('flightspage').classList.toggle('show',page==='flights');
+  document.getElementById('payoutpage').classList.toggle('show',page==='payout');
+  document.getElementById('flightpaypage').classList.toggle('show',page==='flightpay');
+  if(page==='deck')renderDeck();
+  else if(page==='dash'){renderDashboard();updateCounter();}
+  else if(page==='flights'){renderFlights();updateCounter();}
+  else if(page==='payout'){renderPayout();updateCounter();}
+  else if(page==='flightpay'){renderFlightPay();updateCounter();}
+  else updateCounter();
+};
+
+/* ===== ON DECK ===== */
+let idx=0;
+function updateCounter(){
+  if(page==='deck') document.getElementById('counter').textContent= idx>=order.length?`Complete · ${order.length} of ${order.length}`:`On The Block · ${idx+1} of ${order.length}`;
+  else document.getElementById('counter').textContent=`${teams.filter(t=>t.amount>0).length} of ${order.length} sold`;
+}
+function renderDeck(){
+  const w=document.getElementById('deckwrap');
+  if(idx<0)idx=0; if(idx>order.length)idx=order.length;
+  if(idx>=order.length){
+    w.innerHTML=`<div class="cardface"><div class="teamline">That's The Field</div>
+      <div class="players">All ${order.length} teams<span class="amp">have been</span>on the block</div>
+      <div class="divider"></div><div class="hint">Press <b>&larr;</b> to review &middot; <b>&#8635; Restart</b> to run again</div></div>`;
+    updateCounter();return;
+  }
+  const t=order[idx];
+  w.innerHTML=`<div class="cardface">
+      <div class="eyebrow">
+        <span class="flightpill"><span class="dot" style="background:${FC[t.flight]}"></span>Flight ${t.flight}</span>
+        <span class="cardnum">Card ${t.card} &middot; Team ${t.team}</span>
+      </div>
+      <div class="teamline">Now On The Block</div>
+      <div class="players"><span class="pl">${t.p1}<span class="hc">${fmtH(t.h1)}</span></span><span class="amp">&amp;</span><span class="pl">${t.p2}<span class="hc">${fmtH(t.h2)}</span></span></div>
+      <div class="divider"></div>
+      <div class="hint"><b>&rarr;</b> or <b>Space</b> for the next team</div>
+    </div>`;
+  updateCounter();
+}
+document.getElementById('next').onclick=()=>{idx++;renderDeck();};
+document.getElementById('prev').onclick=()=>{idx--;renderDeck();};
+document.getElementById('restart').onclick=()=>{idx=0;renderDeck();};
+document.getElementById('fs').onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();};
+document.addEventListener('keydown',e=>{
+  if(page!=='deck')return;
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='Enter'){e.preventDefault();idx++;renderDeck();}
+  else if(e.key==='ArrowLeft'){idx--;renderDeck();}
+  else if(e.key==='Home'){idx=0;renderDeck();}
+  else if(e.key.toLowerCase()==='f'){document.getElementById('fs').click();}
+});
+
+/* ===== BETTING ===== */
+let flights=new Set([1,2,3,4]),search='';
+function flightTotals(f){
+  const ts=teams.filter(t=>t.flight===f);
+  return {
+    teams:ts.length,
+    sold:ts.filter(t=>t.amount>0).length,
+    pot:ts.reduce((s,t)=>s+(t.amount||0),0),
+    coll:ts.filter(t=>t.collected).reduce((s,t)=>s+(t.amount||0),0)
+  };
+}
+function renderFlightCards(){
+  const c=document.getElementById('flightcards');
+  const all=flights.size===4;
+  c.innerHTML=[1,2,3,4].map(f=>{
+    const d=flightTotals(f);
+    const sel=flights.has(f);
+    const cls='flcard'+(sel?' sel':'')+(all?'':(sel?'':' dim'));
+    return `<div class="${cls}" data-flight="${f}" style="--fcol:${FC[f]}">
+      <div class="fhead"><span class="dot"></span>Flight ${f}</div>
+      <div class="fpot">${fmt(d.pot)}</div>
+      <div class="fmeta">${d.sold}/${d.teams} sold &middot; <b>${fmt(d.coll)} in</b></div>
+    </div>`;
+  }).join('');
+  document.getElementById('showAll').classList.toggle('show',!all);
+}
+document.getElementById('flightcards').onclick=e=>{
+  const card=e.target.closest('.flcard'); if(!card)return;
+  const f=+card.dataset.flight;
+  if(flights.has(f)&&flights.size===4)flights=new Set([f]);          // isolate this flight
+  else if(flights.has(f)){flights.delete(f);if(!flights.size)flights=new Set([1,2,3,4]);} // toggle off
+  else flights.add(f);                                                // add to selection
+  renderTable();
+};
+document.getElementById('showAll').onclick=()=>{flights=new Set([1,2,3,4]);renderTable();};
+function visible(){
+  return teams.filter(t=>flights.has(t.flight))
+    .filter(t=>!search.trim()||(t.p1+' '+t.p2+' '+t.bought+' team '+t.team).toLowerCase().includes(search.toLowerCase()));
+}
+function renderTable(){
+  const tb=document.getElementById('tbody');tb.innerHTML='';
+  const list=visible();
+  if(!list.length){tb.innerHTML='<tr><td colspan="6" class="empty">No teams match these filters.</td></tr>';renderStats();return;}
+  list.forEach(t=>{
+    const tr=document.createElement('tr');
+    if(t.amount>0)tr.classList.add('sold');
+    if(t.collected)tr.classList.add('collected');
+    tr.innerHTML=`
+      <td class="mid"><span class="drawpos">${t.drawPos}<span>of ${order.length}</span></span></td>
+      <td class="players-cell"><div><span class="p">${t.p1}</span> <span class="phc">(${fmtH(t.h1)})</span><span class="amp">&amp;</span><span class="p">${t.p2}</span> <span class="phc">(${fmtH(t.h2)})</span></div><div class="sub">Card ${t.card} &middot; Team ${t.team}</div></td>
+      <td><span class="fl"><span class="dot" style="background:${FC[t.flight]}"></span>${t.flight}</span></td>
+      <td><input class="field buyer${t.bought&&!validP.has(t.bought.trim())?' invalid':''}" data-card="${t.card}" data-f="bought" list="buyers" placeholder="select player" value="${(t.bought||'').replace(/"/g,'&quot;')}"></td>
+      <td><span class="dollar"><input class="field amt" data-card="${t.card}" data-f="amount" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="${t.amount==null?'':t.amount}"></span></td>
+      <td class="mid"><input type="checkbox" class="chk" data-card="${t.card}" data-f="collected" ${t.collected?'checked':''}></td>`;
+    tb.appendChild(tr);
+  });
+  let dl=document.getElementById('buyers');
+  if(!dl){dl=document.createElement('datalist');dl.id='buyers';document.body.appendChild(dl);}
+  dl.innerHTML=PLAYERS.map(b=>`<option value="${b.replace(/"/g,'&quot;')}">`).join('');
+  bindInputs();renderStats();
+}
+function bindInputs(){
+  document.querySelectorAll('.field,.chk').forEach(el=>{
+    const card=+el.dataset.card,f=el.dataset.f,t=teams.find(x=>x.card===card);
+    const h=()=>{
+      if(f==='amount'){t.amount=el.value===''?null:Math.max(0,+el.value); persistTeamField(card,'amount',t.amount);}
+      else if(f==='collected'){t.collected=el.checked; persistTeamField(card,'collected',t.collected);}
+      else {t[f]=el.value; el.classList.toggle('invalid',el.value.trim()!==''&&!validP.has(el.value.trim())); persistTeamField(card,'bought',t.bought);}
+      renderStats();updateCounter();
+      const tr=el.closest('tr');if(tr){tr.classList.toggle('sold',t.amount>0);tr.classList.toggle('collected',t.collected);}
+    };
+    if(f==='collected')el.onchange=h; else {el.oninput=h; if(f==='bought')el.onblur=()=>renderTable();}
+  });
+}
+function renderStats(){
+  const pot=teams.reduce((s,t)=>s+(t.amount||0),0);
+  const coll=teams.filter(t=>t.collected).reduce((s,t)=>s+(t.amount||0),0);
+  const sold=teams.filter(t=>t.amount>0).length;
+  const staff=staffCut(pot), net=pot-staff;
+  const pct=pot?Math.round(coll/pot*100):0, soldPct=Math.round(sold/teams.length*100);
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><div class="label">Total Pot</div><div class="value">${fmt(pot)}</div><div class="sub">${sold} of ${teams.length} teams sold</div><div class="barwrap"><i style="width:${soldPct}%"></i></div></div>
+    <div class="stat staffcard"><div class="label">Staff (${Math.round(STAFF_PCT*100)}%)</div><div class="value">${fmt(staff)}</div><div class="sub">off the top of the pot</div></div>
+    <div class="stat accent"><div class="label">Players' Pot</div><div class="value" id="netPot">${fmt(net)}</div><div class="sub">payout pot after staff cut</div></div>
+    <div class="stat"><div class="label">Collected</div><div class="value">${fmt(coll)}</div><div class="sub">${fmt(pot-coll)} outstanding &middot; ${pct}% in</div><div class="barwrap"><i style="width:${pct}%"></i></div></div>`;
+  renderFlightCards();
+  if(page==='dash')renderDashboard();
+  if(page==='flights')renderFlights();
+  if(page==='payout')payoutRecompute();
+  if(page==='flightpay')fpRecompute();
+}
+document.getElementById('search').oninput=e=>{search=e.target.value;renderTable();};
+
+
+/* ===== DASHBOARD (leaderboard) ===== */
+function renderDashboard(){
+  const sold=teams.filter(t=>t.amount>0).slice().sort((a,b)=>b.amount-a.amount);
+  const unsold=teams.filter(t=>!(t.amount>0)).slice().sort((a,b)=>a.drawPos-b.drawPos);
+  const pot=teams.reduce((s,t)=>s+(t.amount||0),0);
+  const top=sold.length?sold[0].amount:0;
+  const staff=staffCut(pot), net=pot-staff;
+  document.getElementById('dashtotals').innerHTML=`
+    <div class="dt"><div class="v">${fmt(pot)}</div><div class="l">Total Pot</div></div>
+    <div class="dt staff"><div class="v">${fmt(staff)}</div><div class="l">Staff (${Math.round(STAFF_PCT*100)}%)</div></div>
+    <div class="dt"><div class="v">${fmt(net)}</div><div class="l">Players' Pot</div></div>
+    <div class="dt"><div class="v">${sold.length}/${teams.length}</div><div class="l">Sold</div></div>
+    <div class="dt"><div class="v">${sold.length?fmt(top):'—'}</div><div class="l">Top Bid</div></div>`;
+  const lb=document.getElementById('leaderboard');
+  if(!sold.length && !unsold.length){lb.innerHTML='<div class="lb-empty">No teams entered yet.</div>';return;}
+  const row=(t,rank,sold)=>{
+    const cls='lb'+(sold?(rank===1?' top1':rank===2?' top2':rank===3?' top3':''):' unsold');
+    const w=sold&&top?Math.max(6,Math.round(t.amount/top*100)):0;
+    const buyer=t.bought?`<span class="by">${t.bought}</span>`:(sold?'<span class="by">—</span>':'unsold');
+    const amt=sold
+      ? `${fmt(t.amount)}<small class="${t.collected?'paid':'owed'}">${t.collected?'PAID':'OWED'}</small>`
+      : '<small>—</small>';
+    return `<div class="${cls}" style="--fcol:${FC[t.flight]}">
+      <div class="lbbar" style="width:${w}%"></div>
+      <div class="rank">${sold?rank:''}</div>
+      <div class="fdot"></div>
+      <div class="who"><div class="nm">${t.p1} &amp; ${t.p2}</div>
+        <div class="meta">Flight ${t.flight} &middot; Team ${t.team} &middot; ${buyer}</div></div>
+      <div class="amt">${amt}</div></div>`;
+  };
+  let html=sold.map((t,i)=>row(t,i+1,true)).join('');
+  html+=unsold.map(t=>row(t,null,false)).join('');
+  lb.innerHTML=html;
+}
+
+/* ===== FLIGHTS SUMMARY ===== */
+function renderFlights(){
+  const pot=teams.reduce((s,t)=>s+(t.amount||0),0);
+  const coll=teams.filter(t=>t.collected).reduce((s,t)=>s+(t.amount||0),0);
+  document.getElementById('flightsTotals').innerHTML=`
+    <div class="dt"><div class="v">${fmt(pot)}</div><div class="l">Total Pot</div></div>
+    <div class="dt"><div class="v">${fmt(coll)}</div><div class="l">Collected</div></div>
+    <div class="dt"><div class="v">${fmt(pot-coll)}</div><div class="l">Outstanding</div></div>`;
+  const body=document.getElementById('flightsBody');
+  body.innerHTML=[1,2,3,4].map(f=>{
+    const d=flightTotals(f);
+    const ts=teams.filter(t=>t.flight===f);
+    const soldT=ts.filter(t=>t.amount>0).sort((a,b)=>b.amount-a.amount);
+    const unsoldT=ts.filter(t=>!(t.amount>0)).sort((a,b)=>a.team-b.team);
+    const rows=[...soldT.map(t=>({t,s:true})),...unsoldT.map(t=>({t,s:false}))].map(({t,s})=>{
+      const bidder=t.bought?`<span class="fbidder">${t.bought}</span>`:`<span class="fbidder none">${s?'—':'unsold'}</span>`;
+      const amt=s?`${fmt(t.amount)}<small class="${t.collected?'paid':'owed'}">${t.collected?'PAID':'OWED'}</small>`:'<small>&mdash;</small>';
+      return `<div class="frow ${s?'fsold':'funsold'}" style="--fcol:${FC[f]}">
+        <div class="fteam"><div class="tn">${t.p1} &amp; ${t.p2}</div><div class="tsub">Team ${t.team} &middot; Card ${t.card}</div></div>
+        ${bidder}
+        <div class="famt">${amt}</div></div>`;
+    }).join('');
+    return `<div class="flsec" style="--fcol:${FC[f]}">
+      <div class="flsec-head">
+        <span class="fdot"></span><span class="ftitle">Flight ${f}</span>
+        <div class="fstats">
+          <div><div class="v">${d.sold}/${d.teams}</div><div class="l">Sold</div></div>
+          <div><div class="v">${fmt(d.pot)}</div><div class="l">Pot</div></div>
+          <div><div class="v">${fmt(d.coll)}</div><div class="l">Collected</div></div>
+          <div><div class="v">${fmt(d.pot-d.coll)}</div><div class="l">Outstanding</div></div>
+        </div>
+      </div>
+      ${rows}
+    </div>`;
+  }).join('');
+}
+
+/* ===== PAYOUT CALCULATOR ===== */
+function payoutDistributable(){ const pot=potTotal(); const staff=staffCut(pot); return {pot,staff,dist:pot-staff}; }
+function clampN(v,lo,hi){ v=parseInt(v,10); if(isNaN(v))v=lo; return Math.max(lo,Math.min(hi,v)); }
+
+function renderPayout(){
+  const {pot,staff,dist}=payoutDistributable();
+  document.getElementById('payoutTotals').innerHTML=`
+    <div class="dt"><div class="v">${fmt(pot)}</div><div class="l">Total Pot</div></div>
+    <div class="dt staff"><div class="v">${fmt(staff)}</div><div class="l">Staff (${Math.round(STAFF_PCT*100)}%)</div></div>
+    <div class="dt"><div class="v">${fmt(dist)}</div><div class="l">Distributable</div></div>`;
+
+  const placeRows=(pool)=>payout[pool].map((p,i)=>`
+    <div class="po-place">
+      <span class="pl-rank">${ordinal(i+1)}</span>
+      <span class="po-pctwrap"><input class="pl-in" data-pool="${pool}" data-i="${i}" type="number" min="0" step="1" value="${p}"></span>
+      <span class="pl-amt" id="po-${pool}-amt-${i}">$0</span>
+    </div>`).join('');
+
+  document.getElementById('payoutBody').innerHTML=`
+    <div class="po-panel">
+      <h3>Gross vs Net Split</h3>
+      <div class="ph">Share of the distributable pot to each competition (should total 100%)</div>
+      <div class="po-split">
+        <div class="po-share">
+          <div class="sh-l">Gross<small>scratch competition</small></div>
+          <span class="po-pctwrap"><input class="po-pctin" id="po-grossPct" type="number" min="0" max="100" step="1" value="${payout.grossPct}"></span>
+          <span class="sh-amt" id="po-grossPool">$0</span>
+        </div>
+        <div class="po-share">
+          <div class="sh-l">Net<small>handicap competition</small></div>
+          <span class="po-pctwrap"><input class="po-pctin" id="po-netPct" type="number" min="0" max="100" step="1" value="${payout.netPct}"></span>
+          <span class="sh-amt" id="po-netPool">$0</span>
+        </div>
+      </div>
+      <div class="po-sum"><span id="po-splitsum"></span><span></span></div>
+    </div>
+
+    <div class="po-cols">
+      <div class="po-panel">
+        <div class="po-secthead">
+          <div><h3 style="margin:0">Gross Winners</h3><div class="pool" id="po-grossPoolLbl">$0 pool</div></div>
+          <div class="po-count">Places <input id="po-grossCount" type="number" min="1" max="12" value="${payout.gross.length}">
+            <button class="po-distbtn" data-pool="gross">Even</button></div>
+        </div>
+        <div id="po-grossPlaces">${placeRows('gross')}</div>
+        <div class="po-sum"><span id="po-grossSum"></span><span id="po-grossPaid"></span></div>
+      </div>
+      <div class="po-panel">
+        <div class="po-secthead">
+          <div><h3 style="margin:0">Net Winners</h3><div class="pool" id="po-netPoolLbl">$0 pool</div></div>
+          <div class="po-count">Places <input id="po-netCount" type="number" min="1" max="12" value="${payout.net.length}">
+            <button class="po-distbtn" data-pool="net">Even</button></div>
+        </div>
+        <div id="po-netPlaces">${placeRows('net')}</div>
+        <div class="po-sum"><span id="po-netSum"></span><span id="po-netPaid"></span></div>
+      </div>
+    </div>
+
+    <div class="po-panel">
+      <h3>Balance Check</h3>
+      <div class="ph">Staff + all payouts vs. the total pot</div>
+      <div class="po-balance">
+        <div class="bl"><div class="v" id="po-bTotal">$0</div><div class="l">Total Pot</div></div>
+        <div class="bl staff"><div class="v" id="po-bStaff">$0</div><div class="l">Staff (${Math.round(STAFF_PCT*100)}%)</div></div>
+        <div class="bl"><div class="v" id="po-bPayouts">$0</div><div class="l">Total Payouts</div></div>
+        <div class="verdict" id="po-verdict"></div>
+      </div>
+    </div>`;
+
+  // bind split %
+  ['grossPct','netPct'].forEach(k=>{
+    const el=document.getElementById('po-'+k);
+    el.oninput=()=>{ payout[k]=Math.max(0,+el.value||0); savePayout(); payoutRecompute(); };
+  });
+  // bind place %
+  document.querySelectorAll('#payoutBody .pl-in').forEach(el=>{
+    el.oninput=()=>{ payout[el.dataset.pool][+el.dataset.i]=Math.max(0,+el.value||0); savePayout(); payoutRecompute(); };
+  });
+  // bind counts
+  [['gross','po-grossCount'],['net','po-netCount']].forEach(([pool,id])=>{
+    document.getElementById(id).onchange=function(){
+      const n=clampN(this.value,1,12); const arr=payout[pool];
+      if(n>arr.length){ while(arr.length<n)arr.push(0); }
+      else arr.length=n;
+      savePayout(); renderPayout();
+    };
+  });
+  // even-split buttons
+  document.querySelectorAll('#payoutBody .po-distbtn').forEach(b=>{
+    b.onclick=()=>{ const pool=b.dataset.pool, n=payout[pool].length, each=Math.round(100/n);
+      payout[pool]=Array(n).fill(each); payout[pool][n-1]=100-each*(n-1); savePayout(); renderPayout(); };
+  });
+
+  payoutRecompute();
+}
+
+function payoutRecompute(){
+  if(page!=='payout')return;
+  const {pot,staff,dist}=payoutDistributable();
+  const gPool=dist*payout.grossPct/100;
+  const nPool=dist*payout.netPct/100;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('po-grossPool',fmtC(gPool)); set('po-netPool',fmtC(nPool));
+  set('po-grossPoolLbl',fmtC(gPool)+' pool'); set('po-netPoolLbl',fmtC(nPool)+' pool');
+
+  // split sum check
+  const splitSum=payout.grossPct+payout.netPct;
+  const ss=document.getElementById('po-splitsum');
+  if(ss) ss.innerHTML=`Split total: <span class="${splitSum===100?'ok':'bad'}">${splitSum}%</span>`+(splitSum===100?'':' &middot; should be 100%');
+
+  // place payouts (to the cent)
+  let gPaid=0,nPaid=0;
+  [['gross',gPool],['net',nPool]].forEach(([pool,poolAmt])=>{
+    let sumPct=0, paid=0;
+    payout[pool].forEach((p,i)=>{ sumPct+=p; const amt=poolAmt*p/100; paid+=amt; set(`po-${pool}-amt-${i}`,fmtC(amt)); });
+    const sumEl=document.getElementById('po-'+pool+'Sum');
+    if(sumEl) sumEl.innerHTML=`Places total: <span class="${sumPct===100?'ok':'bad'}">${sumPct}%</span>`+(sumPct===100?'':' &middot; should be 100%');
+    const paidEl=document.getElementById('po-'+pool+'Paid');
+    if(paidEl) paidEl.textContent=fmtC(paid)+' allocated';
+    if(pool==='gross')gPaid=paid; else nPaid=paid;
+  });
+
+  // balance
+  const payouts=gPaid+nPaid, allocated=staff+payouts, diff=pot-allocated;
+  set('po-bTotal',fmt(pot)); set('po-bStaff',fmt(staff)); set('po-bPayouts',fmtC(payouts));
+  const v=document.getElementById('po-verdict');
+  if(v){
+    const issues=[];
+    if(payout.grossPct+payout.netPct!==100)issues.push('split ≠ 100%');
+    if(payout.gross.reduce((a,b)=>a+b,0)!==100)issues.push('gross places ≠ 100%');
+    if(payout.net.reduce((a,b)=>a+b,0)!==100)issues.push('net places ≠ 100%');
+    if(pot===0){ v.className='verdict'; v.innerHTML='&mdash;<small>no pot yet</small>'; }
+    else if(issues.length){ v.className='verdict bad'; v.innerHTML='Not balanced<small>'+issues.join(' · ')+'</small>'; }
+    else if(Math.abs(diff)<0.5){ v.className='verdict good'; v.innerHTML='Balanced &#10003;<small>fully allocated to the cent</small>'; }
+    else { v.className='verdict bad'; v.innerHTML=(diff>0?'Under by '+fmtC(diff):'Over by '+fmtC(-diff))+'<small>staff + payouts vs pot</small>'; }
+  }
+}
+function ordinal(n){ const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+
+/* ===== IF WE PAY OUT FLIGHTS (what-if) ===== */
+function renderFlightPay(){
+  const pot=potTotal(), staff=staffCut(pot);
+  document.getElementById('flightpayTotals').innerHTML=`
+    <div class="dt"><div class="v">${fmt(pot)}</div><div class="l">Total Pot</div></div>
+    <div class="dt staff"><div class="v">${fmt(staff)}</div><div class="l">Staff (${Math.round(STAFF_PCT*100)}%)</div></div>
+    <div class="dt"><div class="v" id="fp-totalDivert">$0</div><div class="l">Flight Payouts</div></div>
+    <div class="dt"><div class="v" id="fp-tournPot">$0</div><div class="l">Tournament Pot</div></div>`;
+
+  const rows=[1,2,3,4].map(f=>`
+    <tr style="--fcol:${FC[f]}">
+      <td><span class="fdot" style="background:${FC[f]}"></span>Flight ${f}</td>
+      <td id="fp-payin-${f}">$0</td>
+      <td class="money" id="fp-money-${f}">$0</td>
+      <td id="fp-gross-${f}">$0</td>
+      <td id="fp-net-${f}">$0</td>
+    </tr>`).join('');
+
+  const gRows=payout.gross.map((p,i)=>`<tr><td>${ordinal(i+1)} Gross</td><td>${p}%</td><td id="fp-pg-b-${i}">$0</td><td class="money" id="fp-pg-a-${i}">$0</td></tr>`).join('');
+  const nRows=payout.net.map((p,i)=>`<tr><td>${ordinal(i+1)} Net</td><td>${p}%</td><td id="fp-pn-b-${i}">$0</td><td class="money" id="fp-pn-a-${i}">$0</td></tr>`).join('');
+
+  document.getElementById('flightpayBody').innerHTML=`
+    <div class="po-panel">
+      <h3>How Flight Payouts Work</h3>
+      <div class="ph">A share of each flight's pay-in is paid back to that flight's winners</div>
+      <div class="po-split">
+        <div class="po-share">
+          <div class="sh-l">Flight cut<small>% of each flight's pay-in paid back</small></div>
+          <span class="po-pctwrap"><input class="po-pctin" id="fp-pct" type="number" min="0" max="100" step="1" value="${payout.flightPct}"></span>
+        </div>
+        <div class="po-share">
+          <div class="sh-l">Gross / Net split<small>1 gross + 1 net winner per flight</small></div>
+          <span class="po-pctwrap"><input class="po-pctin" id="fp-gpct" type="number" min="0" max="100" step="1" value="${payout.flightGrossPct}"></span>
+          <span class="sh-amt" id="fp-splitlbl" style="font-size:15px">50 / 50</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="po-panel">
+      <h3>Per-Flight Payouts</h3>
+      <div class="ph">Based on current bids in each flight</div>
+      <table class="fp-table">
+        <thead><tr><th>Flight</th><th>Pay-In</th><th>Flight Money</th><th>Gross Winner</th><th>Net Winner</th></tr></thead>
+        <tbody>${rows}
+          <tr class="tot"><td>Total</td><td id="fp-payin-tot">$0</td><td id="fp-money-tot">$0</td><td id="fp-gross-tot">$0</td><td id="fp-net-tot">$0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="po-panel">
+      <h3>Impact on the Tournament Pot</h3>
+      <div class="ph">Paying flights reduces what's left for the main gross/net payout</div>
+      <div class="fp-impact">
+        <div class="fp-card before">
+          <h4>Main payout only</h4>
+          <div class="fp-line"><span class="lbl">Total pot</span><span class="val" id="fp-b-pot">$0</span></div>
+          <div class="fp-line"><span class="lbl">Staff (${Math.round(STAFF_PCT*100)}%)</span><span class="val" id="fp-b-staff">$0</span></div>
+          <div class="fp-line big"><span class="lbl">Tournament pot</span><span class="val" id="fp-b-pool">$0</span></div>
+          <div class="fp-line"><span class="lbl">Gross (${payout.grossPct}%)</span><span class="val" id="fp-b-gross">$0</span></div>
+          <div class="fp-line"><span class="lbl">Net (${payout.netPct}%)</span><span class="val" id="fp-b-net">$0</span></div>
+        </div>
+        <div class="fp-card after">
+          <h4>If we also pay flights</h4>
+          <div class="fp-line"><span class="lbl">Total pot</span><span class="val" id="fp-a-pot">$0</span></div>
+          <div class="fp-line"><span class="lbl">Staff (${Math.round(STAFF_PCT*100)}%)</span><span class="val" id="fp-a-staff">$0</span></div>
+          <div class="fp-line divert"><span class="lbl">Less flight payouts</span><span class="val" id="fp-a-divert">$0</span></div>
+          <div class="fp-line big"><span class="lbl">Tournament pot</span><span class="val" id="fp-a-pool">$0</span></div>
+          <div class="fp-line"><span class="lbl">Gross (${payout.grossPct}%)</span><span class="val" id="fp-a-gross">$0</span></div>
+          <div class="fp-line"><span class="lbl">Net (${payout.netPct}%)</span><span class="val" id="fp-a-net">$0</span></div>
+        </div>
+      </div>
+      <div class="fp-note" id="fp-summary"></div>
+    </div>
+
+    <div class="po-panel">
+      <h3>Payout Results &mdash; Place by Place</h3>
+      <div class="ph">The main ${payout.grossPct}/${payout.netPct} gross-net schedule, with vs. without paying flights first</div>
+      <table class="fp-table">
+        <thead><tr><th>Place</th><th>Share</th><th>Main payout</th><th>With flight payouts</th></tr></thead>
+        <tbody>
+          <tr class="fp-sec"><td colspan="4">Gross &mdash; ${payout.grossPct}% of tournament pot</td></tr>
+          ${gRows}
+          <tr class="fp-sec"><td colspan="4">Net &mdash; ${payout.netPct}% of tournament pot</td></tr>
+          ${nRows}
+        </tbody>
+      </table>
+      <div class="fp-note">The "Main payout" column matches the Payout tab. "With flight payouts" shows the same places paid from the smaller pot after flight winners are covered.</div>
+    </div>`;
+
+  document.getElementById('fp-pct').oninput=function(){ payout.flightPct=Math.max(0,Math.min(100,+this.value||0)); savePayout(); fpRecompute(); };
+  document.getElementById('fp-gpct').oninput=function(){ payout.flightGrossPct=Math.max(0,Math.min(100,+this.value||0)); savePayout(); fpRecompute(); };
+  fpRecompute();
+}
+
+function fpRecompute(){
+  if(page!=='flightpay')return;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  const pot=potTotal(), staff=staffCut(pot);
+  const fpct=payout.flightPct/100, gsplit=payout.flightGrossPct/100, nsplit=1-gsplit;
+  set('fp-splitlbl',`${payout.flightGrossPct} / ${100-payout.flightGrossPct}`);
+  let payinTot=0,moneyTot=0,grossTot=0,netTot=0;
+  [1,2,3,4].forEach(f=>{
+    const payin=flightTotals(f).pot;
+    const money=payin*fpct, g=money*gsplit, n=money*nsplit;
+    payinTot+=payin; moneyTot+=money; grossTot+=g; netTot+=n;
+    set('fp-payin-'+f,fmtC(payin)); set('fp-money-'+f,fmtC(money)); set('fp-gross-'+f,fmtC(g)); set('fp-net-'+f,fmtC(n));
+  });
+  set('fp-payin-tot',fmtC(payinTot)); set('fp-money-tot',fmtC(moneyTot)); set('fp-gross-tot',fmtC(grossTot)); set('fp-net-tot',fmtC(netTot));
+  set('fp-totalDivert',fmtC(moneyTot));
+
+  const beforePool=pot-staff;                 // players' pot, main payout only
+  const afterPool=pot-staff-moneyTot;         // reduced by flight payouts
+  set('fp-tournPot',fmtC(afterPool));
+
+  // before card
+  set('fp-b-pot',fmtC(pot)); set('fp-b-staff',fmtC(staff)); set('fp-b-pool',fmtC(beforePool));
+  set('fp-b-gross',fmtC(beforePool*payout.grossPct/100)); set('fp-b-net',fmtC(beforePool*payout.netPct/100));
+  // after card
+  set('fp-a-pot',fmtC(pot)); set('fp-a-staff',fmtC(staff)); set('fp-a-divert','− '+fmtC(moneyTot)); set('fp-a-pool',fmtC(afterPool));
+  set('fp-a-gross',fmtC(afterPool*payout.grossPct/100)); set('fp-a-net',fmtC(afterPool*payout.netPct/100));
+
+  const sm=document.getElementById('fp-summary');
+  if(sm) sm.textContent = pot===0 ? 'No bids entered yet — totals will fill in as teams are sold.'
+    : `Paying out flights diverts ${fmtC(moneyTot)} to flight winners, lowering the main tournament pot from ${fmtC(beforePool)} to ${fmtC(afterPool)}.`;
+
+  // place-by-place comparison (main pot vs reduced pot)
+  const gPoolB=beforePool*payout.grossPct/100, gPoolA=afterPool*payout.grossPct/100;
+  const nPoolB=beforePool*payout.netPct/100, nPoolA=afterPool*payout.netPct/100;
+  payout.gross.forEach((p,i)=>{ set('fp-pg-b-'+i,fmtC(gPoolB*p/100)); set('fp-pg-a-'+i,fmtC(gPoolA*p/100)); });
+  payout.net.forEach((p,i)=>{ set('fp-pn-b-'+i,fmtC(nPoolB*p/100)); set('fp-pn-a-'+i,fmtC(nPoolA*p/100)); });
+}
+
+
+/* export/import */
+function buildReport(){
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const sold=teams.filter(t=>t.amount>0);
+  const pot=sold.reduce((s,t)=>s+t.amount,0);
+  const coll=sold.filter(t=>t.collected).reduce((s,t)=>s+t.amount,0);
+  const staff=staffCut(pot), net=pot-staff;
+  const staffStr=fmt(staff), netStr=fmt(net);
+  const now=new Date().toLocaleString('en-US',{dateStyle:'long',timeStyle:'short'});
+
+  // group by buyer
+  const by={};
+  sold.forEach(t=>{const k=(t.bought||'').trim()||'(no buyer entered)';(by[k]=by[k]||[]).push(t);});
+  const buyers=Object.keys(by).sort((a,b)=>lastName(a).localeCompare(lastName(b))||a.localeCompare(b));
+
+  let byBuyerHtml=buyers.map(name=>{
+    const list=by[name].sort((a,b)=>b.amount-a.amount);
+    const tot=list.reduce((s,t)=>s+t.amount,0);
+    const owed=list.filter(t=>!t.collected).reduce((s,t)=>s+t.amount,0);
+    const rows=list.map(t=>`<tr>
+        <td class="c">${t.flight}</td>
+        <td>${esc(t.p1)} &amp; ${esc(t.p2)}</td>
+        <td class="r">${fmt(t.amount)}</td>
+        <td class="c">${t.collected?'<span class="pr-paid">&#10003; Paid</span>':'<span class="pr-owed">Owed</span>'}</td></tr>`).join('');
+    return `<div class="pr-buyer">
+      <h3>${esc(name)} <span>${list.length} team${list.length>1?'s':''} &middot; ${fmt(tot)}${owed>0?` &middot; <span class="pr-owed">${fmt(owed)} owed</span>`:' &middot; <span class="pr-paid">paid in full</span>'}</span></h3>
+      <table class="pr"><thead><tr><th class="c">Flt</th><th>Team</th><th class="r">Amount</th><th class="c">Status</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  }).join('') || '<p style="color:#888;font-style:italic">No teams have been sold yet.</p>';
+
+  // full ledger by draw order
+  const ledger=order.map(t=>`<tr>
+      <td class="c">${t.drawPos}</td>
+      <td class="c">${t.flight}</td>
+      <td>${esc(t.p1)} &amp; ${esc(t.p2)}</td>
+      <td>${esc(t.bought||'')}</td>
+      <td class="r">${t.amount>0?fmt(t.amount):'&mdash;'}</td>
+      <td class="c">${t.collected?'&#10003;':''}</td></tr>`).join('');
+
+  // by flight — full breakdown with winning bidder + bid
+  const byFlightHtml=[1,2,3,4].map(f=>{
+    const d=flightTotals(f);
+    const ts=teams.filter(t=>t.flight===f);
+    const soldT=ts.filter(t=>t.amount>0).sort((a,b)=>b.amount-a.amount);
+    const unsoldT=ts.filter(t=>!(t.amount>0)).sort((a,b)=>a.team-b.team);
+    const rows=[...soldT,...unsoldT].map(t=>`<tr>
+        <td>${esc(t.p1)} &amp; ${esc(t.p2)}</td>
+        <td>${t.bought?esc(t.bought):'<span style="color:#999">&mdash;</span>'}</td>
+        <td class="r">${t.amount>0?fmt(t.amount):'<span style="color:#999">&mdash;</span>'}</td>
+        <td class="c">${t.amount>0?(t.collected?'<span class="pr-paid">&#10003; Paid</span>':'<span class="pr-owed">Owed</span>'):''}</td></tr>`).join('');
+    return `<div class="pr-buyer">
+      <h3>Flight ${f} <span>${d.sold}/${d.teams} sold &middot; ${fmt(d.pot)} pot${d.pot-d.coll>0?` &middot; <span class="pr-owed">${fmt(d.pot-d.coll)} outstanding</span>`:' &middot; <span class="pr-paid">fully collected</span>'}</span></h3>
+      <table class="pr"><thead><tr><th>Team</th><th>Winning Bidder</th><th class="r">Bid</th><th class="c">Status</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  }).join('');
+
+  // payout schedule
+  const staffP=staffCut(pot), dist=pot-staffP;
+  const gPool=dist*payout.grossPct/100, nPool=dist*payout.netPct/100;
+  const payRows=(pool,poolAmt)=>payout[pool].map((p,i)=>`<tr><td>${ordinal(i+1)} ${pool==='gross'?'Gross':'Net'}</td><td class="c">${p}%</td><td class="r">${fmtC(poolAmt*p/100)}</td></tr>`).join('');
+  const payoutHtml=`
+    <table class="pr" style="margin-bottom:10px"><tbody>
+      <tr><td>Distributable pot (after ${Math.round(STAFF_PCT*100)}% staff)</td><td class="r">${fmtC(dist)}</td></tr>
+      <tr><td>Gross pool (${payout.grossPct}%)</td><td class="r">${fmtC(gPool)}</td></tr>
+      <tr><td>Net pool (${payout.netPct}%)</td><td class="r">${fmtC(nPool)}</td></tr>
+    </tbody></table>
+    <table class="pr"><thead><tr><th>Place</th><th class="c">Share</th><th class="r">Payout</th></tr></thead>
+    <tbody>${payRows('gross',gPool)}${payRows('net',nPool)}</tbody></table>`;
+
+  document.getElementById('printArea').innerHTML=`
+    <h1 class="pr-h1">2026 Men's Member&ndash;Member Calcutta &mdash; Auction Record</h1>
+    <div class="pr-sub">Montgomery Country Club &middot; Generated ${now}</div>
+    <div class="pr-summary">
+      <div><b>${fmt(pot)}</b>Total Pot</div>
+      <div><b>${staffStr}</b>Staff (${Math.round(STAFF_PCT*100)}%)</div>
+      <div><b>${netStr}</b>Players' Pot</div>
+      <div><b>${sold.length}/${teams.length}</b>Teams Sold</div>
+      <div><b>${fmt(coll)}</b>Collected</div>
+      <div><b>${fmt(pot-coll)}</b>Outstanding</div>
+    </div>
+    <div class="pr-sec">Payout Schedule</div>
+    ${payoutHtml}
+    <div class="pr-sec" style="page-break-before:always">Summary by Flight &mdash; Winning Bidders</div>
+    ${byFlightHtml}
+    <div class="pr-sec" style="page-break-before:always">Summary by Buyer</div>
+    ${byBuyerHtml}
+    <div class="pr-sec" style="page-break-before:always">Full Ledger &mdash; Draw Order</div>
+    <table class="pr"><thead><tr><th class="c">Draw</th><th class="c">Flt</th><th>Team</th><th>Bought By</th><th class="r">Amount</th><th class="c">Coll.</th></tr></thead><tbody>${ledger}</tbody></table>
+    <div class="pr-foot">Calcutta auction record &middot; figures reflect entries at time of printing.</div>`;
+}
+document.getElementById('exportPdf').onclick=()=>{ buildReport(); window.print(); };
+
+function download(name,content,type){const b=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);}
+document.getElementById('exportCsv').onclick=()=>{
+  const head=['Card #','Team ID','Player 1','Player 2','Flight','Draw Order','Bought By','Amount','Collected'];
+  const rows=teams.slice().sort((a,b)=>a.card-b.card).map(t=>[t.card,t.team,t.p1,t.p2,t.flight,t.drawPos,t.bought||'',(t.amount==null?'':t.amount),t.collected?'Yes':'No'].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  download('calcutta_board.csv',[head.join(','),...rows].join('\n'),'text/csv');
+};
+document.getElementById('exportJson').onclick=()=>download('calcutta_backup.json',JSON.stringify({teams:teams.map(t=>({card:t.card,bought:t.bought,amount:t.amount,collected:t.collected})),payout},null,2),'application/json');
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const parsed=JSON.parse(r.result);const arr=Array.isArray(parsed)?parsed:(parsed.teams||[]);if(!Array.isArray(parsed)&&parsed.payout&&parsed.payout.gross&&parsed.payout.net){payout=parsed.payout;}const m={};arr.forEach(s=>m[s.card]=s);teams.forEach(t=>{const s=m[t.card];if(s){t.bought=s.bought||'';t.amount=(s.amount===0||s.amount)?s.amount:null;t.collected=!!s.collected;}});normalizePayout();persistAll();renderCurrent();}catch(err){alert('Could not read that backup file.');}};r.readAsText(f);e.target.value='';};
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Clear all bought-by, amounts, and collected checkmarks?\n\nTeams, flights, and draw order stay.')){teams.forEach(t=>{t.bought='';t.amount=null;t.collected=false;});persistAll();renderCurrent();}};
+
+/* init */
+/* init */
+teams=blankTeams();
+if(useCloud){
+  note('Connecting…');
+  root.on('value',snap=>{ applySnapshot(snap.val()); onRemoteUpdate(); }, err=>{ console.warn('RTDB read failed:',err); note('Offline — local only'); });
+} else {
+  loadLocal();
+}
+renderTable(); renderDeck();
+</script>
+</body>
+</html>

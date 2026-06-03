@@ -160,6 +160,10 @@ tbody tr.collected:hover{background:#13502f}
 .field:focus{border-color:var(--brass);background:#0a2a20;box-shadow:0 0 0 3px #d8b65f2e}
 .field.buyer{min-width:170px}
 .field.buyer.invalid{border-color:#e0734a;background:#2c130c}
+select.field{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;padding-right:36px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23d8b65f' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 13px center}
+select.field option{background:#0c3225;color:var(--ink)}
 .field.buyer.invalid:focus{box-shadow:0 0 0 3px #e0734a40}
 .dollar{position:relative;max-width:160px;margin-left:auto}
 .dollar::before{content:"$";position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--brass-soft);font-size:16px;pointer-events:none;font-weight:700}
@@ -773,6 +777,9 @@ const staffCut=pot=>Math.round(pot*STAFF_PCT);
 const lastName=n=>String(n).trim().split(' ').slice(-1)[0].replace(',','');
 const PLAYERS=[...new Set(SEED.flatMap(t=>[t.p1,t.p2]))].sort((a,b)=>lastName(a).localeCompare(lastName(b))||a.localeCompare(b));
 const validP=new Set(PLAYERS.map(p=>p.trim()));
+function lastFirst(n){ n=String(n).trim().replace(/,/g,''); const suf=/^(II|III|IV|Jr|Sr)$/i; let parts=n.split(/\s+/); let suffix=''; if(parts.length>2&&suf.test(parts[parts.length-1])){suffix=' '+parts.pop();} if(parts.length<2) return n; const last=parts.pop(); return last+', '+parts.join(' ')+suffix; }
+const PLAYER_OPTS=PLAYERS.map(p=>({v:p,l:lastFirst(p)})).sort((a,b)=>a.l.localeCompare(b.l));
+function buyerOptions(sel){ sel=sel||''; let o='<option value="">\u2014 select player \u2014</option>'; PLAYER_OPTS.forEach(p=>{ o+=`<option value="${p.v.replace(/"/g,'&quot;')}"${sel===p.v?' selected':''}>${escapeHtml(p.l)}</option>`; }); return o; }
 
 let teams=[];
 let payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:20,flightGrossPct:50,mode:'flights'};
@@ -842,7 +849,7 @@ function syncTeamsToDOM(){
     const card=+el.dataset.card, f=el.dataset.f, t=teams.find(x=>x.card===card); if(!t) return;
     if(f==='amount') el.value=(t.amount==null?'':t.amount);
     else if(f==='collected') el.checked=t.collected;
-    else { el.value=t.bought||''; el.classList.toggle('invalid', t.bought && t.bought.trim()!=='' && !validP.has(t.bought.trim())); }
+    else { el.value=t.bought||''; }
     const tr=el.closest('tr'); if(tr){ tr.classList.toggle('sold',t.amount>0); tr.classList.toggle('collected',t.collected); }
   });
   renderStats();
@@ -1059,14 +1066,11 @@ function renderTable(){
       <td class="mid"><span class="drawpos">${t.drawPos}<span>of ${order.length}</span></span></td>
       <td class="players-cell"><div><span class="p">${t.p1}</span> <span class="phc">(${fmtH(t.h1)})</span><span class="amp">&amp;</span><span class="p">${t.p2}</span> <span class="phc">(${fmtH(t.h2)})</span></div><div class="sub">Card ${t.card} &middot; Team ${t.team}</div></td>
       <td><span class="fl"><span class="dot" style="background:${FC[t.flight]}"></span>${t.flight}</span></td>
-      <td data-label="Winning bidder"><input class="field buyer${t.bought&&!validP.has(t.bought.trim())?' invalid':''}" data-card="${t.card}" data-f="bought" list="buyers" placeholder="select player" value="${(t.bought||'').replace(/"/g,'&quot;')}"${dis()}></td>
+      <td data-label="Winning bidder"><select class="field buyer" data-card="${t.card}" data-f="bought"${dis()}>${buyerOptions(t.bought)}</select></td>
       <td data-label="Amount"><span class="dollar"><input class="field amt" data-card="${t.card}" data-f="amount" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="${t.amount==null?'':t.amount}"${dis()}></span></td>
       <td class="mid chkcell" data-label="Collected"><input type="checkbox" class="chk" data-card="${t.card}" data-f="collected" ${t.collected?'checked':''}${dis()}></td>`;
     tb.appendChild(tr);
   });
-  let dl=document.getElementById('buyers');
-  if(!dl){dl=document.createElement('datalist');dl.id='buyers';document.body.appendChild(dl);}
-  dl.innerHTML=PLAYERS.map(b=>`<option value="${b.replace(/"/g,'&quot;')}">`).join('');
   bindInputs();renderStats();
 }
 function bindInputs(){
@@ -1075,11 +1079,11 @@ function bindInputs(){
     const h=()=>{
       if(f==='amount'){t.amount=el.value===''?null:Math.max(0,+el.value); persistTeamField(card,'amount',t.amount);}
       else if(f==='collected'){t.collected=el.checked; persistTeamField(card,'collected',t.collected);}
-      else {t[f]=el.value; el.classList.toggle('invalid',el.value.trim()!==''&&!validP.has(el.value.trim())); persistTeamField(card,'bought',t.bought);}
+      else {t[f]=el.value; persistTeamField(card,'bought',t.bought);}
       renderStats();updateCounter();
       const tr=el.closest('tr');if(tr){tr.classList.toggle('sold',t.amount>0);tr.classList.toggle('collected',t.collected);}
     };
-    if(f==='collected')el.onchange=h; else {el.oninput=h;}
+    if(f==='collected'||el.tagName==='SELECT')el.onchange=h; else {el.oninput=h;}
   });
 }
 function renderStats(){

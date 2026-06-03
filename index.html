@@ -393,6 +393,109 @@ body.player .modechk{opacity:.6;cursor:default}
 
 /* ===== Graphical Print report ===== */
 #printArea{display:none}
+/* ============ MOBILE LAYER — only applies on small screens; laptop view is untouched ============ */
+@media(max-width:760px){
+  body{font-size:16px}
+  /* header: brand + admin on row 1, tabs swipe on row 2, method strip on row 3 */
+  .topbar{flex-wrap:wrap;gap:10px;min-height:0;padding:8px 12px}
+  .brandwrap{order:1;gap:10px;min-width:0}
+  .topright{order:2;margin-left:auto;gap:9px}
+  .pagetabs{order:3;flex-basis:100%;width:100%;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-radius:12px}
+  .pagetabs::-webkit-scrollbar{display:none}
+  .pagetabs button{flex:0 0 auto;font-size:14px;padding:10px 14px}
+  .clublogo{height:36px}
+  .brandtext .b1{font-size:15px}
+  .modestrip{gap:8px;padding:9px 12px}
+  .modestrip .modechecks{width:100%}
+  .modechk{flex:1;justify-content:center;padding:11px 12px}
+
+  /* content padding */
+  .betwrap,.dashwrap{padding-left:14px;padding-right:14px;padding-bottom:60px}
+  .dashhead{padding:16px 2px 12px;margin-bottom:16px;gap:12px}
+  .dash-title{font-size:clamp(22px,6.6vw,30px)}
+  .dashtotals{gap:10px}
+  .dashtotals .dt{padding:8px 12px}
+  /* let the big stats block scroll away on phones so the table gets room */
+  .betsticky{position:static;padding:6px 0 14px}
+
+  /* tables: horizontal swipe instead of crushing columns */
+  .scroll,.tblscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  thead th,tbody td{padding:12px 12px}
+  tbody td{font-size:16px}
+  .fp-table{min-width:520px}
+
+  /* dashboard leaderboard rows */
+  .lb{gap:10px;padding:12px 13px}
+  .lb .rank{min-width:24px;font-size:17px}
+  .lb .who .nm{font-size:16px}
+  .lb .amt{min-width:88px;font-size:20px}
+
+  /* flights: team + amount on line 1, bidder wraps to line 2 */
+  .flsec-head{flex-wrap:wrap;gap:10px;padding:15px 16px}
+  .flsec-head .ftitle{font-size:20px}
+  .flsec-head .fstats{margin-left:0;gap:16px}
+  .frow{flex-wrap:wrap;gap:6px 12px;padding:12px 16px}
+  .frow .fteam{flex:1 1 58%}
+  .frow .famt{width:auto;margin-left:auto}
+  .frow .fbidder{flex:1 1 100%;width:auto;min-width:0;order:5}
+
+  /* payout / results panels */
+  .po-panel{padding:18px 16px}
+  .po-balance{padding:18px}
+  .po-balance .verdict{margin-left:0;width:100%;text-align:left}
+  .fw-headrow{display:none}
+  .res-head{flex-wrap:wrap;gap:6px}
+
+  /* On Deck (admin display) — keep it from overflowing a phone */
+  .deckwrap{padding:20px 16px 6px;min-height:calc(100vh - var(--nav-h) - 70px)}
+  .players{font-size:clamp(34px,11vw,120px)}
+  .deck-nav{flex-wrap:wrap;gap:12px}
+  .deck-nav .dprog{min-width:84px;font-size:16px}
+  .deckbtns{bottom:14px;right:14px}
+
+  .an-kpi{padding:15px 16px}
+
+  /* Betting entry: one card per team (built for thumb editing, not sideways scroll) */
+  #betpage .tablecard{background:transparent;border:none;box-shadow:none;overflow:visible;margin-top:0}
+  #betpage .scroll{overflow:visible}
+  #betpage table{min-width:0;width:100%}
+  #betpage thead{display:none}
+  #betpage tbody,#betpage tr,#betpage td{display:block;width:auto}
+  #betpage tbody tr{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
+    background:#0b2f23cc;border:1px solid var(--line);border-radius:16px;margin:0 0 12px;padding:14px 15px}
+  #betpage tbody tr:nth-child(even){background:#0b2f23cc}
+  #betpage tbody tr.sold{box-shadow:inset 4px 0 0 var(--brass)}
+  #betpage tbody tr.collected{background:#11472f}
+  #betpage tbody td{padding:0;border:none}
+  #betpage td:nth-child(1){order:1;flex:0 0 auto}
+  #betpage td:nth-child(1) .drawpos{font-size:15px;display:flex;align-items:baseline;gap:6px}
+  #betpage td:nth-child(1) .drawpos span{margin:0;font-size:10px}
+  #betpage td:nth-child(3){order:2;flex:0 0 auto}
+  #betpage td.players-cell{order:3;flex:1 1 100%;margin-top:2px}
+  #betpage td:nth-child(4){order:4;flex:1 1 100%}
+  #betpage td:nth-child(5){order:5;flex:0 1 auto}
+  #betpage td:nth-child(6){order:6;flex:0 0 auto;margin-left:auto}
+  #betpage td[data-label]::before{content:attr(data-label);display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:800;margin-bottom:6px}
+  #betpage td.chkcell{display:flex;flex-direction:column;align-items:center;gap:5px}
+  #betpage td.chkcell::before{margin-bottom:0}
+  #betpage .dollar{margin-left:0;max-width:none;width:150px}
+  #betpage .field.buyer{min-width:0}
+  #betpage .empty{padding:32px 12px}
+
+  /* editable payout rows fit narrow screens */
+  .po-share{flex-wrap:wrap}
+  .po-share .sh-amt{min-width:0;margin-left:auto}
+  .po-secthead{flex-wrap:wrap}
+}
+@media(max-width:480px){
+  .flightcards{grid-template-columns:1fr 1fr}
+  .an-grid{grid-template-columns:1fr 1fr}
+  .brandtext .b2{display:none}
+  .counter{display:none}
+  .frow .fteam{flex:1 1 100%}
+  .pagetabs button{font-size:13.5px;padding:9px 12px}
+}
+
 @media print{
   @page{margin:12mm}
   *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
@@ -922,9 +1025,9 @@ function renderTable(){
       <td class="mid"><span class="drawpos">${t.drawPos}<span>of ${order.length}</span></span></td>
       <td class="players-cell"><div><span class="p">${t.p1}</span> <span class="phc">(${fmtH(t.h1)})</span><span class="amp">&amp;</span><span class="p">${t.p2}</span> <span class="phc">(${fmtH(t.h2)})</span></div><div class="sub">Card ${t.card} &middot; Team ${t.team}</div></td>
       <td><span class="fl"><span class="dot" style="background:${FC[t.flight]}"></span>${t.flight}</span></td>
-      <td><input class="field buyer${t.bought&&!validP.has(t.bought.trim())?' invalid':''}" data-card="${t.card}" data-f="bought" list="buyers" placeholder="select player" value="${(t.bought||'').replace(/"/g,'&quot;')}"${dis()}></td>
-      <td><span class="dollar"><input class="field amt" data-card="${t.card}" data-f="amount" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="${t.amount==null?'':t.amount}"${dis()}></span></td>
-      <td class="mid"><input type="checkbox" class="chk" data-card="${t.card}" data-f="collected" ${t.collected?'checked':''}${dis()}></td>`;
+      <td data-label="Winning bidder"><input class="field buyer${t.bought&&!validP.has(t.bought.trim())?' invalid':''}" data-card="${t.card}" data-f="bought" list="buyers" placeholder="select player" value="${(t.bought||'').replace(/"/g,'&quot;')}"${dis()}></td>
+      <td data-label="Amount"><span class="dollar"><input class="field amt" data-card="${t.card}" data-f="amount" type="number" inputmode="numeric" min="0" step="1" placeholder="0" value="${t.amount==null?'':t.amount}"${dis()}></span></td>
+      <td class="mid chkcell" data-label="Collected"><input type="checkbox" class="chk" data-card="${t.card}" data-f="collected" ${t.collected?'checked':''}${dis()}></td>`;
     tb.appendChild(tr);
   });
   let dl=document.getElementById('buyers');
@@ -1216,12 +1319,12 @@ function renderFlightPay(){
     <div class="po-panel">
       <h3>Per-Flight Payouts</h3>
       <div class="ph">Based on current bids in each flight</div>
-      <table class="fp-table">
+      <div class="tblscroll"><table class="fp-table">
         <thead><tr><th>Flight</th><th>Pay-In</th><th>Flight Money</th><th>Gross Winner</th><th>Net Winner</th></tr></thead>
         <tbody>${rows}
           <tr class="tot"><td>Total</td><td id="fp-payin-tot">$0</td><td id="fp-money-tot">$0</td><td id="fp-gross-tot">$0</td><td id="fp-net-tot">$0</td></tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
 
     <div class="po-panel">
@@ -1252,7 +1355,7 @@ function renderFlightPay(){
     <div class="po-panel">
       <h3>Payout Results &mdash; Place by Place</h3>
       <div class="ph">The main ${payout.grossPct}/${payout.netPct} gross-net schedule, with vs. without paying flights first</div>
-      <table class="fp-table">
+      <div class="tblscroll"><table class="fp-table">
         <thead><tr><th>Place</th><th>Share</th><th>Main payout</th><th>With flight payouts</th></tr></thead>
         <tbody>
           <tr class="fp-sec"><td colspan="4">Gross &mdash; ${payout.grossPct}% of tournament pot</td></tr>
@@ -1260,7 +1363,7 @@ function renderFlightPay(){
           <tr class="fp-sec"><td colspan="4">Net &mdash; ${payout.netPct}% of tournament pot</td></tr>
           ${nRows}
         </tbody>
-      </table>
+      </table></div>
       <div class="fp-note">The "Main payout" column matches the Payout tab. "With flight payouts" shows the same places paid from the smaller pot after flight winners are covered.</div>
     </div>
     ${flightWinnersDisplay()}`;

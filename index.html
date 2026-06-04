@@ -933,7 +933,7 @@ body.player .res-sel{opacity:.9}
     <div class="dashhead">
       <div>
         <div class="dash-eyebrow">Auction Leaderboard</div>
-        <h2 class="dash-title">Teams by Sold Price</h2>
+        <h2 class="dash-title">Teams Sold by Price</h2>
       </div>
       <div class="dashtotals" id="dashtotals"></div>
     </div>
@@ -1419,8 +1419,7 @@ document.getElementById('search').oninput=e=>{search=e.target.value;renderTable(
 
 /* ===== DASHBOARD (leaderboard) ===== */
 function renderDashboard(){
-  const sold=teams.filter(t=>t.amount>0).slice().sort((a,b)=>b.amount-a.amount);
-  const unsold=teams.filter(t=>!(t.amount>0)).slice().sort((a,b)=>a.drawPos-b.drawPos);
+  const sold=teams.filter(t=>t.amount>0).slice().sort((a,b)=>(b.amount||0)-(a.amount||0)||a.drawPos-b.drawPos);
   const pot=teams.reduce((s,t)=>s+(t.amount||0),0);
   const top=sold.length?sold[0].amount:0;
   const staff=staffCut(pot), net=pot-staff;
@@ -1431,25 +1430,24 @@ function renderDashboard(){
     <div class="dt"><div class="v">${sold.length}/${teams.length}</div><div class="l">Sold</div></div>
     <div class="dt"><div class="v">${sold.length?fmt(top):'—'}</div><div class="l">Top Bid</div></div>`;
   const lb=document.getElementById('leaderboard');
-  if(!sold.length && !unsold.length){lb.innerHTML='<div class="lb-empty">No teams entered yet.</div>';return;}
-  const row=(t,rank,sold)=>{
-    const cls='lb'+(sold?(rank===1?' top1':rank===2?' top2':rank===3?' top3':''):' unsold');
-    const w=sold&&top?Math.max(6,Math.round(t.amount/top*100)):0;
-    const buyer=t.bought?`<span class="by">${t.bought}</span>`:(sold?'<span class="by">—</span>':'unsold');
-    const amt=sold
-      ? `${fmt(t.amount)}<small class="${t.collected?'paid':'owed'}">${t.collected?'PAID':'OWED'}</small>`
-      : '<small>—</small>';
+  if(!sold.length){
+    lb.innerHTML='<div class="lb-empty"><b>Pending Bids</b><br>Teams will appear here as they are purchased.</div>';
+    return;
+  }
+  const row=(t,rank)=>{
+    const cls='lb'+(rank===1?' top1':rank===2?' top2':rank===3?' top3':'');
+    const w=top?Math.max(6,Math.round(t.amount/top*100)):0;
+    const buyer=t.bought?`<span class="by">${t.bought}</span>`:'<span class="by">—</span>';
+    const amt=`${fmt(t.amount)}<small class="${t.collected?'paid':'owed'}">${t.collected?'PAID':'OWED'}</small>`;
     return `<div class="${cls}" style="--fcol:${FC[t.flight]}">
       <div class="lbbar" style="width:${w}%"></div>
-      <div class="rank">${sold?rank:''}</div>
+      <div class="rank">${rank}</div>
       <div class="fdot"></div>
       <div class="who"><div class="nm">${t.p1} &amp; ${t.p2}</div>
         <div class="meta">Flight ${t.flight} &middot; Team ${t.team} &middot; ${buyer}</div></div>
       <div class="amt">${amt}</div></div>`;
   };
-  let html=sold.map((t,i)=>row(t,i+1,true)).join('');
-  html+=unsold.map(t=>row(t,null,false)).join('');
-  lb.innerHTML=html;
+  lb.innerHTML=sold.map((t,i)=>row(t,i+1)).join('');
 }
 
 function fmtHcp(v){ v=String(v??'').trim(); return v ? v : '—'; }
@@ -2154,7 +2152,7 @@ function buildReport(kind){
   }).join('') || '<p style="color:#888;font-style:normal">No teams have been sold yet.</p>';
 
   const soldPriceHtml = `<table class="pr"><thead><tr><th class="c">Rank</th><th>Team</th><th class="c">Flight</th><th>Bought By</th><th class="r">Amount</th><th class="c">Status</th></tr></thead><tbody>${
-    soldByPrice.map((t,i)=>`<tr><td class="c">${i+1}</td><td>${esc(t.p1)} &amp; ${esc(t.p2)}</td><td class="c">${t.flight}</td><td>${esc(t.bought||'')}</td><td class="r">${fmt(t.amount)}</td><td class="c">${t.collected?'<span class="pr-paid">&#10003; Paid</span>':'<span class="pr-owed">Owed</span>'}</td></tr>`).join('') || '<tr><td colspan="6" class="c">No teams have been sold yet.</td></tr>'
+    soldByPrice.map((t,i)=>`<tr><td class="c">${i+1}</td><td>${esc(t.p1)} &amp; ${esc(t.p2)}</td><td class="c">${t.flight}</td><td>${esc(t.bought||'')}</td><td class="r">${fmt(t.amount)}</td><td class="c">${t.collected?'<span class="pr-paid">&#10003; Paid</span>':'<span class="pr-owed">Owed</span>'}</td></tr>`).join('') || '<tr><td colspan="6" class="c"><b>Pending Bids</b><br>Teams will appear here as they are purchased.</td></tr>'
   }</tbody></table>`;
 
   const byFlightHtml=[1,2,3,4].map(f=>{
@@ -2200,7 +2198,7 @@ function buildReport(kind){
     ${section(methodLabel,'active method only',true)}${payoutHtml}
     ${section('Winning Bidders by Flight','auction board',true)}${byFlightHtml}
     ${section('By Buyer — Detail','collection view',true)}${byBuyerHtml}
-    ${section('Teams by Sold Price','high to low',true)}${soldPriceHtml}
+    ${section('Teams Sold by Price','high to low',true)}${soldPriceHtml}
     <div class="pr-foot">Montgomery Country Club Member&ndash;Member Calcutta &middot; figures reflect entries at time of printing.</div>`;
 }
 document.getElementById('exportPdf').onclick=()=>{ buildReport('auction'); window.print(); };

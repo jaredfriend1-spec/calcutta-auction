@@ -824,6 +824,15 @@ body.player .res-sel{opacity:.9}
 .flsec-body{display:block}
 @media(max-width:760px){.landing-actions{grid-template-columns:1fr}.landing-card{border-radius:22px;padding:34px 20px}.landing-title{font-size:40px}.landing-sub{font-size:21px}.landing-tagline{font-size:14.5px}.landing-choice{text-align:center}.landing-foot{font-size:11px}}
 
+
+/* ===== Player payout simplification ===== */
+.official-payout-badge{display:none;align-items:center;gap:8px;margin-top:9px;padding:7px 12px;border:1px solid var(--line-strong);border-radius:999px;background:#d8b65f1a;color:var(--brass-soft);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;width:max-content;max-width:100%}
+body.player #modeStrip{display:none !important}
+body.player #pagetabs button.payout-inactive-player{display:none !important}
+body.player .official-payout-badge{display:inline-flex}
+body.player #payoutpage .dashhead,body.player #flightpaypage .dashhead{align-items:flex-start}
+@media(max-width:760px){.official-payout-badge{font-size:11px;white-space:normal;width:auto}}
+
 </style>
 </head>
 <body class="player">
@@ -960,6 +969,7 @@ body.player .res-sel{opacity:.9}
       <div>
         <div class="dash-eyebrow">Prize Allocation</div>
         <h2 class="dash-title">Standard Payout</h2>
+        <div class="official-payout-badge">Official Payout Structure: Standard Payout</div>
       </div>
       <div class="dashtotals" id="payoutTotals"></div>
     </div>
@@ -973,6 +983,7 @@ body.player .res-sel{opacity:.9}
       <div>
         <div class="dash-eyebrow">Payout Method</div>
         <h2 class="dash-title">Flight Payout</h2>
+        <div class="official-payout-badge">Official Payout Structure: Flight Payout</div>
       </div>
       <div class="dashtotals" id="flightpayTotals"></div>
     </div>
@@ -1877,8 +1888,11 @@ function applyMode(){
   document.body.classList.toggle('admin',ADMIN);
   const b=document.getElementById('adminBtn');
   if(b){ b.textContent=ADMIN?'Organizer · Lock':'Organizer Login'; b.classList.toggle('admin',ADMIN); }
-  const playerAllowed=['dash','flights','payout','flightpay','analytics','results','roster','recon'];
-  if(!ADMIN && !playerAllowed.includes(page)){ showPage('dash'); }
+  const activePayoutPage=payout.mode==='standard'?'payout':'flightpay';
+  const inactivePayoutPage=payout.mode==='standard'?'flightpay':'payout';
+  const playerAllowed=['dash','flights',activePayoutPage,'analytics','results','roster','recon'];
+  if(!ADMIN && (page===inactivePayoutPage || !playerAllowed.includes(page))){ showPage(page==='deck'||page==='bet'? 'dash' : activePayoutPage); }
+  updatePayTabFlag();
   setPlayerReadOnly();
 }
 /* ===== Active payout mode (Standard vs If Flights Pay) ===== */
@@ -1892,9 +1906,14 @@ function renderModeHeader(){
   el.innerHTML=`<span class="ms-lbl">Paying out</span><div class="modechecks">${modeChecksHtml()}</div>`;
 }
 function updatePayTabFlag(){
-  document.querySelectorAll('#pagetabs button').forEach(b=>b.classList.remove('pay-active'));
-  const sel=payout.mode==='standard'?'[data-page="payout"]':'[data-page="flightpay"]';
-  const btn=document.querySelector('#pagetabs button'+sel); if(btn)btn.classList.add('pay-active');
+  const activePage=payout.mode==='standard'?'payout':'flightpay';
+  const inactivePage=payout.mode==='standard'?'flightpay':'payout';
+  document.querySelectorAll('#pagetabs button').forEach(b=>{
+    b.classList.remove('pay-active','payout-inactive-player');
+    if(!ADMIN && b.dataset.page===inactivePage) b.classList.add('payout-inactive-player');
+  });
+  const btn=document.querySelector('#pagetabs button[data-page="'+activePage+'"]');
+  if(btn)btn.classList.add('pay-active');
 }
 document.addEventListener('change',e=>{
   const cb=e.target; if(!(cb&&cb.matches&&cb.matches('.modechk input[data-mode]')))return;

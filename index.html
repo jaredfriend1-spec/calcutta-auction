@@ -746,14 +746,12 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
   table.roster td.nm{font-size:15.5px;color:var(--ink);font-weight:800}
   table.roster td.num,table.roster td.thcp{text-align:left!important}
   table.roster td:not(.nm)::before{display:inline-block;min-width:78px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:800}
-  table.roster td:nth-child(1)::before{content:'Card'}
-  table.roster td:nth-child(2)::before{content:'';display:none}
+  table.roster td:nth-child(1)::before{content:'Player 1'}
+  table.roster td:nth-child(2)::before{content:'Player 2'}
   table.roster td:nth-child(3)::before{content:'Flight'}
-  table.roster td:nth-child(4)::before{content:'Team'}
-  table.roster td:nth-child(5)::before{content:'Player 1'}
-  table.roster td:nth-child(6)::before{content:'Index'}
-  table.roster td:nth-child(7)::before{content:'Player 2'}
-  table.roster td:nth-child(8)::before{content:'Index'}
+  table.roster td:nth-child(4)::before{content:'Card'}
+  table.roster td:nth-child(5)::before{content:'Team'}
+  table.roster td:nth-child(6)::before{content:'Team HCP'}
 
   /* Reconciliation cards */
   .recon{max-width:100%}
@@ -1021,7 +1019,7 @@ body.player .res-sel{opacity:.9}
       <label class="btn ghost" for="rosterImportFile">Import roster PDF/CSV</label>
       <input id="rosterImportFile" type="file" accept=".pdf,.csv,.txt" style="display:none">
       <button class="btn ghost" id="exportRosterCsv">Export Current Roster CSV</button>
-      <div class="savenote" id="rosterImportNote">Current roster loaded: 39 teams</div>
+      <div class="savenote" id="rosterImportNote">Current roster loaded: 40 teams</div>
     </div>
     <div id="rosterImportPreview"></div>
     <div class="tablecard"><div class="scroll"><table class="roster" id="rosterTable"></table></div></div>
@@ -1491,6 +1489,25 @@ function renderFlights(){
     </div>`;
   }).join('');
 }
+
+
+function toggleFlightSectionFromHeader(head){
+  const sec=head&&head.closest&&head.closest('.flsec');
+  if(!sec) return;
+  const f=sec.dataset.flight;
+  if(!f) return;
+  FLIGHT_COLLAPSED[f]=!FLIGHT_COLLAPSED[f];
+  renderFlights();
+}
+document.addEventListener('click',e=>{
+  const head=e.target&&e.target.closest&&e.target.closest('.flsec-head');
+  if(head) toggleFlightSectionFromHeader(head);
+});
+document.addEventListener('keydown',e=>{
+  const head=e.target&&e.target.closest&&e.target.closest('.flsec-head');
+  if(!head) return;
+  if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleFlightSectionFromHeader(head); }
+});
 
 /* ===== PAYOUT CALCULATOR ===== */
 function payoutDistributable(){ const pot=potTotal(); const staff=staffCut(pot); return {pot,staff,dist:pot-staff}; }
@@ -2038,6 +2055,8 @@ function renderRoster(){
   document.getElementById('rosterTotals').innerHTML=
     `<div class="dt"><div class="v">${teams.length}</div><div class="l">Teams</div></div>`+
     `<div class="dt"><div class="v">${teams.length*2}</div><div class="l">Players</div></div>`;
+  const note=document.getElementById('rosterImportNote');
+  if(note) note.textContent=`Current roster loaded: ${teams.length} teams`;
 }
 
 /* ===== POT RECONCILIATION (read-only, everyone) ===== */

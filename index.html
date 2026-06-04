@@ -234,7 +234,7 @@ select.field option{background:#0c3225;color:var(--ink)}
 .frow.fsold{box-shadow:inset 4px 0 0 var(--fcol)}
 .frow .fteam{flex:1;min-width:0}
 .frow .fteam .tn{font-weight:700;color:var(--ink)}
-.frow .fteam .tsub{font-size:12px;color:var(--ink-3);margin-top:1px;font-weight:600}.frow .fteam .tsub b{color:var(--brass-soft);font-weight:800}
+.frow .fteam .tsub{font-size:12px;color:var(--ink-3);margin-top:1px;font-weight:600}
 .frow .fbidder{width:28%;min-width:120px;color:var(--brass-soft);font-weight:700}
 .frow .fbidder.none{color:var(--ink-3);font-weight:500}
 .frow .famt{width:130px;text-align:right;font-family:var(--serif);font-weight:800;font-size:19px;color:var(--ink)}
@@ -1048,8 +1048,8 @@ body.player .res-sel{opacity:.9}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-const SEED = [{"card": 36, "team": 1, "p1": "Tom Watson", "p2": "William Wood", "flight": 4, "draw": 337, "drawPos": 34, "h1": "17.3", "h2": "20.0"}, {"card": 37, "team": 2, "p1": "John Gray", "p2": "Jeff Yeakle", "flight": 3, "draw": 304, "drawPos": 37, "h1": "15.0", "h2": "11.5"}, {"card": 38, "team": 3, "p1": "Brian Grimes", "p2": "Matthew Honacki", "flight": 2, "draw": 318, "drawPos": 8, "h1": "6.5", "h2": "6.0"}, {"card": 39, "team": 4, "p1": "Cyrus Fordyce", "p2": "Rick Meade", "flight": 1, "draw": 309, "drawPos": 2, "h1": "3.1", "h2": "5.3"}, {"card": 40, "team": 5, "p1": "Mike Althouse", "p2": "Chris Convey", "flight": 1, "draw": 330, "drawPos": 31, "h1": "4.8", "h2": "1.9"}, {"card": 41, "team": 6, "p1": "Alex Hinson", "p2": "Dale Williams", "flight": 1, "draw": 311, "drawPos": 23, "h1": "1.4", "h2": "4.8"}, {"card": 42, "team": 7, "p1": "Marty More", "p2": "Jim Muir, III", "flight": 4, "draw": 313, "drawPos": 13, "h1": "20.8", "h2": "12.0"}, {"card": 43, "team": 8, "p1": "Steve Craver", "p2": "Jim Harvey", "flight": 4, "draw": 303, "drawPos": 12, "h1": "12.5", "h2": "15.3"}, {"card": 44, "team": 9, "p1": "Clark Kunkle", "p2": "Will Paul", "flight": 3, "draw": 332, "drawPos": 4, "h1": "10.5", "h2": "12.6"}, {"card": 45, "team": 10, "p1": "Ken Sanquist", "p2": "Cody Stewart", "flight": 3, "draw": 320, "drawPos": 28, "h1": "10.7", "h2": "11.5"}, {"card": 46, "team": 11, "p1": "Austin Sanquist", "p2": "Thomas Vyskocil", "flight": 1, "draw": 327, "drawPos": 6, "h1": "1.0", "h2": "7.9"}, {"card": 47, "team": 12, "p1": "Jake Silverman", "p2": "Sam Silverman", "flight": 2, "draw": 308, "drawPos": 33, "h1": "2.6", "h2": "8.2"}, {"card": 48, "team": 13, "p1": "Tom Steffes", "p2": "Robert Sundell", "flight": 3, "draw": 307, "drawPos": 7, "h1": "12.0", "h2": "15.1"}, {"card": 49, "team": 14, "p1": "John McCarthy", "p2": "D.J. Park", "flight": 4, "draw": 314, "drawPos": 14, "h1": "13.6", "h2": "19.8"}, {"card": 50, "team": 15, "p1": "Todd Williams", "p2": "Scott Wilson", "flight": 1, "draw": 325, "drawPos": 38, "h1": "3.2", "h2": "4.3"}, {"card": 51, "team": 16, "p1": "Timothy Jeffery", "p2": "Douglas McPherson", "flight": 2, "draw": 319, "drawPos": 22, "h1": "7.3", "h2": "7.6"}, {"card": 52, "team": 17, "p1": "Raul Chacon", "p2": "Ryan Chacon", "flight": 2, "draw": 317, "drawPos": 17, "h1": "11.5", "h2": "+0.6"}, {"card": 53, "team": 18, "p1": "Rodolfo Camacho", "p2": "Mark Shank", "flight": 4, "draw": 334, "drawPos": 3, "h1": "17.5", "h2": "16.8"}, {"card": 54, "team": 19, "p1": "Anthony Blaszczyk", "p2": "Steve Middleton", "flight": 2, "draw": 326, "drawPos": 16, "h1": "4.4", "h2": "13.8"}, {"card": 55, "team": 20, "p1": "Christopher Andrews", "p2": "William Barrett", "flight": 1, "draw": 329, "drawPos": 10, "h1": "6.9", "h2": "2.9"}, {"card": 56, "team": 21, "p1": "Bob Latos", "p2": "Bruce Yoo", "flight": 3, "draw": 321, "drawPos": 21, "h1": "8.3", "h2": "15.7"}, {"card": 57, "team": 22, "p1": "James Carroll", "p2": "Ray Sanchez", "flight": 4, "draw": 316, "drawPos": 29, "h1": "18.3", "h2": "26.8"}, {"card": 58, "team": 23, "p1": "Bill Balster", "p2": "Kevin Duffy", "flight": 2, "draw": 306, "drawPos": 26, "h1": "8.5", "h2": "3.8"}, {"card": 59, "team": 24, "p1": "Grant LaGasse", "p2": "Jeff Sandusky", "flight": 2, "draw": 331, "drawPos": 32, "h1": "9.5", "h2": "8.3"}, {"card": 60, "team": 25, "p1": "Jared Friend", "p2": "Devin Grimaldi", "flight": 2, "draw": 335, "drawPos": 15, "h1": "6.4", "h2": "5.5"}, {"card": 61, "team": 26, "p1": "Carl Cutright", "p2": "Tim McNichol", "flight": 4, "draw": 323, "drawPos": 19, "h1": "21.6", "h2": "8.3"}, {"card": 62, "team": 27, "p1": "Britt Musser", "p2": "Joel Sandler", "flight": 1, "draw": 310, "drawPos": 11, "h1": "2.7", "h2": "6.8"}, {"card": 63, "team": 28, "p1": "Brent Davis", "p2": "Timothy Gilchrist", "flight": 1, "draw": 322, "drawPos": 39, "h1": "0.0", "h2": "3.3"}, {"card": 64, "team": 29, "p1": "Bob Chase", "p2": "Jim Weiskopf", "flight": 4, "draw": 333, "drawPos": 20, "h1": "15.0", "h2": "12.7"}, {"card": 65, "team": 30, "p1": "Chris Allen", "p2": "Joey Tominovich", "flight": 2, "draw": 305, "drawPos": 5, "h1": "5.4", "h2": "12.7"}, {"card": 66, "team": 31, "p1": "Steven Weiss", "p2": "Jeff Williams", "flight": 1, "draw": 324, "drawPos": 24, "h1": "2.7", "h2": "+0.3"}, {"card": 67, "team": 32, "p1": "Kevin Scudder", "p2": "Jacob Seiter", "flight": 2, "draw": 312, "drawPos": 9, "h1": "13.3", "h2": "1.2"}, {"card": 68, "team": 33, "p1": "Andrew Divver", "p2": "George Divver", "flight": 4, "draw": 301, "drawPos": 30, "h1": "13.1", "h2": "17.8"}, {"card": 69, "team": 34, "p1": "Jang Lee", "p2": "Chip Mace", "flight": 3, "draw": 336, "drawPos": 18, "h1": "11.1", "h2": "7.2"}, {"card": 70, "team": 35, "p1": "Eric Cloutier", "p2": "Daniel Woo", "flight": 3, "draw": 302, "drawPos": 25, "h1": "14.2", "h2": "6.9"}, {"card": 71, "team": 36, "p1": "Andrew Dexter", "p2": "Brendan Spellman", "flight": 3, "draw": 315, "drawPos": 36, "h1": "4.1", "h2": "19.0"}, {"card": 72, "team": 37, "p1": "Phil Murray", "p2": "Duane Robbins", "flight": 3, "draw": 328, "drawPos": 1, "h1": "11.8", "h2": "11.4"}, {"card": 73, "team": 38, "p1": "Cesar Rodas", "p2": "Chris Windsor", "flight": 4, "draw": 338, "drawPos": 35, "h1": "8.1", "h2": "19.2"}, {"card": 74, "team": 39, "p1": "Ari Bonnett", "p2": "Michael Corrado", "flight": 3, "draw": 339, "drawPos": 27, "h1": "9.1", "h2": "16.4"}];
-const ROSTER_VERSION = "2026 Men's Member-Member PDF roster - 39 teams - Flight counts 9/10/10/10";
+const SEED = [{"card":36,"team":1,"p1":"Tom Watson","p2":"William Wood","flight":4,"draw":337,"drawPos":35,"h1":"17.3","h2":"20.0"},{"card":37,"team":2,"p1":"John Gray","p2":"Jeff Yeakle","flight":3,"draw":304,"drawPos":38,"h1":"15.0","h2":"11.5"},{"card":38,"team":3,"p1":"Brian Grimes","p2":"Matthew Honacki","flight":2,"draw":318,"drawPos":8,"h1":"6.5","h2":"6.0"},{"card":39,"team":4,"p1":"Cyrus Fordyce","p2":"Rick Meade","flight":1,"draw":309,"drawPos":2,"h1":"3.1","h2":"5.3"},{"card":40,"team":5,"p1":"Mike Althouse","p2":"Chris Convey","flight":1,"draw":330,"drawPos":32,"h1":"4.8","h2":"1.9"},{"card":41,"team":6,"p1":"Alex Hinson","p2":"Dale Williams","flight":1,"draw":311,"drawPos":24,"h1":"1.4","h2":"4.8"},{"card":42,"team":7,"p1":"Marty More","p2":"Jim Muir, III","flight":4,"draw":313,"drawPos":14,"h1":"20.8","h2":"12.0"},{"card":43,"team":8,"p1":"Steve Craver","p2":"Jim Harvey","flight":4,"draw":303,"drawPos":13,"h1":"12.5","h2":"15.3"},{"card":44,"team":9,"p1":"Clark Kunkle","p2":"Will Paul","flight":3,"draw":332,"drawPos":4,"h1":"10.5","h2":"12.6"},{"card":45,"team":10,"p1":"Ken Sanquist","p2":"Cody Stewart","flight":3,"draw":320,"drawPos":29,"h1":"10.7","h2":"11.5"},{"card":46,"team":11,"p1":"Austin Sanquist","p2":"Thomas Vyskocil","flight":1,"draw":327,"drawPos":6,"h1":"1.0","h2":"7.9"},{"card":47,"team":12,"p1":"Jake Silverman","p2":"Sam Silverman","flight":1,"draw":308,"drawPos":34,"h1":"2.6","h2":"8.2"},{"card":48,"team":13,"p1":"Tom Steffes","p2":"Robert Sundell","flight":3,"draw":307,"drawPos":7,"h1":"12.0","h2":"15.1"},{"card":49,"team":14,"p1":"John McCarthy","p2":"D.J. Park","flight":4,"draw":314,"drawPos":15,"h1":"13.6","h2":"19.8"},{"card":50,"team":15,"p1":"Todd Williams","p2":"Scott Wilson","flight":1,"draw":325,"drawPos":39,"h1":"3.2","h2":"4.3"},{"card":51,"team":16,"p1":"Timothy Jeffery","p2":"Douglas McPherson","flight":2,"draw":319,"drawPos":23,"h1":"7.3","h2":"7.6"},{"card":52,"team":17,"p1":"Raul Chacon","p2":"Ryan Chacon","flight":2,"draw":317,"drawPos":18,"h1":"11.5","h2":"+0.6"},{"card":53,"team":18,"p1":"Rodolfo Camacho","p2":"Mark Shank","flight":4,"draw":334,"drawPos":3,"h1":"17.5","h2":"16.8"},{"card":54,"team":19,"p1":"Anthony Blaszczyk","p2":"Steve Middleton","flight":2,"draw":326,"drawPos":17,"h1":"4.4","h2":"13.8"},{"card":55,"team":20,"p1":"Christopher Andrews","p2":"William Barrett","flight":1,"draw":329,"drawPos":10,"h1":"6.9","h2":"2.9"},{"card":56,"team":21,"p1":"Bob Latos","p2":"Bruce Yoo","flight":3,"draw":321,"drawPos":22,"h1":"8.3","h2":"15.7"},{"card":57,"team":22,"p1":"James Carroll","p2":"Ray Sanchez","flight":4,"draw":316,"drawPos":30,"h1":"18.3","h2":"26.8"},{"card":58,"team":23,"p1":"Bill Balster","p2":"Kevin Duffy","flight":2,"draw":306,"drawPos":27,"h1":"8.5","h2":"3.8"},{"card":59,"team":24,"p1":"Grant LaGasse","p2":"Jeff Sandusky","flight":2,"draw":331,"drawPos":33,"h1":"9.5","h2":"8.3"},{"card":60,"team":25,"p1":"Jared Friend","p2":"Devin Grimaldi","flight":2,"draw":335,"drawPos":16,"h1":"6.4","h2":"5.5"},{"card":61,"team":26,"p1":"Carl Cutright","p2":"Tim McNichol","flight":4,"draw":323,"drawPos":20,"h1":"21.6","h2":"8.3"},{"card":62,"team":27,"p1":"Britt Musser","p2":"Joel Sandler","flight":1,"draw":310,"drawPos":11,"h1":"2.7","h2":"6.8"},{"card":63,"team":28,"p1":"Brent Davis","p2":"Timothy Gilchrist","flight":1,"draw":322,"drawPos":40,"h1":"0.0","h2":"3.3"},{"card":64,"team":29,"p1":"Bob Chase","p2":"Jim Weiskopf","flight":4,"draw":333,"drawPos":21,"h1":"15.0","h2":"12.7"},{"card":65,"team":30,"p1":"Chris Allen","p2":"Joey Tominovich","flight":2,"draw":305,"drawPos":5,"h1":"5.4","h2":"12.7"},{"card":66,"team":31,"p1":"Steven Weiss","p2":"Jeff Williams","flight":1,"draw":324,"drawPos":25,"h1":"2.7","h2":"+0.3"},{"card":67,"team":32,"p1":"Kevin Scudder","p2":"Jacob Seiter","flight":2,"draw":312,"drawPos":9,"h1":"13.3","h2":"1.2"},{"card":68,"team":33,"p1":"Andrew Divver","p2":"George Divver","flight":4,"draw":301,"drawPos":31,"h1":"13.1","h2":"17.8"},{"card":69,"team":34,"p1":"Jang Lee","p2":"Chip Mace","flight":3,"draw":336,"drawPos":19,"h1":"11.1","h2":"7.2"},{"card":70,"team":35,"p1":"Eric Cloutier","p2":"Daniel Woo","flight":3,"draw":302,"drawPos":26,"h1":"14.2","h2":"6.9"},{"card":71,"team":36,"p1":"Andrew Dexter","p2":"Brendan Spellman","flight":3,"draw":315,"drawPos":37,"h1":"4.1","h2":"19.0"},{"card":72,"team":37,"p1":"Phil Murray","p2":"Duane Robbins","flight":3,"draw":328,"drawPos":1,"h1":"11.8","h2":"11.4"},{"card":73,"team":38,"p1":"Cesar Rodas","p2":"Chris Windsor","flight":4,"draw":338,"drawPos":36,"h1":"8.1","h2":"19.2"},{"card":74,"team":39,"p1":"Ari Bonnett","p2":"Michael Corrado","flight":3,"draw":339,"drawPos":28,"h1":"9.1","h2":"16.4"},{"card":75,"team":40,"p1":"Grady Meier","p2":"Jonathan Verbus","flight":2,"draw":340,"drawPos":12,"h1":"7.1","h2":"5.5"}];
+const ROSTER_VERSION = "2026 Men\'s Member-Member PDF roster - 40 teams - Flight counts 10/10/10/10";
 </script>
 <script>
 if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}
@@ -1078,15 +1078,21 @@ const fmtC=n=>'$'+(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximum
 const fmtH=h=>(h===null||h===undefined||h==='')?'\u2014':String(h);
 const centRound=val=>Math.round(val*100)/100;
 
-const order=SEED.slice().sort((a,b)=>a.drawPos-b.drawPos);
+let order=SEED.slice().sort((a,b)=>a.drawPos-b.drawPos);
 const STAFF_PCT=0.05;
 const staffCut=pot=>Math.round(pot*STAFF_PCT);
 const lastName=n=>String(n).trim().split(' ').slice(-1)[0].replace(',','');
-const PLAYERS=[...new Set(SEED.flatMap(t=>[t.p1,t.p2]))].sort((a,b)=>lastName(a).localeCompare(lastName(b))||a.localeCompare(b));
-const validP=new Set(PLAYERS.map(p=>p.trim()));
+let PLAYERS=[];
+let validP=new Set();
+let PLAYER_OPTS=[];
 function lastFirst(n){ n=String(n).trim().replace(/,/g,''); const suf=/^(II|III|IV|Jr|Sr)$/i; let parts=n.split(/\s+/); let suffix=''; if(parts.length>2&&suf.test(parts[parts.length-1])){suffix=' '+parts.pop();} if(parts.length<2) return n; const last=parts.pop(); return last+', '+parts.join(' ')+suffix; }
-const PLAYER_OPTS=PLAYERS.map(p=>({v:p,l:lastFirst(p)})).sort((a,b)=>a.l.localeCompare(b.l));
-function buyerOptions(sel){ sel=sel||''; let o='<option value="">\u2014 select player \u2014</option>'; PLAYER_OPTS.forEach(p=>{ o+=`<option value="${p.v.replace(/"/g,'&quot;')}"${sel===p.v?' selected':''}>${escapeHtml(p.l)}</option>`; }); return o; }
+function rebuildPlayerLists(){
+  PLAYERS=[...new Set(order.flatMap(t=>[t.p1,t.p2]))].sort((a,b)=>lastName(a).localeCompare(lastName(b))||a.localeCompare(b));
+  validP=new Set(PLAYERS.map(p=>p.trim()));
+  PLAYER_OPTS=PLAYERS.map(p=>({v:p,l:lastFirst(p)})).sort((a,b)=>a.l.localeCompare(b.l));
+}
+rebuildPlayerLists();
+function buyerOptions(sel){ sel=sel||''; let o='<option value="">— select player —</option>'; PLAYER_OPTS.forEach(p=>{ o+=`<option value="${p.v.replace(/"/g,'&quot;')}"${sel===p.v?' selected':''}>${escapeHtml(p.l)}</option>`; }); return o; }
 
 let teams=[];
 let payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:10,flightGrossPct:50,mode:'flights'};
@@ -1448,6 +1454,7 @@ function renderDashboard(){
   lb.innerHTML=html;
 }
 
+function fmtHcp(v){ v=String(v??'').trim(); return v ? v : '—'; }
 /* ===== FLIGHTS SUMMARY ===== */
 const FLIGHT_COLLAPSED={1:false,2:false,3:false,4:false};
 function renderFlights(){
@@ -1460,24 +1467,13 @@ function renderFlights(){
   const body=document.getElementById('flightsBody');
   body.innerHTML=[1,2,3,4].map(f=>{
     const d=flightTotals(f);
-    const ts=teams
-      .filter(t=>t.flight===f)
-      .slice()
-      .sort((a,b)=>{
-        const ah=teamHcp(a), bh=teamHcp(b);
-        if(ah!==bh) return ah-bh;
-        return `${a.p1} ${a.p2}`.localeCompare(`${b.p1} ${b.p2}`);
-      });
+    const ts=teams.filter(t=>t.flight===f).slice().sort((a,b)=>teamHcp(a)-teamHcp(b)||lastName(a.p1).localeCompare(lastName(b.p1))||lastName(a.p2).localeCompare(lastName(b.p2)));
     const rows=ts.map(t=>{
       const s=t.amount>0;
-      const teamH=fmtHcpVal(teamHcp(t));
       const bidder=t.bought?`<span class="fbidder">${t.bought}</span>`:`<span class="fbidder none">${s?'—':'unsold'}</span>`;
       const amt=s?`${fmt(t.amount)}<small class="${t.collected?'paid':'owed'}">${t.collected?'PAID':'OWED'}</small>`:'<small>&mdash;</small>';
       return `<div class="frow ${s?'fsold':'funsold'}" style="--fcol:${FC[f]}">
-        <div class="fteam">
-          <div class="tn">${t.p1} &amp; ${t.p2}</div>
-          <div class="tsub"><b>Team HCP ${teamH}</b> &middot; ${t.p1} (${fmtH(t.h1)}) &middot; ${t.p2} (${fmtH(t.h2)}) &middot; Team ${t.team} &middot; Card ${t.card}</div>
-        </div>
+        <div class="fteam"><div class="tn">${t.p1} (${fmtHcp(t.h1)}) &amp; ${t.p2} (${fmtHcp(t.h2)})</div><div class="tsub">Team HCP ${fmtHcpVal(teamHcp(t))} &middot; Team ${t.team} &middot; Card ${t.card}</div></div>
         ${bidder}
         <div class="famt">${amt}</div></div>`;
     }).join('');
@@ -2311,34 +2307,59 @@ if(importBackupInput){ importBackupInput.onchange=async()=>{
 document.getElementById('resetBtn').onclick=()=>{const ans=prompt('This clears ALL bought-by names, amounts, and collected checks. Teams, flights, and draw order stay.\n\nType DELETE to confirm:');if(ans===null)return;if(ans.trim().toUpperCase()==='DELETE'){teams.forEach(t=>{t.bought='';t.amount=null;t.collected=false;});persistAll();renderCurrent();note('Entries cleared');}else{alert('Not cleared \u2014 you must type DELETE exactly.');}};
 
 
+
 /* roster export/import - admin only, non-destructive guard once betting starts */
 function rosterCsvRows(){
   const head=['Flight','Team','Player 1','Player 1 HCP','Player 2','Player 2 HCP','Draw Order'];
-  const rows=order.slice().sort((a,b)=>a.flight-b.flight||a.drawPos-b.drawPos).map(t=>[t.flight,`${t.p1} + ${t.p2}`,t.p1,t.h1,t.p2,t.h2,t.drawPos].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const rows=order.slice().sort((a,b)=>a.flight-b.flight||teamHcp(a)-teamHcp(b)).map(t=>[t.flight,`${lastName(t.p1)} + ${lastName(t.p2)} (${fmtHcpVal(teamHcp(t))})`,t.p1,t.h1,t.p2,t.h2,t.drawPos].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
   return [head.join(','),...rows].join('\n');
 }
 const rosterExportBtn=document.getElementById('exportRosterCsv');
 if(rosterExportBtn){ rosterExportBtn.onclick=()=>download('current_roster.csv',rosterCsvRows(),'text/csv'); }
 function bettingHasStarted(){ return teams.some(t=>t.amount>0 || (t.bought||'').trim()); }
-function normalizeTeamKey(p1,p2){ return [p1,p2].map(x=>String(x).toLowerCase().replace(/[^a-z]/g,'')).sort().join('|'); }
+function cleanNamePart(s){ return String(s||'').replace(/\([+\-]?\d+(?:\.\d+)?\)/g,'').replace(/[^a-zA-Z, .'-]/g,' ').replace(/\s+/g,' ').trim(); }
+function nameKeyPart(n){ return lastName(cleanNamePart(n)).toLowerCase().replace(/[^a-z]/g,''); }
+function normalizeTeamKey(p1,p2){ return [nameKeyPart(p1),nameKeyPart(p2)].filter(Boolean).sort().join('|'); }
+function teamKeyFromObject(t){ return t.key || normalizeTeamKey(t.p1,t.p2); }
+function parsePlayerPairLine(line){
+  const m=String(line||'').match(/^(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)\s+(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)$/);
+  if(!m || /Team Name|Members|Divisions|Flight/i.test(line)) return null;
+  return {p1:cleanNamePart(m[1]),h1:m[2],p2:cleanNamePart(m[3]),h2:m[4],key:normalizeTeamKey(m[1],m[3])};
+}
 function buildRosterFromText(txt){
-  const lines=String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  const raw=String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  const lines=[];
+  raw.forEach(x=>{ String(x).split(/(?=Flight:\s*Flight\s*\d)/i).forEach(y=>{ y=y.trim(); if(y)lines.push(y); }); });
+  const memberMap=new Map();
+  lines.forEach(line=>{ const pair=parsePlayerPairLine(line); if(pair) memberMap.set(pair.key,pair); });
   let out=[], currentFlight=null;
-  for(const line of lines){
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
     const fm=line.match(/Flight:\s*Flight\s*(\d)/i) || line.match(/^Flight\s*(\d)$/i);
     if(fm){ currentFlight=+fm[1]; continue; }
     if(!currentFlight || /Team Name|Members|Divisions|Member-Member/i.test(line)) continue;
-    const m=line.match(/^(.+?)\s*\+\s*(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)\s+(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)\s+(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)$/);
-    if(m){ out.push({flight:currentFlight,p1:m[3].trim(),h1:m[4],p2:m[5].trim(),h2:m[6]}); continue; }
     const tm=line.match(/^(.+?)\s*\+\s*(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)$/);
-    if(tm){ out.push({flight:currentFlight,p1:tm[1].trim(),h1:'',p2:tm[2].trim(),h2:''}); }
+    if(tm){
+      const key=normalizeTeamKey(tm[1],tm[2]);
+      const full=memberMap.get(key);
+      const pA=(lines[i+1]||'').match(/^(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)$/);
+      const pB=(lines[i+2]||'').match(/^(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)$/);
+      let p1=full?full.p1:cleanNamePart(tm[1]), h1=full?full.h1:'', p2=full?full.p2:cleanNamePart(tm[2]), h2=full?full.h2:'';
+      if(pA && pB && !/Flight|Team Name|Members/i.test(lines[i+1]+lines[i+2])){
+        p1=cleanNamePart(pA[1]); h1=pA[2]; p2=cleanNamePart(pB[1]); h2=pB[2];
+      }
+      out.push({flight:currentFlight,teamName:`${cleanNamePart(tm[1])} + ${cleanNamePart(tm[2])}`,teamHcp:tm[3],key,p1,h1,p2,h2});
+    }
   }
+  // de-dupe by key + flight, keeping first occurrence
+  const seen=new Set();
+  out=out.filter(t=>{ const k=t.key+'@'+t.flight; if(seen.has(k))return false; seen.add(k); return true; });
   return out;
 }
 async function readRosterFile(file){
   if(!file) return '';
   if(/\.pdf$/i.test(file.name)){
-    if(!window.pdfjsLib){ throw new Error('PDF text reader is not loaded. Export the roster as CSV/text, or use the built-in current roster.'); }
+    if(!window.pdfjsLib){ throw new Error('PDF text reader is not loaded. Export the roster as CSV/text instead.'); }
     const buf=await file.arrayBuffer();
     const pdf=await pdfjsLib.getDocument({data:buf}).promise;
     let txt='';
@@ -2350,14 +2371,67 @@ async function readRosterFile(file){
   }
   return await file.text();
 }
+let pendingRosterImport=null;
+function rosterDiff(newRoster){
+  const oldMap=new Map(order.map(t=>[teamKeyFromObject(t),t]));
+  const newMap=new Map(newRoster.map(t=>[teamKeyFromObject(t),t]));
+  const added=newRoster.filter(t=>!oldMap.has(teamKeyFromObject(t)));
+  const removed=order.filter(t=>!newMap.has(teamKeyFromObject(t)));
+  const moved=newRoster.filter(t=>{const o=oldMap.get(teamKeyFromObject(t));return o&&+o.flight!==+t.flight;});
+  return {added,removed,moved,oldMap,newMap};
+}
+function hVal(v){ return parseHcp(v); }
+function applyRosterImport(newRoster){
+  if(bettingHasStarted()) throw new Error('Roster import is disabled after betting starts. Reset entries before changing teams/flights.');
+  const {oldMap,newMap}=rosterDiff(newRoster);
+  let maxCard=Math.max(0,...order.map(t=>+t.card||0));
+  let maxTeam=Math.max(0,...order.map(t=>+t.team||0));
+  let maxDraw=Math.max(300,...order.map(t=>+t.draw||0));
+  let merged=[];
+  // preserve existing draw order for matched teams
+  order.slice().sort((a,b)=>a.drawPos-b.drawPos).forEach(old=>{
+    const nr=newMap.get(teamKeyFromObject(old));
+    if(!nr)return;
+    merged.push({...old,flight:+nr.flight,p1:nr.p1||old.p1,p2:nr.p2||old.p2,h1:nr.h1||old.h1,h2:nr.h2||old.h2});
+  });
+  // randomly insert true new teams into draw order
+  newRoster.forEach(nr=>{
+    if(oldMap.has(teamKeyFromObject(nr)))return;
+    const nt={card:++maxCard,team:++maxTeam,p1:nr.p1,p2:nr.p2,flight:+nr.flight,draw:++maxDraw,drawPos:0,h1:nr.h1||'',h2:nr.h2||'',bought:'',amount:null,collected:false};
+    const idx=Math.floor(Math.random()*(merged.length+1));
+    merged.splice(idx,0,nt);
+  });
+  merged=merged.map((t,i)=>({...t,drawPos:i+1}));
+  order=merged.map(t=>({card:t.card,team:t.team,p1:t.p1,p2:t.p2,flight:t.flight,draw:t.draw,drawPos:t.drawPos,h1:t.h1,h2:t.h2}));
+  teams=merged.map(t=>({...t,bought:t.bought||'',amount:(t.amount===0||t.amount)?t.amount:null,collected:!!t.collected}));
+  rebuildPlayerLists();
+  localStorage.removeItem(KEY);
+  persistAll();
+  renderCurrent();
+}
 function previewRosterImport(newRoster){
   const box=document.getElementById('rosterImportPreview'); if(!box)return;
-  const oldMap=new Map(order.map(t=>[normalizeTeamKey(t.p1,t.p2),t]));
-  const newMap=new Map(newRoster.map(t=>[normalizeTeamKey(t.p1,t.p2),t]));
-  const added=newRoster.filter(t=>!oldMap.has(normalizeTeamKey(t.p1,t.p2)));
-  const removed=order.filter(t=>!newMap.has(normalizeTeamKey(t.p1,t.p2)));
-  const moved=newRoster.filter(t=>{const o=oldMap.get(normalizeTeamKey(t.p1,t.p2));return o&&+o.flight!==+t.flight;});
-  box.innerHTML=`<div class="po-panel"><h3>Roster Import Preview</h3><div class="ph">${newRoster.length} teams found. Added ${added.length}, removed ${removed.length}, flight changes ${moved.length}.</div><div class="res-note">This preview does not change the live board. This version already has the current 39-team roster baked in.</div></div>`;
+  const {added,removed,moved}=rosterDiff(newRoster);
+  pendingRosterImport=newRoster;
+  const list=(arr,fn)=>arr.length?`<ul>${arr.slice(0,12).map(fn).join('')}${arr.length>12?`<li>...and ${arr.length-12} more</li>`:''}</ul>`:'<div class="res-note">None</div>';
+  box.innerHTML=`<div class="po-panel"><h3>Roster Import Preview</h3>
+    <div class="ph">${newRoster.length} teams found. Added ${added.length}, removed ${removed.length}, flight changes ${moved.length}.</div>
+    <div class="po-cols">
+      <div><h3>Added</h3>${list(added,t=>`<li>${escapeHtml(t.p1)} &amp; ${escapeHtml(t.p2)} — Flight ${t.flight}</li>`)}</div>
+      <div><h3>Removed</h3>${list(removed,t=>`<li>${escapeHtml(t.p1)} &amp; ${escapeHtml(t.p2)} — Flight ${t.flight}</li>`)}</div>
+    </div>
+    <h3>Flight Changes</h3>${list(moved,t=>{const o=order.find(x=>teamKeyFromObject(x)===teamKeyFromObject(t));return `<li>${escapeHtml(t.p1)} &amp; ${escapeHtml(t.p2)} — Flight ${o?o.flight:'?'} → ${t.flight}</li>`;})}
+    <div class="actions"><button class="btn" id="applyRosterImportBtn">Apply Roster Update</button></div>
+    <div class="res-note">Apply only if the preview matches the official roster. This replaces teams/flights/draw order before betting starts.</div>
+  </div>`;
+  const btn=document.getElementById('applyRosterImportBtn');
+  if(btn)btn.onclick=()=>{
+    if(!pendingRosterImport)return;
+    const ok=confirm(`Apply this roster update?\n\nTeams found: ${pendingRosterImport.length}\nAdded: ${added.length}\nRemoved: ${removed.length}\nFlight changes: ${moved.length}\n\nThis should only be used before betting starts.`);
+    if(!ok)return;
+    try{ applyRosterImport(pendingRosterImport); box.innerHTML='<div class="po-panel"><h3>Roster Updated</h3><div class="ph">Roster update applied.</div></div>'; }
+    catch(err){ alert('Could not apply roster: '+(err&&err.message?err.message:err)); }
+  };
 }
 const rosterFile=document.getElementById('rosterImportFile');
 if(rosterFile){ rosterFile.onchange=async()=>{
@@ -2367,13 +2441,12 @@ if(rosterFile){ rosterFile.onchange=async()=>{
     if(bettingHasStarted()){ alert('Roster import is disabled after betting starts. Reset entries before changing teams/flights.'); rosterFile.value=''; return; }
     const txt=await readRosterFile(rosterFile.files[0]);
     const parsed=buildRosterFromText(txt);
-    if(!parsed.length) throw new Error('No teams were found in that file. This app currently has the correct 39-team roster already loaded.');
+    if(!parsed.length) throw new Error('No teams were found in that file.');
     previewRosterImport(parsed);
-    if(noteEl) noteEl.textContent='Preview loaded: '+parsed.length+' teams found. Built-in roster remains active.';
+    if(noteEl) noteEl.textContent='Preview loaded: '+parsed.length+' teams found. Review carefully before applying.';
   }catch(err){ alert('Could not import roster: '+err.message); if(noteEl)noteEl.textContent='Import failed'; }
   rosterFile.value='';
 }; }
-
 
 /* landing gate */
 function hideLanding(){ const g=document.getElementById('landingGate'); if(g)g.classList.add('hide'); }

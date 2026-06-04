@@ -588,6 +588,194 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
   table.pr thead{display:table-header-group}
   table.pr tr{break-inside:avoid;page-break-inside:avoid}
 }
+
+
+/* ===== MOBILE POLISH PATCH v3 — player-friendly phone layout ===== */
+@media(max-width:760px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body{font-size:15.5px;background-attachment:scroll}
+  .page,.appheader,.topbar,.modestrip,.betwrap,.dashwrap,.deckwrap,.tablecard,.po-panel,.res-sec,.flsec{max-width:100%;overflow-x:hidden}
+
+  /* Header stays usable without pushing the screen sideways */
+  .appheader{position:sticky;top:0}
+  .topbar{padding:8px 10px;align-items:center}
+  .brandwrap{flex:1 1 auto;min-width:0;max-width:calc(100% - 88px)}
+  .brandtext{min-width:0;white-space:normal}
+  .brandtext .b1{font-size:14px;line-height:1.05}
+  .clublogo{height:34px}
+  .topright{margin-left:auto}
+  .lockbtn{font-size:11px;padding:7px 9px;border-radius:9px}
+  .counter{display:none!important}
+  .pagetabs{width:100%;max-width:100%;overflow-x:auto;justify-content:flex-start;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+  .pagetabs button{scroll-snap-align:start;flex:0 0 auto;padding:9px 12px;font-size:13px}
+  .modestrip{padding:8px 10px;gap:8px}
+  .modestrip .ms-lbl{width:100%;font-size:10px}
+  .modechecks{display:grid!important;grid-template-columns:1fr 1fr;width:100%;gap:8px;margin-left:0}
+  .modechk{justify-content:center;padding:10px 8px;min-width:0}
+  .modechk .lab{font-size:12.5px;white-space:normal;text-align:center}
+
+  /* Page headers and cards */
+  .betwrap,.dashwrap{padding-left:12px;padding-right:12px;padding-bottom:54px}
+  .dashhead{position:static;padding:14px 2px 12px;margin-bottom:14px;align-items:flex-start}
+  .dash-title{font-size:25px;line-height:1.05}
+  .dash-eyebrow{font-size:10px;letter-spacing:.2em}
+  .dashtotals,.stats{display:grid!important;grid-template-columns:1fr 1fr;width:100%;gap:9px}
+  .dashtotals .dt,.stat{padding:10px 11px;text-align:left;min-width:0}
+  .dashtotals .dt .v,.stat .value{font-size:22px;line-height:1.05}
+  .dashtotals .dt .l,.stat .label{font-size:9px;letter-spacing:.08em}
+  .stat .sub{font-size:11px}
+
+  /* On Deck */
+  .deckwrap{padding:18px 12px 4px;min-height:calc(100vh - 190px)}
+  .eyebrow{gap:8px;margin-bottom:10px}
+  .flightpill{font-size:16px;padding:8px 15px}
+  .cardnum{font-size:15px}
+  .teamline{font-size:12px;letter-spacing:.22em;margin:18px 0 10px}
+  .players{font-size:clamp(38px,14vw,68px);line-height:1}
+  .players .amp{font-size:.34em}
+  .deck-nav{gap:8px;margin-top:16px;padding-bottom:10px}
+  .deck-nav .dbtn{padding:11px 14px;font-size:14px;border-radius:12px}
+  .deck-nav .dprog{min-width:74px;font-size:14px}
+  .nav,.deckbtns{display:none!important}
+
+  /* Controls */
+  .betsticky{position:static;padding:8px 0 12px;box-shadow:none;background:transparent}
+  .flightcards{grid-template-columns:1fr 1fr;gap:8px}
+  .flcard{padding:10px 11px;border-radius:12px}
+  .flcard .fhead{font-size:12.5px}
+  .flcard .fpot{font-size:22px}
+  .flcard .fmeta{font-size:10.5px}
+  .controls,.actions{gap:8px;margin-top:12px}
+  .search{flex:1 1 100%;min-width:0}
+  .btn,.tb{font-size:12px;padding:10px 12px;border-radius:10px}
+  .savenote{flex:1 1 100%;margin-left:0;font-size:11.5px}
+
+  /* Betting table already becomes cards in the base file; tighten it up */
+  #betpage tbody tr{padding:12px 12px;margin-bottom:10px;border-radius:14px}
+  #betpage .players-cell .p{font-size:16px}
+  #betpage .players-cell .sub{font-size:11.5px}
+  #betpage .field{font-size:16px;padding:11px 12px}
+  #betpage .dollar{width:132px}
+  #betpage .chk{width:28px;height:28px}
+
+  /* Dashboard rows */
+  .lb{display:grid;grid-template-columns:32px 16px 1fr auto;gap:8px;padding:11px 12px;border-radius:13px}
+  .lb .rank{min-width:0;font-size:17px}
+  .lb .who .nm{font-size:15.5px;line-height:1.2}
+  .lb .who .meta{font-size:11px}
+  .lb .amt{min-width:72px;font-size:19px}
+
+  /* Flight summaries */
+  .flsec{border-radius:14px;margin-bottom:14px}
+  .flsec-head{padding:13px 14px;flex-wrap:wrap}
+  .flsec-head .ftitle{font-size:18px}
+  .flsec-head .fstats{width:100%;margin-left:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:left}
+  .flsec-head .fstats .v{font-size:16px}
+  .frow{padding:11px 14px;display:grid;grid-template-columns:1fr auto;gap:6px 10px}
+  .frow .fteam{min-width:0}
+  .frow .fteam .tn{font-size:14.5px}
+  .frow .fteam .tsub{font-size:11px}
+  .frow .fbidder{grid-column:1/3;width:auto;min-width:0;font-size:12.5px}
+  .frow .famt{width:auto;font-size:18px}
+
+  /* Payout panels */
+  .po-panel{padding:15px 13px;border-radius:14px;margin-bottom:14px}
+  .po-panel h3{font-size:18px}
+  .po-panel .ph{font-size:10.5px;margin-bottom:12px}
+  .po-share{padding:12px;gap:10px;flex-wrap:wrap}
+  .po-share .sh-l{font-size:14px;flex:1 1 100%}
+  .po-share .sh-amt{font-size:20px;min-width:0;margin-left:auto}
+  .po-pctin{font-size:19px;width:76px}
+  .po-place{gap:8px;flex-wrap:wrap}
+  .po-place .pl-rank{min-width:52px;font-size:15px}
+  .po-place .pl-amt{font-size:18px}
+  .po-balance{padding:14px;gap:12px}
+  .po-balance .bl .v{font-size:21px}
+  .po-balance .verdict{margin-left:0;width:100%;text-align:left;font-size:18px}
+
+  /* Convert Flight Payout tables to cards */
+  .tblscroll{overflow:visible!important}
+  .fp-table{min-width:0!important;width:100%}
+  .fp-table thead{display:none}
+  .fp-table tbody,.fp-table tr,.fp-table td{display:block;width:100%}
+  .fp-table tr{background:#0b2f23cc;border:1px solid var(--line);border-radius:13px;margin:0 0 9px;padding:10px 12px}
+  .fp-table tr.fp-sec{background:transparent;border:none;padding:12px 0 2px;margin:0}
+  .fp-table tr.fp-sec td{padding:0 0 6px;border:none;background:transparent!important}
+  .fp-table tr.tot{background:#0e4030;border-color:var(--line-strong)}
+  .fp-table td{border:none!important;padding:5px 0!important;text-align:right!important;font-size:14px;display:flex;justify-content:space-between;gap:12px}
+  .fp-table td:first-child{text-align:left!important;font-weight:800;display:block}
+  .fp-table td:not(:first-child)::before{content:'Value';font-family:var(--sans);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:800;text-align:left}
+  .fp-table td:nth-child(2)::before{content:'Pay-In'}
+  .fp-table td:nth-child(3)::before{content:'Flight Money'}
+  .fp-table td:nth-child(4)::before{content:'Gross Win'}
+  .fp-table td:nth-child(5)::before{content:'Net Win'}
+
+  /* Results */
+  .res-sec{border-radius:14px;margin-bottom:14px}
+  .res-head{padding:13px 14px;flex-wrap:wrap}
+  .res-head .rt{font-size:18px}
+  .res-head .rp{margin-left:0;width:100%;font-size:15px}
+  .res-row{padding:12px 14px;display:grid;grid-template-columns:54px 84px 1fr;gap:8px;align-items:center}
+  .res-row .pl{min-width:0;font-size:16px}
+  .res-row .amt{min-width:0;font-size:17px}
+  .res-row .pick{grid-column:1/4;min-width:0}
+  .res-sel{font-size:13px;padding:9px 10px}
+  .res-buyer{grid-column:1/4;min-width:0;font-size:12.5px}
+  .fw-row{border-radius:13px;margin-bottom:9px;background:#0b2f23cc;border:1px solid var(--line)}
+
+  /* Analytics */
+  .an-grid{grid-template-columns:1fr 1fr;gap:9px}
+  .an-kpi{padding:13px 12px;border-radius:13px}
+  .an-kpi .v{font-size:22px}
+  .an-two{grid-template-columns:1fr;gap:12px}
+  .an-brow{gap:8px;align-items:flex-start}
+  .an-brow .nm{min-width:0;flex:1;font-size:14px}
+  .an-brow .barcol{display:none}
+  .an-brow .nums{min-width:92px}
+  .an-flbar{gap:8px}
+  .an-flbar .v{min-width:82px}
+
+  /* Roster table becomes cards */
+  #rosterpage .tablecard{background:transparent;border:none;box-shadow:none;overflow:visible}
+  #rosterpage .scroll{overflow:visible!important}
+  table.roster{min-width:0!important;width:100%}
+  table.roster thead{display:none}
+  table.roster tbody,table.roster tr,table.roster td{display:block;width:100%}
+  table.roster tbody tr{background:#0b2f23cc!important;border:1px solid var(--line);border-radius:13px;margin:0 0 9px;padding:10px 12px}
+  table.roster tbody td{border:none;padding:4px 0;font-size:13.5px;color:var(--ink-2)}
+  table.roster td.nm{font-size:15.5px;color:var(--ink);font-weight:800}
+  table.roster td.num,table.roster td.thcp{text-align:left!important}
+  table.roster td:not(.nm)::before{display:inline-block;min-width:78px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:800}
+  table.roster td:nth-child(1)::before{content:'Card'}
+  table.roster td:nth-child(2)::before{content:'';display:none}
+  table.roster td:nth-child(3)::before{content:'Flight'}
+  table.roster td:nth-child(4)::before{content:'Team'}
+  table.roster td:nth-child(5)::before{content:'Player 1'}
+  table.roster td:nth-child(6)::before{content:'Index'}
+  table.roster td:nth-child(7)::before{content:'Player 2'}
+  table.roster td:nth-child(8)::before{content:'Index'}
+
+  /* Reconciliation cards */
+  .recon{max-width:100%}
+  .rec-card{padding:14px 13px;border-radius:14px}
+  .rec-row{font-size:13.5px;gap:8px}
+  .rec-row.flt{padding-left:6px}
+
+  /* Prevent form controls from causing sideways scroll */
+  input,select,textarea,button{max-width:100%}
+  table{max-width:100%}
+}
+
+@media(max-width:420px){
+  .flightcards,.stats,.dashtotals,.an-grid{grid-template-columns:1fr!important}
+  .pagetabs button{font-size:12.5px;padding:8px 10px}
+  .dash-title{font-size:22px}
+  .players{font-size:clamp(34px,16vw,58px)}
+  .lb{grid-template-columns:26px 12px 1fr;gap:7px}
+  .lb .amt{grid-column:1/4;text-align:left;min-width:0;padding-left:45px}
+  .res-row{grid-template-columns:48px 76px 1fr}
+}
+
 </style>
 </head>
 <body>

@@ -234,7 +234,7 @@ select.field option{background:#0c3225;color:var(--ink)}
 .frow.fsold{box-shadow:inset 4px 0 0 var(--fcol)}
 .frow .fteam{flex:1;min-width:0}
 .frow .fteam .tn{font-weight:700;color:var(--ink)}
-.frow .fteam .tsub{font-size:12px;color:var(--ink-3);margin-top:1px;font-weight:600}
+.frow .fteam .tsub{font-size:12px;color:var(--ink-3);margin-top:1px;font-weight:600}.frow .fteam .tsub b{color:var(--brass-soft);font-weight:800}
 .frow .fbidder{width:28%;min-width:120px;color:var(--brass-soft);font-weight:700}
 .frow .fbidder.none{color:var(--ink-3);font-weight:500}
 .frow .famt{width:130px;text-align:right;font-family:var(--serif);font-weight:800;font-size:19px;color:var(--ink)}
@@ -1460,14 +1460,24 @@ function renderFlights(){
   const body=document.getElementById('flightsBody');
   body.innerHTML=[1,2,3,4].map(f=>{
     const d=flightTotals(f);
-    const ts=teams.filter(t=>t.flight===f);
-    const soldT=ts.filter(t=>t.amount>0).sort((a,b)=>b.amount-a.amount);
-    const unsoldT=ts.filter(t=>!(t.amount>0)).sort((a,b)=>a.team-b.team);
-    const rows=[...soldT.map(t=>({t,s:true})),...unsoldT.map(t=>({t,s:false}))].map(({t,s})=>{
+    const ts=teams
+      .filter(t=>t.flight===f)
+      .slice()
+      .sort((a,b)=>{
+        const ah=teamHcp(a), bh=teamHcp(b);
+        if(ah!==bh) return ah-bh;
+        return `${a.p1} ${a.p2}`.localeCompare(`${b.p1} ${b.p2}`);
+      });
+    const rows=ts.map(t=>{
+      const s=t.amount>0;
+      const teamH=fmtHcpVal(teamHcp(t));
       const bidder=t.bought?`<span class="fbidder">${t.bought}</span>`:`<span class="fbidder none">${s?'—':'unsold'}</span>`;
       const amt=s?`${fmt(t.amount)}<small class="${t.collected?'paid':'owed'}">${t.collected?'PAID':'OWED'}</small>`:'<small>&mdash;</small>';
       return `<div class="frow ${s?'fsold':'funsold'}" style="--fcol:${FC[f]}">
-        <div class="fteam"><div class="tn">${t.p1} &amp; ${t.p2}</div><div class="tsub">Team ${t.team} &middot; Card ${t.card}</div></div>
+        <div class="fteam">
+          <div class="tn">${t.p1} &amp; ${t.p2}</div>
+          <div class="tsub"><b>Team HCP ${teamH}</b> &middot; ${t.p1} (${fmtH(t.h1)}) &middot; ${t.p2} (${fmtH(t.h2)}) &middot; Team ${t.team} &middot; Card ${t.card}</div>
+        </div>
         ${bidder}
         <div class="famt">${amt}</div></div>`;
     }).join('');

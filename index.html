@@ -787,6 +787,9 @@ body.player #exportResultsPdf,
 body.player #importRosterBtn,
 body.player #rosterImport,
 body.player #exportRosterCsv,
+body.player #exportBackupXlsx,
+body.player label[for="importBackupXlsxFile"],
+body.player #importBackupXlsxFile,
 body.player #resetBtn,
 body.player .admin-only{display:none !important}
 body.player .modechk{pointer-events:none;cursor:default;opacity:.95}
@@ -918,6 +921,9 @@ body.player .res-sel{opacity:.9}
       <button class="btn" id="exportPdf">&#9112; Auction Record PDF</button>
       <button class="btn" id="exportResultsPdf">&#9112; Results &amp; Awards PDF</button>
       <button class="btn ghost" id="exportCsv">&#8595; Export CSV</button>
+      <button class="btn ghost admin-only" id="exportBackupXlsx">&#8595; Export Backup XLSX</button>
+      <label class="btn ghost admin-only" for="importBackupXlsxFile">Import Backup XLSX</label>
+      <input id="importBackupXlsxFile" type="file" accept=".xlsx,.xls" style="display:none">
       <button class="btn danger ghost" id="resetBtn">Reset entries</button>
       <div class="savenote" id="savenote">Ready</div>
     </div>
@@ -1040,6 +1046,7 @@ body.player .res-sel{opacity:.9}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const SEED = [{"card": 36, "team": 1, "p1": "Tom Watson", "p2": "William Wood", "flight": 4, "draw": 337, "drawPos": 34, "h1": "17.3", "h2": "20.0"}, {"card": 37, "team": 2, "p1": "John Gray", "p2": "Jeff Yeakle", "flight": 3, "draw": 304, "drawPos": 37, "h1": "15.0", "h2": "11.5"}, {"card": 38, "team": 3, "p1": "Brian Grimes", "p2": "Matthew Honacki", "flight": 2, "draw": 318, "drawPos": 8, "h1": "6.5", "h2": "6.0"}, {"card": 39, "team": 4, "p1": "Cyrus Fordyce", "p2": "Rick Meade", "flight": 1, "draw": 309, "drawPos": 2, "h1": "3.1", "h2": "5.3"}, {"card": 40, "team": 5, "p1": "Mike Althouse", "p2": "Chris Convey", "flight": 1, "draw": 330, "drawPos": 31, "h1": "4.8", "h2": "1.9"}, {"card": 41, "team": 6, "p1": "Alex Hinson", "p2": "Dale Williams", "flight": 1, "draw": 311, "drawPos": 23, "h1": "1.4", "h2": "4.8"}, {"card": 42, "team": 7, "p1": "Marty More", "p2": "Jim Muir, III", "flight": 4, "draw": 313, "drawPos": 13, "h1": "20.8", "h2": "12.0"}, {"card": 43, "team": 8, "p1": "Steve Craver", "p2": "Jim Harvey", "flight": 4, "draw": 303, "drawPos": 12, "h1": "12.5", "h2": "15.3"}, {"card": 44, "team": 9, "p1": "Clark Kunkle", "p2": "Will Paul", "flight": 3, "draw": 332, "drawPos": 4, "h1": "10.5", "h2": "12.6"}, {"card": 45, "team": 10, "p1": "Ken Sanquist", "p2": "Cody Stewart", "flight": 3, "draw": 320, "drawPos": 28, "h1": "10.7", "h2": "11.5"}, {"card": 46, "team": 11, "p1": "Austin Sanquist", "p2": "Thomas Vyskocil", "flight": 1, "draw": 327, "drawPos": 6, "h1": "1.0", "h2": "7.9"}, {"card": 47, "team": 12, "p1": "Jake Silverman", "p2": "Sam Silverman", "flight": 2, "draw": 308, "drawPos": 33, "h1": "2.6", "h2": "8.2"}, {"card": 48, "team": 13, "p1": "Tom Steffes", "p2": "Robert Sundell", "flight": 3, "draw": 307, "drawPos": 7, "h1": "12.0", "h2": "15.1"}, {"card": 49, "team": 14, "p1": "John McCarthy", "p2": "D.J. Park", "flight": 4, "draw": 314, "drawPos": 14, "h1": "13.6", "h2": "19.8"}, {"card": 50, "team": 15, "p1": "Todd Williams", "p2": "Scott Wilson", "flight": 1, "draw": 325, "drawPos": 38, "h1": "3.2", "h2": "4.3"}, {"card": 51, "team": 16, "p1": "Timothy Jeffery", "p2": "Douglas McPherson", "flight": 2, "draw": 319, "drawPos": 22, "h1": "7.3", "h2": "7.6"}, {"card": 52, "team": 17, "p1": "Raul Chacon", "p2": "Ryan Chacon", "flight": 2, "draw": 317, "drawPos": 17, "h1": "11.5", "h2": "+0.6"}, {"card": 53, "team": 18, "p1": "Rodolfo Camacho", "p2": "Mark Shank", "flight": 4, "draw": 334, "drawPos": 3, "h1": "17.5", "h2": "16.8"}, {"card": 54, "team": 19, "p1": "Anthony Blaszczyk", "p2": "Steve Middleton", "flight": 2, "draw": 326, "drawPos": 16, "h1": "4.4", "h2": "13.8"}, {"card": 55, "team": 20, "p1": "Christopher Andrews", "p2": "William Barrett", "flight": 1, "draw": 329, "drawPos": 10, "h1": "6.9", "h2": "2.9"}, {"card": 56, "team": 21, "p1": "Bob Latos", "p2": "Bruce Yoo", "flight": 3, "draw": 321, "drawPos": 21, "h1": "8.3", "h2": "15.7"}, {"card": 57, "team": 22, "p1": "James Carroll", "p2": "Ray Sanchez", "flight": 4, "draw": 316, "drawPos": 29, "h1": "18.3", "h2": "26.8"}, {"card": 58, "team": 23, "p1": "Bill Balster", "p2": "Kevin Duffy", "flight": 2, "draw": 306, "drawPos": 26, "h1": "8.5", "h2": "3.8"}, {"card": 59, "team": 24, "p1": "Grant LaGasse", "p2": "Jeff Sandusky", "flight": 2, "draw": 331, "drawPos": 32, "h1": "9.5", "h2": "8.3"}, {"card": 60, "team": 25, "p1": "Jared Friend", "p2": "Devin Grimaldi", "flight": 2, "draw": 335, "drawPos": 15, "h1": "6.4", "h2": "5.5"}, {"card": 61, "team": 26, "p1": "Carl Cutright", "p2": "Tim McNichol", "flight": 4, "draw": 323, "drawPos": 19, "h1": "21.6", "h2": "8.3"}, {"card": 62, "team": 27, "p1": "Britt Musser", "p2": "Joel Sandler", "flight": 1, "draw": 310, "drawPos": 11, "h1": "2.7", "h2": "6.8"}, {"card": 63, "team": 28, "p1": "Brent Davis", "p2": "Timothy Gilchrist", "flight": 1, "draw": 322, "drawPos": 39, "h1": "0.0", "h2": "3.3"}, {"card": 64, "team": 29, "p1": "Bob Chase", "p2": "Jim Weiskopf", "flight": 4, "draw": 333, "drawPos": 20, "h1": "15.0", "h2": "12.7"}, {"card": 65, "team": 30, "p1": "Chris Allen", "p2": "Joey Tominovich", "flight": 2, "draw": 305, "drawPos": 5, "h1": "5.4", "h2": "12.7"}, {"card": 66, "team": 31, "p1": "Steven Weiss", "p2": "Jeff Williams", "flight": 1, "draw": 324, "drawPos": 24, "h1": "2.7", "h2": "+0.3"}, {"card": 67, "team": 32, "p1": "Kevin Scudder", "p2": "Jacob Seiter", "flight": 2, "draw": 312, "drawPos": 9, "h1": "13.3", "h2": "1.2"}, {"card": 68, "team": 33, "p1": "Andrew Divver", "p2": "George Divver", "flight": 4, "draw": 301, "drawPos": 30, "h1": "13.1", "h2": "17.8"}, {"card": 69, "team": 34, "p1": "Jang Lee", "p2": "Chip Mace", "flight": 3, "draw": 336, "drawPos": 18, "h1": "11.1", "h2": "7.2"}, {"card": 70, "team": 35, "p1": "Eric Cloutier", "p2": "Daniel Woo", "flight": 3, "draw": 302, "drawPos": 25, "h1": "14.2", "h2": "6.9"}, {"card": 71, "team": 36, "p1": "Andrew Dexter", "p2": "Brendan Spellman", "flight": 3, "draw": 315, "drawPos": 36, "h1": "4.1", "h2": "19.0"}, {"card": 72, "team": 37, "p1": "Phil Murray", "p2": "Duane Robbins", "flight": 3, "draw": 328, "drawPos": 1, "h1": "11.8", "h2": "11.4"}, {"card": 73, "team": 38, "p1": "Cesar Rodas", "p2": "Chris Windsor", "flight": 4, "draw": 338, "drawPos": 35, "h1": "8.1", "h2": "19.2"}, {"card": 74, "team": 39, "p1": "Ari Bonnett", "p2": "Michael Corrado", "flight": 3, "draw": 339, "drawPos": 27, "h1": "9.1", "h2": "16.4"}];
 const ROSTER_VERSION = "2026 Men's Member-Member PDF roster - 39 teams - Flight counts 9/10/10/10";
@@ -2180,6 +2187,116 @@ document.getElementById('exportCsv').onclick=()=>{
   const rows=teams.slice().sort((a,b)=>a.card-b.card).map(t=>[t.card,t.team,t.p1,t.p2,t.flight,t.drawPos,t.bought||'',(t.amount==null?'':t.amount),t.collected?'Yes':'No'].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
   download('calcutta_board.csv',[head.join(','),...rows].join('\n'),'text/csv');
 };
+
+/* ===== Foolproof Excel Backup / Restore =====
+   Organizer-only operational backup. Exports a real .xlsx workbook that can be edited in Excel.
+   Restore prefers the editable sheets. BackupJson is included as a safety snapshot.
+*/
+function yn(v){ return String(v||'').trim().toLowerCase(); }
+function truthyCell(v){ const x=yn(v); return x==='yes'||x==='y'||x==='true'||x==='1'||x==='paid'||x==='collected'||x==='✓'; }
+function moneyCell(v){ if(v===null||v===undefined||v==='') return null; const n=Number(String(v).replace(/[$,\s]/g,'')); return isNaN(n)?null:n; }
+function sheetRows(ws){ return XLSX.utils.sheet_to_json(ws,{defval:'',raw:false}); }
+function backupTimestamp(){ return new Date().toISOString().replace(/[:.]/g,'-').slice(0,19); }
+function teamDisplay(t){ return `${t.p1} + ${t.p2}`; }
+function exportTournamentBackupXlsx(){
+  if(!window.XLSX){ alert('Excel backup library did not load. Use Export CSV as an emergency fallback.'); return; }
+  const wb=XLSX.utils.book_new();
+  const now=new Date();
+  const pot=potTotal();
+  const sold=teams.filter(t=>t.amount>0||String(t.bought||'').trim());
+  const snapshot={
+    app:'Member-Member Calcutta',
+    backupVersion:1,
+    exportedAt:now.toISOString(),
+    rosterVersion:typeof ROSTER_VERSION!=='undefined'?ROSTER_VERSION:'',
+    teams:teams.map(t=>({card:t.card,team:t.team,drawPos:t.drawPos,flight:t.flight,p1:t.p1,h1:t.h1,p2:t.p2,h2:t.h2,bought:t.bought||'',amount:t.amount,collected:!!t.collected})),
+    payout:JSON.parse(JSON.stringify(payout)),
+    results:JSON.parse(JSON.stringify(results))
+  };
+  const readme=[
+    ['Member-Member Calcutta Backup'],
+    ['Exported At', now.toLocaleString()],
+    ['Teams', teams.length],
+    ['Teams Sold / Entered', sold.length],
+    ['Total Pot', pot],
+    ['Instructions'],
+    ['Use Auction sheet to manually enter Buyer, Amount, and Collected. Use Results sheet for winner card numbers. Keep Card values unchanged. Import this workbook back into the app from Organizer mode.'],
+    ['Emergency Rule'],
+    ['If the app or database fails, this workbook is the manual operating ledger.']
+  ];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(readme), 'README');
+  const teamsRows=[['Card','Team ID','Draw Order','Flight','Team','Player 1','HCP 1','Player 2','HCP 2']].concat(
+    teams.slice().sort((a,b)=>a.flight-b.flight||a.drawPos-b.drawPos).map(t=>[t.card,t.team,t.drawPos,t.flight,teamDisplay(t),t.p1,t.h1,t.p2,t.h2])
+  );
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(teamsRows), 'Teams');
+  const auctionRows=[['Card','Draw Order','Flight','Team','Buyer','Amount','Collected','Notes']].concat(
+    teams.slice().sort((a,b)=>a.drawPos-b.drawPos).map(t=>[t.card,t.drawPos,t.flight,teamDisplay(t),t.bought||'',t.amount==null?'':t.amount,t.collected?'Yes':'No',''])
+  );
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(auctionRows), 'Auction');
+  const buyerRows=[['Buyer','Teams Bought','Total Spend','Collected','Outstanding']].concat(
+    buyerAgg().map(b=>[b.name,b.count,b.total,b.collected,b.owed])
+  );
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(buyerRows), 'Buyer Summary');
+  const payoutRows=[
+    ['Setting','Value'],['Mode',payout.mode],['Gross Percent',payout.grossPct],['Net Percent',payout.netPct],['Flight Cut Percent',payout.flightPct],['Flight Gross Percent',payout.flightGrossPct],
+    [],['Standard Gross Places','Share Percent'],...payout.gross.map((v,i)=>[`Gross ${i+1}`,v]),
+    [],['Standard Net Places','Share Percent'],...payout.net.map((v,i)=>[`Net ${i+1}`,v])
+  ];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(payoutRows), 'Payout Settings');
+  const resRows=[['Type','Place','Card','Team','Buyer']];
+  (payout.gross||[]).forEach((_,i)=>{const c=(results.gross||{})[i]||''; const t=teams.find(x=>String(x.card)===String(c)); resRows.push(['Gross',i+1,c,t?teamDisplay(t):'',t?t.bought||'':'']);});
+  (payout.net||[]).forEach((_,i)=>{const c=(results.net||{})[i]||''; const t=teams.find(x=>String(x.card)===String(c)); resRows.push(['Net',i+1,c,t?teamDisplay(t):'',t?t.bought||'':'']);});
+  [1,2,3,4].forEach(f=>{const rf=(results.flights||{})[f]||{}; ['g','n'].forEach(k=>{const c=rf[k]||''; const t=teams.find(x=>String(x.card)===String(c)); resRows.push([`Flight ${f}`,k==='g'?'Gross':'Net',c,t?teamDisplay(t):'',t?t.bought||'':'']);});});
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resRows), 'Results');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['BackupJson'],[JSON.stringify(snapshot)]]), 'BackupJson');
+  ['README','Teams','Auction','Buyer Summary','Payout Settings','Results','BackupJson'].forEach(name=>{ const ws=wb.Sheets[name]; if(ws) ws['!cols']=[{wch:16},{wch:18},{wch:14},{wch:12},{wch:32},{wch:20},{wch:10},{wch:20},{wch:10}]; });
+  XLSX.writeFile(wb, `Calcutta_Tournament_Backup_${backupTimestamp()}.xlsx`);
+}
+function restoreTournamentBackupWorkbook(wb){
+  const auctionWs=wb.Sheets['Auction'];
+  if(!auctionWs) throw new Error('Missing Auction sheet.');
+  const rows=sheetRows(auctionWs);
+  const byCard={}; rows.forEach(r=>{ const card=String(r.Card||'').trim(); if(card) byCard[card]=r; });
+  if(!Object.keys(byCard).length) throw new Error('No Card rows found on Auction sheet.');
+  teams=order.map(seed=>{ const r=byCard[String(seed.card)]||{}; let amt=moneyCell(r.Amount); return {...seed,bought:String(r.Buyer||'').trim(),amount:amt,collected:truthyCell(r.Collected)}; });
+
+  const pws=wb.Sheets['Payout Settings'];
+  if(pws){
+    const pRows=XLSX.utils.sheet_to_json(pws,{header:1,defval:''});
+    const get=(label)=>{ const row=pRows.find(x=>String(x[0]).trim().toLowerCase()===label.toLowerCase()); return row?row[1]:undefined; };
+    const mode=get('Mode'); if(mode) payout.mode=String(mode).trim()==='standard'?'standard':'flights';
+    [['Gross Percent','grossPct'],['Net Percent','netPct'],['Flight Cut Percent','flightPct'],['Flight Gross Percent','flightGrossPct']].forEach(([label,key])=>{const v=Number(get(label)); if(!isNaN(v)) payout[key]=v;});
+    const g=[],n=[]; pRows.forEach(row=>{const label=String(row[0]||'').trim(); const val=Number(row[1]); if(/^Gross \d+$/i.test(label)&&!isNaN(val)) g.push(val); if(/^Net \d+$/i.test(label)&&!isNaN(val)) n.push(val);});
+    if(g.length) payout.gross=g; if(n.length) payout.net=n;
+  }
+  const rws=wb.Sheets['Results'];
+  if(rws){
+    const rRows=sheetRows(rws); const nr={gross:{},net:{},flights:{}};
+    rRows.forEach(r=>{ const type=String(r.Type||'').trim(); const place=String(r.Place||'').trim(); const card=String(r.Card||'').trim(); if(!card)return; if(type==='Gross') nr.gross[Number(place)-1]=card; else if(type==='Net') nr.net[Number(place)-1]=card; else { const m=type.match(/Flight\s+(\d+)/i); if(m){ const f=m[1]; nr.flights[f]=nr.flights[f]||{}; if(/^Gross$/i.test(place)) nr.flights[f].g=card; if(/^Net$/i.test(place)) nr.flights[f].n=card; } } });
+    results=nr;
+  }
+  normalizePayout(); normalizeResults();
+  persistAll();
+  renderCurrent();
+  alert('Backup restored. Review the Dashboard, Payout, Results, and Reconciliation pages before continuing.');
+}
+const exportBackupBtn=document.getElementById('exportBackupXlsx');
+if(exportBackupBtn){ exportBackupBtn.onclick=()=>{ if(!ADMIN){ alert('Unlock Organizer mode before exporting a backup.'); return; } exportTournamentBackupXlsx(); }; }
+const importBackupInput=document.getElementById('importBackupXlsxFile');
+if(importBackupInput){ importBackupInput.onchange=async()=>{
+  try{
+    if(!ADMIN){ alert('Unlock Organizer mode before importing a backup.'); importBackupInput.value=''; return; }
+    if(!window.XLSX){ throw new Error('Excel backup library did not load.'); }
+    const file=importBackupInput.files&&importBackupInput.files[0]; if(!file)return;
+    const ok=confirm('Restore this backup into the live app? This will replace buyers, bid amounts, collected checks, payout settings, and results.');
+    if(!ok){ importBackupInput.value=''; return; }
+    const buf=await file.arrayBuffer();
+    const wb=XLSX.read(buf,{type:'array'});
+    restoreTournamentBackupWorkbook(wb);
+  }catch(err){ alert('Could not import backup: '+(err&&err.message?err.message:err)); }
+  finally{ importBackupInput.value=''; }
+}; }
+
 /* JSON backup/restore removed from UI */
 document.getElementById('resetBtn').onclick=()=>{const ans=prompt('This clears ALL bought-by names, amounts, and collected checks. Teams, flights, and draw order stay.\n\nType DELETE to confirm:');if(ans===null)return;if(ans.trim().toUpperCase()==='DELETE'){teams.forEach(t=>{t.bought='';t.amount=null;t.collected=false;});persistAll();renderCurrent();note('Entries cleared');}else{alert('Not cleared \u2014 you must type DELETE exactly.');}};
 

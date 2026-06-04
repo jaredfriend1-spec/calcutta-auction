@@ -372,11 +372,11 @@ body.player .modechk{opacity:.6;cursor:default}
 .res-row .pl{font-family:var(--serif);font-weight:800;font-size:18px;color:var(--brass);min-width:58px}
 .res-row .amt{font-family:var(--serif);font-weight:800;font-size:19px;color:var(--ink);min-width:96px}
 .res-row .pick{flex:1;min-width:200px}
-.res-sel{width:100%;background:#08231b;border:1.5px solid #ffffff33;border-radius:10px;color:var(--ink);font-family:var(--sans);font-size:16px;font-weight:600;padding:12px 14px;outline:none;cursor:pointer}
+.res-sel{width:100%;background:#08231b;border:1.5px solid #ffffff33;border-radius:9px;color:var(--ink);font-family:var(--sans);font-size:14px;font-weight:600;padding:9px 12px;outline:none;cursor:pointer}
 .res-sel:hover{border-color:#ffffff55}
 .res-sel:focus{border-color:var(--brass);box-shadow:0 0 0 3px #d8b65f2e}
 .res-sel:disabled{opacity:.7;cursor:default}
-.res-buyer{min-width:170px;font-size:13.5px;color:var(--ink-2);font-weight:600}
+.res-buyer{min-width:170px;font-size:15px;color:var(--ink-2);font-weight:600}
 .res-buyer b{color:var(--brass-soft);font-weight:700}
 .res-buyer .none{color:var(--ink-3);font-weight:500}
 .res-flagrid{display:grid;grid-template-columns:1fr 1fr;gap:0}
@@ -412,6 +412,26 @@ table.roster td.thcp{font-family:var(--serif);font-weight:800;color:var(--brass-
 table.roster td.flt{font-weight:700}
 table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
 @media(max-width:760px){ table.roster thead th,table.roster tbody td{padding:11px 10px;font-size:14px} }
+
+/* ===== Pot Reconciliation ===== */
+.recon{max-width:780px}
+.rec-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 22px;margin-bottom:16px;box-shadow:0 14px 32px -30px #000}
+.rec-h{font-family:var(--serif);font-weight:800;font-size:18px;color:var(--ink);margin-bottom:8px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.rec-h small{font-family:var(--sans);font-weight:600;font-size:12px;color:var(--ink-3)}
+.rec-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:8px 0;font-size:15px;color:var(--ink-2);border-bottom:1px solid #ffffff0a}
+.rec-row:last-child{border-bottom:none}
+.rec-row span:last-child{font-family:var(--serif);font-weight:700;color:var(--ink);white-space:nowrap}
+.rec-row.sub{font-size:13px;color:var(--ink-3)}
+.rec-row.sub span:last-child{color:var(--ink-3);font-weight:600}
+.rec-row .neg{color:#e0a07a !important}
+.rec-row.flt{font-size:13.5px;color:var(--ink-3);padding:5px 0 5px 14px}
+.rec-row.total{border-top:1.5px solid var(--line);border-bottom:none;margin-top:5px;padding-top:11px}
+.rec-row.total span{font-weight:800;color:var(--ink);font-size:16px}
+.rec-card.balance.ok{border-color:#3f9d6b;background:#0e3c2a}
+.rec-card.balance.warn{border-color:#e0734a}
+.rec-status{margin-top:13px;text-align:center;font-weight:800;font-size:15.5px;color:#86dca8;font-family:var(--sans)}
+.rec-card.balance.warn .rec-status{color:#e0734a}
+.rec-status .chk{display:inline-block;margin-right:7px}
 
 /* ===== Graphical Print report ===== */
 #printArea{display:none}
@@ -578,9 +598,10 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
     <button data-page="dash">Dashboard</button>
     <button data-page="flights">Flights</button>
     <button data-page="payout">Standard Payout</button>
-    <button data-page="flightpay">If Flights Pay</button>
-    <button data-page="analytics">Analytics</button>
+    <button data-page="flightpay">Flight Payout</button>
+    <button data-page="analytics">Buyer Summary</button>
     <button data-page="results">Results</button>
+    <button data-page="recon">Reconciliation</button>
     <button data-page="roster">Roster</button>
   </div>
   <div class="topright">
@@ -638,9 +659,6 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
     <div class="actions">
       <button class="btn" id="exportPdf">&#9112; Export PDF Record</button>
       <button class="btn ghost" id="exportCsv">&#8595; Export CSV</button>
-      <button class="btn ghost" id="exportJson">&#8595; Backup (JSON)</button>
-      <button class="btn ghost" id="importBtn">&#8593; Restore backup</button>
-      <input type="file" id="importFile" accept=".json" style="display:none">
       <button class="btn danger ghost" id="resetBtn">Reset entries</button>
       <div class="savenote" id="savenote">Ready</div>
     </div>
@@ -652,7 +670,7 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
     <div class="dashhead">
       <div>
         <div class="dash-eyebrow">Auction Leaderboard</div>
-        <h2 class="dash-title">Teams by Hammer Price</h2>
+        <h2 class="dash-title">Teams by Sold Price</h2>
       </div>
       <div class="dashtotals" id="dashtotals"></div>
     </div>
@@ -690,8 +708,8 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
   <div class="dashwrap">
     <div class="dashhead">
       <div>
-        <div class="dash-eyebrow">What-If Scenario</div>
-        <h2 class="dash-title">If We Pay Out Flights</h2>
+        <div class="dash-eyebrow">Payout Method</div>
+        <h2 class="dash-title">Flight Payout</h2>
       </div>
       <div class="dashtotals" id="flightpayTotals"></div>
     </div>
@@ -704,7 +722,7 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
     <div class="dashhead">
       <div>
         <div class="dash-eyebrow">Where The Money Is</div>
-        <h2 class="dash-title">Auction Analytics</h2>
+        <h2 class="dash-title">Buyer Summary</h2>
       </div>
       <div class="dashtotals" id="analyticsTotals"></div>
     </div>
@@ -735,6 +753,19 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
       <div class="dashtotals" id="rosterTotals"></div>
     </div>
     <div class="tablecard"><div class="scroll"><table class="roster" id="rosterTable"></table></div></div>
+  </div>
+</div>
+
+<div class="page" id="reconpage">
+  <div class="dashwrap">
+    <div class="dashhead">
+      <div>
+        <div class="dash-eyebrow">Every Dollar Accounted For</div>
+        <h2 class="dash-title">Pot Reconciliation</h2>
+      </div>
+      <div class="dashtotals" id="reconTotals"></div>
+    </div>
+    <div id="reconBody"></div>
   </div>
 </div>
 
@@ -782,10 +813,10 @@ const PLAYER_OPTS=PLAYERS.map(p=>({v:p,l:lastFirst(p)})).sort((a,b)=>a.l.localeC
 function buyerOptions(sel){ sel=sel||''; let o='<option value="">\u2014 select player \u2014</option>'; PLAYER_OPTS.forEach(p=>{ o+=`<option value="${p.v.replace(/"/g,'&quot;')}"${sel===p.v?' selected':''}>${escapeHtml(p.l)}</option>`; }); return o; }
 
 let teams=[];
-let payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:20,flightGrossPct:50,mode:'flights'};
+let payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:10,flightGrossPct:50,mode:'flights'};
 let results={gross:{},net:{},flights:{}};
 const blankTeams=()=>order.map(s=>({...s,bought:'',amount:null,collected:false}));
-function normalizePayout(){ if(payout.flightPct==null)payout.flightPct=20; if(payout.flightGrossPct==null)payout.flightGrossPct=50; if(payout.mode!=='standard'&&payout.mode!=='flights')payout.mode='flights'; }
+function normalizePayout(){ if(payout.flightPct==null)payout.flightPct=10; if(payout.flightGrossPct==null)payout.flightGrossPct=50; if(payout.mode!=='standard'&&payout.mode!=='flights')payout.mode='flights'; }
 function normalizeResults(){ if(!results||typeof results!=='object')results={}; results.gross=results.gross||{}; results.net=results.net||{}; results.flights=results.flights||{}; }
 
 function note(msg){ const n=document.getElementById('savenote'); if(n) n.innerHTML=msg+' &middot; <b>'+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'</b>'; }
@@ -864,6 +895,7 @@ function renderCurrent(){
   else if(page==='analytics')renderAnalytics();
   else if(page==='results')renderResults();
   else if(page==='roster')renderRoster();
+  else if(page==='recon')renderReconciliation();
   updatePayTabFlag(); renderModeHeader();
   measureChrome();
 }
@@ -891,6 +923,7 @@ document.getElementById('pagetabs').onclick=e=>{
   document.getElementById('analyticspage').classList.toggle('show',page==='analytics');
   document.getElementById('resultspage').classList.toggle('show',page==='results');
   document.getElementById('rosterpage').classList.toggle('show',page==='roster');
+  document.getElementById('reconpage').classList.toggle('show',page==='recon');
   try{window.scrollTo(0,0);}catch(e){}
   renderCurrent();
   updateCounter();
@@ -1107,6 +1140,7 @@ function renderStats(){
   if(page==='flightpay')fpRecompute();
   if(page==='analytics')renderAnalytics();
   if(page==='results')renderResults();
+  if(page==='recon')renderReconciliation();
   measureChrome();
 }
 document.getElementById('search').oninput=e=>{search=e.target.value;renderTable();};
@@ -1334,8 +1368,8 @@ function renderFlightPay(){
       <td id="fp-net-${f}">$0</td>
     </tr>`).join('');
 
-  const gRows=payout.gross.map((p,i)=>`<tr><td>${ordinal(i+1)} Gross</td><td>${p}%</td><td id="fp-pg-b-${i}">$0</td><td class="money" id="fp-pg-a-${i}">$0</td></tr>`).join('');
-  const nRows=payout.net.map((p,i)=>`<tr><td>${ordinal(i+1)} Net</td><td>${p}%</td><td id="fp-pn-b-${i}">$0</td><td class="money" id="fp-pn-a-${i}">$0</td></tr>`).join('');
+  const gRows=payout.gross.map((p,i)=>`<tr><td>${ordinal(i+1)} Gross</td><td>${p}%</td><td class="money" id="fp-pg-a-${i}">$0</td></tr>`).join('');
+  const nRows=payout.net.map((p,i)=>`<tr><td>${ordinal(i+1)} Net</td><td>${p}%</td><td class="money" id="fp-pn-a-${i}">$0</td></tr>`).join('');
 
   document.getElementById('flightpayBody').innerHTML=`
     <div class="po-panel">
@@ -1352,17 +1386,6 @@ function renderFlightPay(){
           <span class="sh-amt" id="fp-splitlbl" style="font-size:15px">50 / 50</span>
         </div>
       </div>
-    </div>
-
-    <div class="po-panel">
-      <h3>Per-Flight Payouts</h3>
-      <div class="ph">Based on current bids in each flight</div>
-      <div class="tblscroll"><table class="fp-table">
-        <thead><tr><th>Flight</th><th>Pay-In</th><th>Flight Money</th><th>Gross Winner</th><th>Net Winner</th></tr></thead>
-        <tbody>${rows}
-          <tr class="tot"><td>Total</td><td id="fp-payin-tot">$0</td><td id="fp-money-tot">$0</td><td id="fp-gross-tot">$0</td><td id="fp-net-tot">$0</td></tr>
-        </tbody>
-      </table></div>
     </div>
 
     <div class="po-panel">
@@ -1392,19 +1415,29 @@ function renderFlightPay(){
 
     <div class="po-panel">
       <h3>Payout Results &mdash; Place by Place</h3>
-      <div class="ph">The main ${payout.grossPct}/${payout.netPct} gross-net schedule, with vs. without paying flights first</div>
+      <div class="ph">The ${payout.grossPct}/${payout.netPct} gross-net schedule paid from the tournament pot (after the flight cut)</div>
       <div class="tblscroll"><table class="fp-table">
-        <thead><tr><th>Place</th><th>Share</th><th>Main payout</th><th>With flight payouts</th></tr></thead>
+        <thead><tr><th>Place</th><th>Share</th><th>Payout</th></tr></thead>
         <tbody>
-          <tr class="fp-sec"><td colspan="4">Gross &mdash; ${payout.grossPct}% of tournament pot</td></tr>
+          <tr class="fp-sec"><td colspan="3">Gross &mdash; ${payout.grossPct}% of tournament pot</td></tr>
           ${gRows}
-          <tr class="fp-sec"><td colspan="4">Net &mdash; ${payout.netPct}% of tournament pot</td></tr>
+          <tr class="fp-sec"><td colspan="3">Net &mdash; ${payout.netPct}% of tournament pot</td></tr>
           ${nRows}
         </tbody>
       </table></div>
-      <div class="fp-note">The "Main payout" column matches the Payout tab. "With flight payouts" shows the same places paid from the smaller pot after flight winners are covered.</div>
+      <div class="fp-note">These are the amounts paid from the tournament pot after the flight cut. The Standard Payout tab shows the figures when flights are not paid.</div>
     </div>
-    ${flightWinnersDisplay()}`;
+
+    <div class="po-panel">
+      <h3>Per-Flight Payouts</h3>
+      <div class="ph">Based on current bids in each flight</div>
+      <div class="tblscroll"><table class="fp-table">
+        <thead><tr><th>Flight</th><th>Pay-In</th><th>Flight Money</th><th>Gross Winner</th><th>Net Winner</th></tr></thead>
+        <tbody>${rows}
+          <tr class="tot"><td>Total</td><td id="fp-payin-tot">$0</td><td id="fp-money-tot">$0</td><td id="fp-gross-tot">$0</td><td id="fp-net-tot">$0</td></tr>
+        </tbody>
+      </table></div>
+    </div>`;
 
   document.getElementById('fp-pct').oninput=function(){ payout.flightPct=Math.max(0,Math.min(100,+this.value||0)); savePayout(); fpRecompute(); };
   document.getElementById('fp-gpct').oninput=function(){ payout.flightGrossPct=Math.max(0,Math.min(100,+this.value||0)); savePayout(); fpRecompute(); };
@@ -1530,7 +1563,7 @@ function applyMode(){
   if(!ADMIN && (page==='deck'||page==='bet')){
     page='dash';
     document.querySelectorAll('#pagetabs button').forEach(x=>x.classList.toggle('on',x.dataset.page==='dash'));
-    ['deckpage','betpage','dashpage','flightspage','payoutpage','flightpaypage','analyticspage','resultspage','rosterpage'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('show',id==='dashpage');});
+    ['deckpage','betpage','dashpage','flightspage','payoutpage','flightpaypage','analyticspage','resultspage','rosterpage','reconpage'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('show',id==='dashpage');});
   }
 }
 
@@ -1538,7 +1571,7 @@ function applyMode(){
 function modeChecksHtml(){
   const m=payout.mode;
   const chk=(mode,label)=>`<label class="modechk ${m===mode?'on':''}"><input type="checkbox" data-mode="${mode}" ${m===mode?'checked':''}><span class="box"></span><span class="lab">${label}</span></label>`;
-  return chk('standard','Standard Payout')+chk('flights','If Flights Pay');
+  return chk('standard','Standard Payout')+chk('flights','Flight Payout');
 }
 function renderModeHeader(){
   const el=document.getElementById('modeStrip'); if(!el)return;
@@ -1648,8 +1681,8 @@ function renderResults(){
   const grossRows=payout.gross.map((p,i)=>resRow('gross',i,ordinal(i+1)+' Gross',centRound(P.gPool*p/100),results.gross[i]||'')).join('');
   const netRows=payout.net.map((p,i)=>resRow('net',i,ordinal(i+1)+' Net',centRound(P.nPool*p/100),results.net[i]||'')).join('');
   const flightSection = P.mode==='flights'
-    ? `<div class="res-note">Because the method is <b>If Flights Pay</b>, each flight also pays a gross and a net winner.</div>${flightWinnersSection()}`
-    : `<div class="res-note">Method is <b>Standard</b> — no flight winners are paid. Switch the toggle above to <b>If Flights Pay</b> to record flight winners.</div>`;
+    ? `<div class="res-note">Because the method is <b>Flight Payout</b>, each flight also pays a gross and a net winner.</div>${flightWinnersSection()}`
+    : `<div class="res-note">Method is <b>Standard</b> — no flight winners are paid. Switch the method above to <b>Flight Payout</b> to record flight winners.</div>`;
 
   document.getElementById('resultsBody').innerHTML=`
     <div class="res-sec">
@@ -1706,6 +1739,73 @@ function renderRoster(){
   document.getElementById('rosterTotals').innerHTML=
     `<div class="dt"><div class="v">${teams.length}</div><div class="l">Teams</div></div>`+
     `<div class="dt"><div class="v">${teams.length*2}</div><div class="l">Players</div></div>`;
+}
+
+/* ===== POT RECONCILIATION (read-only, everyone) ===== */
+function renderReconciliation(){
+  const M=n=>'$'+(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const P=activePools(), isF=P.mode==='flights';
+  const coll=teams.filter(t=>t.collected).reduce((s,t)=>s+(t.amount||0),0);
+  const gItems=payout.gross.map((p,i)=>({lbl:ordinal(i+1)+' Gross',pct:p,amt:centRound(P.gPool*p/100)}));
+  const nItems=payout.net.map((p,i)=>({lbl:ordinal(i+1)+' Net',pct:p,amt:centRound(P.nPool*p/100)}));
+  const grossPaid=gItems.reduce((s,x)=>s+x.amt,0), netPaid=nItems.reduce((s,x)=>s+x.amt,0);
+  let flightPaid=0; if(isF)[1,2,3,4].forEach(f=>flightPaid+=P.fl[f].g+P.fl[f].n);
+  const totalOut=P.staff+flightPaid+grossPaid+netPaid;
+  const remainder=Math.round((P.pot-totalOut)*100)/100;
+  const balanced=Math.abs(remainder)<0.005;
+
+  document.getElementById('reconTotals').innerHTML=
+    `<div class="dt"><div class="v">${fmt(P.pot)}</div><div class="l">Money In</div></div>`+
+    `<div class="dt staff"><div class="v">${fmt(P.staff)}</div><div class="l">Staff (5%)</div></div>`+
+    (isF?`<div class="dt"><div class="v">${fmt(P.flMoney)}</div><div class="l">Flight Payouts</div></div>`:'')+
+    `<div class="dt"><div class="v">${fmt(P.pool)}</div><div class="l">Tournament Pot</div></div>`;
+
+  const flightCut=isF?`<div class="rec-row"><span>Flight payouts (${payout.flightPct}% of each flight's bids)</span><span class="neg">-${M(P.flMoney)}</span></div>`+
+      [1,2,3,4].map(f=>`<div class="rec-row flt"><span>Flight ${f} &mdash; gross ${M(P.fl[f].g)} + net ${M(P.fl[f].n)}</span><span>${M(P.fl[f].g+P.fl[f].n)}</span></div>`).join(''):'';
+
+  const flightPayCard=isF?`<div class="rec-card">
+      <div class="rec-h">Flight Payout <small>the ${payout.flightPct}% &mdash; 1 gross + 1 net per flight</small></div>
+      ${[1,2,3,4].map(f=>`<div class="rec-row"><span>Flight ${f} &mdash; Gross winner</span><span>${M(P.fl[f].g)}</span></div><div class="rec-row"><span>Flight ${f} &mdash; Net winner</span><span>${M(P.fl[f].n)}</span></div>`).join('')}
+      <div class="rec-row total"><span>Flight payout subtotal</span><span>${M(flightPaid)}</span></div>
+    </div>`:'';
+
+  document.getElementById('reconBody').innerHTML=`<div class="recon">
+    <div class="rec-card">
+      <div class="rec-h">Money In</div>
+      <div class="rec-row total"><span>Total pot &mdash; all winning bids</span><span>${M(P.pot)}</span></div>
+      <div class="rec-row sub"><span>Collected so far</span><span>${M(coll)}</span></div>
+      <div class="rec-row sub"><span>Still to collect</span><span>${M(P.pot-coll)}</span></div>
+    </div>
+
+    <div class="rec-card">
+      <div class="rec-h">Off the Top</div>
+      <div class="rec-row"><span>Staff appreciation (5%)</span><span class="neg">-${M(P.staff)}</span></div>
+      ${flightCut}
+      <div class="rec-row total"><span>Tournament pot ${isF?'(after staff &amp; flights)':'(after staff)'}</span><span>${M(P.pool)}</span></div>
+    </div>
+
+    <div class="rec-card">
+      <div class="rec-h">Tournament Payout <small>${payout.grossPct}% gross / ${payout.netPct}% net of ${M(P.pool)}</small></div>
+      ${gItems.map(x=>`<div class="rec-row"><span>${x.lbl} <small style="color:var(--ink-3)">(${x.pct}%)</small></span><span>${M(x.amt)}</span></div>`).join('')}
+      <div class="rec-row total"><span>Gross subtotal (${payout.grossPct}%)</span><span>${M(grossPaid)}</span></div>
+      ${nItems.map(x=>`<div class="rec-row"><span>${x.lbl} <small style="color:var(--ink-3)">(${x.pct}%)</small></span><span>${M(x.amt)}</span></div>`).join('')}
+      <div class="rec-row total"><span>Net subtotal (${payout.netPct}%)</span><span>${M(netPaid)}</span></div>
+    </div>
+
+    ${flightPayCard}
+
+    <div class="rec-card balance ${balanced?'ok':'warn'}">
+      <div class="rec-h">Reconciliation</div>
+      <div class="rec-row"><span>Staff appreciation</span><span>${M(P.staff)}</span></div>
+      ${isF?`<div class="rec-row"><span>Flight payouts</span><span>${M(flightPaid)}</span></div>`:''}
+      <div class="rec-row"><span>Overall gross payouts</span><span>${M(grossPaid)}</span></div>
+      <div class="rec-row"><span>Overall net payouts</span><span>${M(netPaid)}</span></div>
+      ${balanced?'':`<div class="rec-row"><span>Rounding adjustment</span><span>${M(remainder)}</span></div>`}
+      <div class="rec-row total"><span>Total accounted for</span><span>${M(totalOut+(balanced?0:remainder))}</span></div>
+      <div class="rec-row total"><span>Money in (total pot)</span><span>${M(P.pot)}</span></div>
+      <div class="rec-status"><span class="chk">${balanced?'\u2713':'\u26A0'}</span>${balanced?'Balanced \u2014 every dollar is accounted for.':'Off by '+M(remainder)+' \u2014 check entries.'}</div>
+    </div>
+  </div>`;
 }
 
 /* export/import */
@@ -1792,7 +1892,7 @@ function buildReport(){
   const fpGPool=centRound(fpAfter*payout.grossPct/100), fpNPool=centRound(fpAfter*payout.netPct/100);
   /* results winners (based on the selected payout method) */
   const isF=payout.mode==='flights';
-  const methodLabel=isF?'If Flights Pay':'Standard (no flight payouts)';
+  const methodLabel=isF?'Flight Payout':'Standard (no flight payouts)';
   const ovG=isF?fpGPool:gPool, ovN=isF?fpNPool:nPool;
   const winRow=(rank,amt,card)=>{const t=card?teams.find(x=>String(x.card)===String(card)):null;return `<tr><td>${rank}</td><td class="r">${fmtC(amt)}</td><td>${t?esc(t.p1+' &amp; '+t.p2):'<span style="color:#999">&mdash;</span>'}</td><td>${t&&t.bought?esc(t.bought):'<span style="color:#999">&mdash;</span>'}</td></tr>`;};
   const rg=results.gross||{}, rn=results.net||{}, rfl=results.flights||{};
@@ -1838,7 +1938,7 @@ function buildReport(){
     <div class="pr-sec" style="page-break-before:always">Results &mdash; Winners <span class="tag">${methodLabel}</span></div>
     ${resultsHtml}
 
-    <div class="pr-sec" style="page-break-before:always">Payout Option 1 &mdash; If Flights Pay</div>
+    <div class="pr-sec" style="page-break-before:always">Payout Option 1 &mdash; Flight Payout</div>
     ${fpHtml}
     <div class="pr-sec" style="page-break-before:always">Payout Option 2 &mdash; Standard, no flight payouts</div>
     ${payoutHtml}
@@ -1858,9 +1958,7 @@ document.getElementById('exportCsv').onclick=()=>{
   const rows=teams.slice().sort((a,b)=>a.card-b.card).map(t=>[t.card,t.team,t.p1,t.p2,t.flight,t.drawPos,t.bought||'',(t.amount==null?'':t.amount),t.collected?'Yes':'No'].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
   download('calcutta_board.csv',[head.join(','),...rows].join('\n'),'text/csv');
 };
-document.getElementById('exportJson').onclick=()=>download('calcutta_backup.json',JSON.stringify({teams:teams.map(t=>({card:t.card,bought:t.bought,amount:t.amount,collected:t.collected})),payout,results},null,2),'application/json');
-document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
-document.getElementById('importFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const parsed=JSON.parse(r.result);const arr=Array.isArray(parsed)?parsed:(parsed.teams||[]);if(!Array.isArray(parsed)&&parsed.payout&&parsed.payout.gross&&parsed.payout.net){payout=parsed.payout;}if(!Array.isArray(parsed)&&parsed.results){results=parsed.results;}const m={};arr.forEach(s=>m[s.card]=s);teams.forEach(t=>{const s=m[t.card];if(s){t.bought=s.bought||'';t.amount=(s.amount===0||s.amount)?s.amount:null;t.collected=!!s.collected;}});normalizePayout();normalizeResults();persistAll();renderCurrent();}catch(err){alert('Could not read that backup file.');}};r.readAsText(f);e.target.value='';};
+/* JSON backup/restore removed from UI */
 document.getElementById('resetBtn').onclick=()=>{const ans=prompt('This clears ALL bought-by names, amounts, and collected checks. Teams, flights, and draw order stay.\n\nType DELETE to confirm:');if(ans===null)return;if(ans.trim().toUpperCase()==='DELETE'){teams.forEach(t=>{t.bought='';t.amount=null;t.collected=false;});persistAll();renderCurrent();note('Entries cleared');}else{alert('Not cleared \u2014 you must type DELETE exactly.');}};
 
 /* admin unlock / lock */

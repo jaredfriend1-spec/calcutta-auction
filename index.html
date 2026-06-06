@@ -340,6 +340,28 @@ select.field option{background:#0c3225;color:var(--ink)}
 .an-flbar .v{font-family:var(--serif);font-weight:800;font-size:16px;color:var(--ink);min-width:96px;text-align:right}
 .an-flbar .v small{font-family:var(--sans);font-size:11px;color:var(--ink-3);font-weight:700;margin-left:6px}
 
+
+/* ===== Buyer Summary expandable / winnings patch ===== */
+.buyer-detail{border-bottom:1px solid #ffffff12}
+.buyer-detail summary{list-style:none;cursor:pointer}
+.buyer-detail summary::-webkit-details-marker{display:none}
+.buyer-detail .an-brow{margin:0}
+.buyer-detail summary .nm::after{content:'  ▸';color:var(--brass);font-weight:800}
+.buyer-detail[open] summary .nm::after{content:'  ▾'}
+.buyer-expand{padding:0 0 14px 64px}
+.buyer-mini{width:100%;border-collapse:collapse;min-width:0;margin-top:8px;background:#08231b55;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.buyer-mini th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--brass-soft);background:#0d3a2b;padding:9px 10px;text-align:left}
+.buyer-mini td{font-size:13px;padding:9px 10px;border-bottom:1px solid #ffffff10;color:var(--ink-2)}
+.buyer-mini tr:last-child td{border-bottom:none}
+.buyer-mini .money{text-align:right;font-family:var(--serif);font-weight:800;color:var(--ink)}
+.buyer-mini .win{color:var(--good);font-weight:800}
+.buyer-mini .netpos{color:var(--good);font-weight:800}
+.buyer-mini .netneg{color:var(--owed);font-weight:800}
+.buyer-section-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);font-weight:800;margin:12px 0 4px}
+.buyer-empty-detail{font-size:13px;color:var(--ink-3);padding:10px 0}
+.buyer-winnings-panel{margin-top:18px}
+@media(max-width:760px){.buyer-expand{padding:0 0 12px 0}.buyer-mini th,.buyer-mini td{font-size:12px;padding:8px}.buyer-mini{display:table!important}.buyer-detail .an-brow{grid-template-columns:28px 1fr auto}.buyer-detail .barcol{display:none}}
+
 /* ===== Mode toggle (Standard / If Flights Pay) ===== */
 .modebar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-bottom:18px}
 .modebar .ml{font-weight:800;color:var(--ink);font-size:15px}
@@ -583,6 +605,14 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
 
 /* clean print/report section handling */
 @media print{
+
+  table.pr{table-layout:fixed!important;font-size:10.5px!important}
+  table.pr th,table.pr td{white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere!important;word-break:normal!important;line-height:1.25!important;padding:6px 7px!important}
+  table.pr th.r,table.pr td.r{white-space:nowrap!important;overflow-wrap:normal!important}
+  .pr-buyer h3{display:block!important;line-height:1.25!important}
+  .pr-buyer h3 span{display:block!important;margin-top:3px!important}
+  .pr-summary{grid-template-columns:repeat(3,1fr)!important}
+  .pr-summary .card .v{font-size:16px!important;overflow-wrap:anywhere!important}
   .pr-sec{break-after:avoid;page-break-after:avoid;break-inside:avoid;page-break-inside:avoid;background:#0d3427!important;color:#fff!important;padding:8px 10px!important;border-bottom:none!important;margin-top:20px!important}
   .pr-buyer,.pr-card,table.pr{break-inside:auto;page-break-inside:auto}
   table.pr thead{display:table-header-group}
@@ -832,6 +862,178 @@ body.player #pagetabs button.payout-inactive-player{display:none !important}
 body.player .official-payout-badge{display:inline-flex}
 body.player #payoutpage .dashhead,body.player #flightpaypage .dashhead{align-items:flex-start}
 @media(max-width:760px){.official-payout-badge{font-size:11px;white-space:normal;width:auto}}
+
+
+
+/* ===== CLEAN PROFESSIONAL PDF REPORT v2 ===== */
+@media print{
+  @page{size:Letter portrait;margin:0.32in}
+  #printArea{width:100%!important;max-width:100%!important;box-sizing:border-box!important;color:#13211c!important;font-family:'Manrope',Arial,sans-serif!important}
+  .pr-top{padding-bottom:9px!important;margin-bottom:8px!important;border-bottom:3px solid #0d3427!important}
+  .pr-top .pr-logo{height:48px!important}
+  .pr-h1{font-size:22px!important;line-height:1.05!important}
+  .pr-sub{font-size:10.5px!important;color:#5a6b62!important}
+  .pr-sec{display:flex!important;align-items:center!important;gap:8px!important;background:#0d3427!important;color:#fff!important;border:none!important;padding:7px 9px!important;margin:12px 0 7px!important;font-size:13px!important;line-height:1.1!important;break-after:avoid!important;page-break-after:avoid!important}
+  .pr-sec .tag{background:#1d7b57!important;color:#fff!important;font-size:8px!important;padding:2px 6px!important;border-radius:999px!important;white-space:nowrap!important}
+  .pr-summary{display:grid!important;gap:7px!important;margin:8px 0 10px!important}
+  .pr-summary6{grid-template-columns:repeat(6,1fr)!important}
+  .pr-summary3{grid-template-columns:repeat(3,1fr)!important}
+  .pr-summary .card{border-radius:8px!important;padding:8px 9px!important;background:#0d3427!important;color:#fff!important;min-width:0!important;break-inside:avoid!important}
+  .pr-summary .card.staff{background:#b5651d!important}.pr-summary .card.accent{background:#1c6b4d!important}.pr-summary .card.light{background:#f1f5f2!important;color:#0d3427!important;border:1px solid #d4ded8!important}
+  .pr-summary .card .l{font-size:7.5px!important;letter-spacing:.07em!important;text-transform:uppercase!important;opacity:.82!important;font-weight:800!important;white-space:nowrap!important}
+  .pr-summary .card .v{font-size:16px!important;font-weight:800!important;margin-top:2px!important;line-height:1.05!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .pr-summary .card .v.smallv{font-size:12px!important;white-space:normal!important}
+  .pr-summary .card .s{font-size:8.5px!important;margin-top:3px!important;color:inherit!important;opacity:.75!important;line-height:1.15!important;max-height:22px!important;overflow:hidden!important}
+  .pr-two-col{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important;align-items:start!important}
+  .pr-first-page .pr-sec{margin-top:8px!important}
+  .pr-payout-intro{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8px!important;margin:3px 0 10px!important}
+  .pr-payout-intro div{border:1px solid #d4ded8!important;background:#f1f5f2!important;border-radius:8px!important;padding:8px!important;break-inside:avoid!important}
+  .pr-payout-intro b{display:block!important;font-size:8px!important;text-transform:uppercase!important;letter-spacing:.06em!important;color:#5a6b62!important}
+  .pr-payout-intro span{display:block!important;font-size:17px!important;font-weight:800!important;color:#0d3427!important;margin-top:2px!important}
+  .pr-subhead{font-size:12px!important;color:#0d3427!important;margin:9px 0 5px!important}
+  .pr-payout-box h3{font-size:12px!important;margin:0 0 5px!important;display:flex!important;justify-content:space-between!important;color:#0d3427!important;border-bottom:1px solid #bcc7c0!important;padding-bottom:3px!important}
+  table.pr{width:100%!important;border-collapse:collapse!important;table-layout:fixed!important;font-size:9.4px!important;margin-bottom:7px!important;break-inside:auto!important;page-break-inside:auto!important}
+  table.pr th{background:#0d3427!important;color:#fff!important;padding:5px 6px!important;font-size:7.4px!important;letter-spacing:.045em!important;text-transform:uppercase!important;line-height:1.1!important}
+  table.pr td{padding:4.6px 6px!important;border-bottom:1px solid #dfe5e1!important;line-height:1.16!important;vertical-align:top!important;overflow:hidden!important;text-overflow:ellipsis!important;word-break:normal!important;overflow-wrap:anywhere!important}
+  table.pr tr:nth-child(even) td{background:#f1f5f2!important}
+  table.pr thead{display:table-header-group!important}
+  table.pr tr{break-inside:avoid!important;page-break-inside:avoid!important}
+  table.pr td.r,table.pr th.r{text-align:right!important;white-space:nowrap!important;overflow-wrap:normal!important}
+  table.pr td.c,table.pr th.c{text-align:center!important}
+  .pr-compact th,.pr-compact td{padding-top:4.2px!important;padding-bottom:4.2px!important}
+  .pr-barrow{display:flex!important;align-items:center!important;gap:7px!important;padding:3px 0!important;font-size:9.2px!important;break-inside:avoid!important}
+  .pr-barrow .nm{width:132px!important;font-weight:800!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  .pr-barrow .track{height:11px!important;flex:1!important;background:#e7ece8!important;border-radius:4px!important;overflow:hidden!important}
+  .pr-barrow .vv{width:82px!important;text-align:right!important;font-weight:800!important;white-space:nowrap!important;color:#0d3427!important}
+  .pr-flag{width:7px!important;height:7px!important;margin-right:4px!important;border-radius:50%!important;display:inline-block!important}
+  .pr-flight-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px 12px!important}
+  .pr-flight-block{break-inside:avoid!important;page-break-inside:avoid!important;margin-bottom:5px!important}
+  .pr-flight-block h3,.pr-buyer h3{font-size:10.5px!important;margin:0 0 4px!important;color:#0d3427!important;display:flex!important;justify-content:space-between!important;gap:8px!important;border-bottom:1px solid #bcc7c0!important;padding-bottom:3px!important;line-height:1.15!important}
+  .pr-flight-block h3 span,.pr-buyer h3 span{font-size:9px!important;font-weight:700!important;color:#1d6b4d!important;text-align:right!important}
+  .pr-buyer{break-inside:avoid!important;page-break-inside:avoid!important;margin-bottom:8px!important}
+  .pr-buyer table{margin-bottom:4px!important}
+  .pr-empty{font-size:10px!important;color:#7b8a82!important;margin:7px 0!important}
+  .pr-foot{font-size:8px!important;color:#8a978f!important;border-top:1px solid #dde3df!important;margin-top:10px!important;padding-top:6px!important}
+  .pr-sold-price th:nth-child(1),.pr-sold-price td:nth-child(1){width:44%!important}
+  .pr-sold-price th:nth-child(2),.pr-sold-price td:nth-child(2){width:10%!important}
+  .pr-sold-price th:nth-child(3),.pr-sold-price td:nth-child(3){width:30%!important}
+  .pr-sold-price th:nth-child(4),.pr-sold-price td:nth-child(4){width:16%!important}
+  .pr-payout-table th:nth-child(1),.pr-payout-table td:nth-child(1){width:20%!important}
+  .pr-payout-table th:nth-child(2),.pr-payout-table td:nth-child(2),.pr-payout-table th:nth-child(3),.pr-payout-table td:nth-child(3),.pr-payout-table th:nth-child(4),.pr-payout-table td:nth-child(4),.pr-payout-table th:nth-child(5),.pr-payout-table td:nth-child(5){width:20%!important}
+}
+
+
+
+/* ===== Professional PDF report redesign ===== */
+@media print{
+  @page{size:letter portrait;margin:9mm 8mm 10mm}
+  #printArea{display:block!important;color:#13211c;font-family:Arial,Helvetica,sans-serif!important}
+  .pro-report{font-family:Arial,Helvetica,sans-serif!important;color:#13211c!important;font-size:9.2px!important;line-height:1.22!important}
+  .pro-top{display:flex!important;align-items:center!important;gap:12px!important;border-bottom:3px solid #0d3427!important;padding:0 0 9px!important;margin-bottom:10px!important;break-inside:avoid!important}
+  .pro-logo{height:52px!important;width:auto!important;filter:brightness(0) saturate(100%) invert(16%) sepia(28%) saturate(900%) hue-rotate(105deg)!important}
+  .pro-top h1{font-size:21px!important;line-height:1.05!important;margin:0!important;color:#0d3427!important;font-weight:900!important;letter-spacing:-.02em!important}
+  .pro-top p{margin:3px 0 0!important;font-size:10.5px!important;color:#5a6b62!important;font-weight:700!important}
+  .pro-sec{display:flex!important;align-items:end!important;justify-content:space-between!important;gap:8px!important;background:#0d3427!important;color:#fff!important;padding:7px 10px!important;border-radius:6px!important;margin:10px 0 7px!important;break-after:avoid!important;page-break-after:avoid!important;break-inside:avoid!important}
+  .pro-sec h2{font-size:13px!important;line-height:1!important;margin:0!important;color:#fff!important;font-weight:900!important;letter-spacing:.01em!important}
+  .pro-sec p{font-size:8.5px!important;margin:2px 0 0!important;color:#d8e3dc!important;text-transform:uppercase!important;letter-spacing:.06em!important;font-weight:700!important}
+  .pro-cards{display:grid!important;grid-template-columns:repeat(6,1fr)!important;gap:6px!important;margin:6px 0 8px!important;break-inside:avoid!important}
+  .pro-cards>div{background:#0d3427!important;color:#fff!important;border-radius:7px!important;padding:7px 7px!important;min-width:0!important;overflow:hidden!important}
+  .pro-cards span{display:block!important;font-size:7.2px!important;text-transform:uppercase!important;letter-spacing:.06em!important;color:#d7e4dd!important;font-weight:800!important;white-space:nowrap!important}
+  .pro-cards b{display:block!important;font-size:14px!important;margin-top:2px!important;line-height:1.05!important;color:#fff!important;font-weight:900!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .pro-cards small{display:block!important;font-size:7.5px!important;margin-top:2px!important;line-height:1.1!important;color:#d7e4dd!important;max-height:18px!important;overflow:hidden!important}
+  .pro-two{display:grid!important;grid-template-columns:1fr 1fr!important;gap:9px!important;align-items:start!important}
+  .pro-full{grid-column:1/-1!important}
+  .pro-payout-lede{display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:6px!important;margin-bottom:8px!important;break-inside:avoid!important}
+  .pro-payout-lede>div{border:1px solid #d4ded8!important;background:#f3f7f4!important;border-radius:7px!important;padding:7px!important;min-width:0!important}
+  .pro-payout-lede span{display:block!important;font-size:7px!important;text-transform:uppercase!important;letter-spacing:.06em!important;color:#5a6b62!important;font-weight:800!important;white-space:nowrap!important}
+  .pro-payout-lede b{display:block!important;color:#0d3427!important;font-size:14px!important;font-weight:900!important;margin-top:2px!important;white-space:nowrap!important}
+  .pro-box{break-inside:avoid!important;page-break-inside:avoid!important;margin-bottom:7px!important}
+  .pro-box h3,.pro-buyer-block h3,.pro-flight-block h3{display:flex!important;justify-content:space-between!important;gap:8px!important;font-size:10.5px!important;line-height:1.12!important;margin:0 0 4px!important;color:#0d3427!important;border-bottom:1px solid #bcc7c0!important;padding-bottom:3px!important;font-weight:900!important;break-after:avoid!important;page-break-after:avoid!important}
+  .pro-box h3 span,.pro-buyer-block h3 span,.pro-flight-block h3 span{font-size:8.5px!important;color:#1d6b4d!important;font-weight:800!important;text-align:right!important}
+  table.pro-table{width:100%!important;border-collapse:collapse!important;table-layout:fixed!important;margin:0 0 6px!important;font-size:8.6px!important;line-height:1.18!important;break-inside:auto!important;page-break-inside:auto!important}
+  table.pro-table thead{display:table-header-group!important}
+  table.pro-table tr{break-inside:avoid!important;page-break-inside:avoid!important}
+  table.pro-table th{background:#0d3427!important;color:#fff!important;text-align:left!important;font-size:7.2px!important;text-transform:uppercase!important;letter-spacing:.04em!important;font-weight:900!important;padding:4px 5px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  table.pro-table td{border-bottom:1px solid #dfe5e1!important;padding:4px 5px!important;vertical-align:top!important;overflow-wrap:anywhere!important;word-break:normal!important}
+  table.pro-table tr:nth-child(even) td{background:#f7faf8!important}
+  table.pro-table .r{text-align:right!important;white-space:nowrap!important}
+  table.pro-table .c{text-align:center!important;white-space:nowrap!important}
+  .pro-total td{font-weight:900!important;border-top:2px solid #0d3427!important;background:#fff!important}
+  .pro-buyer-block{break-inside:avoid!important;page-break-inside:avoid!important;margin-bottom:8px!important;border:1px solid #d8e0dc!important;border-radius:6px!important;padding:6px!important;background:#fff!important}
+  .pro-win-table{margin-top:4px!important}
+  .pro-flight-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;align-items:start!important}
+  .pro-flight-block{break-inside:avoid!important;page-break-inside:avoid!important;margin-bottom:6px!important}
+  .pro-dot{display:inline-block!important;width:7px!important;height:7px!important;border-radius:50%!important;margin-right:4px!important;vertical-align:middle!important}
+  .pro-pos{color:#157347!important;font-weight:900!important}.pro-neg{color:#a33b20!important;font-weight:900!important}
+  .pro-empty{font-size:10px!important;color:#5a6b62!important;margin:6px 0!important}
+  .pro-foot{font-size:7.5px!important;color:#6c7b72!important;border-top:1px solid #d8e0dc!important;margin-top:10px!important;padding-top:5px!important}
+}
+
+
+
+/* ===== PDF LANDSCAPE FIX — prevents cut-off and restores presentation styling ===== */
+@media print{
+  @page{size:Letter landscape;margin:0.28in 0.32in 0.34in 0.32in!important}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  html,body{width:auto!important;min-width:0!important;background:#fff!important}
+  #printArea{display:block!important;width:100%!important;max-width:none!important;overflow:visible!important;color:#13211c!important}
+  .pro-report{font-family:Arial,Helvetica,sans-serif!important;font-size:8.8px!important;line-height:1.18!important;color:#13211c!important;overflow:visible!important}
+  .pro-top{display:flex!important;align-items:center!important;gap:12px!important;border-bottom:3px solid #0d3427!important;padding:0 0 8px!important;margin-bottom:8px!important;break-inside:avoid!important}
+  .pro-logo{height:46px!important;width:auto!important}
+  .pro-top h1{font-size:20px!important;line-height:1.05!important;margin:0!important;color:#0d3427!important;font-weight:900!important}
+  .pro-top p{font-size:10px!important;margin:2px 0 0!important;color:#5a6b62!important;font-weight:700!important}
+
+  .pro-sec{background:#0d3427!important;color:#fff!important;border-radius:6px!important;padding:6px 9px!important;margin:9px 0 6px!important;break-after:avoid!important;page-break-after:avoid!important}
+  .pro-sec h2{font-size:12.5px!important;color:#fff!important;margin:0!important;line-height:1.05!important}
+  .pro-sec p{font-size:8px!important;color:#d8e3dc!important;margin:1px 0 0!important}
+
+  .pro-cards{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:6px!important;margin:6px 0 8px!important;break-inside:avoid!important}
+  .pro-cards>div{background:#0d3427!important;color:#fff!important;border-radius:8px!important;padding:7px 8px!important;min-width:0!important;overflow:visible!important}
+  .pro-cards span{font-size:7px!important;text-transform:uppercase!important;letter-spacing:.055em!important;color:#d7e4dd!important;font-weight:800!important;white-space:nowrap!important}
+  .pro-cards b{font-size:14px!important;line-height:1.08!important;margin-top:2px!important;color:#fff!important;font-weight:900!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important}
+  .pro-cards small{font-size:7.3px!important;line-height:1.12!important;color:#d7e4dd!important;max-height:none!important;overflow:visible!important}
+  .pro-payout-lede{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:6px!important;margin:4px 0 8px!important;break-inside:avoid!important}
+  .pro-payout-lede>div{background:#f3f7f4!important;border:1px solid #d4ded8!important;border-radius:8px!important;padding:7px 8px!important;overflow:visible!important}
+  .pro-payout-lede span{font-size:7px!important;text-transform:uppercase!important;letter-spacing:.055em!important;color:#5a6b62!important;font-weight:800!important;white-space:nowrap!important}
+  .pro-payout-lede b{font-size:14px!important;color:#0d3427!important;font-weight:900!important;white-space:nowrap!important}
+
+  .pro-two{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;align-items:start!important}
+  .pro-flight-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px 10px!important;align-items:start!important}
+  .pro-box,.pro-flight-block{break-inside:avoid!important;page-break-inside:avoid!important;margin-bottom:6px!important}
+  .pro-buyer-block{break-inside:avoid!important;page-break-inside:avoid!important;margin-bottom:6px!important;border:1px solid #d8e0dc!important;border-radius:6px!important;padding:5px 6px!important;background:#fff!important}
+  .pro-box h3,.pro-buyer-block h3,.pro-flight-block h3{font-size:10px!important;line-height:1.12!important;margin:0 0 3px!important;padding-bottom:3px!important;color:#0d3427!important;border-bottom:1px solid #bcc7c0!important;break-after:avoid!important;page-break-after:avoid!important}
+  .pro-box h3 span,.pro-buyer-block h3 span,.pro-flight-block h3 span{font-size:8.4px!important;color:#1d6b4d!important;font-weight:800!important}
+
+  table.pro-table{width:100%!important;max-width:100%!important;border-collapse:collapse!important;table-layout:auto!important;margin:0 0 5px!important;font-size:8.15px!important;line-height:1.14!important;break-inside:auto!important;page-break-inside:auto!important}
+  table.pro-table thead{display:table-header-group!important}
+  table.pro-table tr{break-inside:avoid!important;page-break-inside:avoid!important}
+  table.pro-table th{background:#0d3427!important;color:#fff!important;text-align:left!important;font-size:6.8px!important;text-transform:uppercase!important;letter-spacing:.035em!important;font-weight:900!important;padding:3.8px 4.5px!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important}
+  table.pro-table td{border-bottom:1px solid #dfe5e1!important;padding:3.8px 4.5px!important;vertical-align:top!important;overflow:visible!important;text-overflow:clip!important;word-break:normal!important;overflow-wrap:normal!important;white-space:normal!important}
+  table.pro-table tr:nth-child(even) td{background:#f7faf8!important}
+  table.pro-table .r,table.pro-table td.r,table.pro-table th.r{text-align:right!important;white-space:nowrap!important;overflow-wrap:normal!important}
+  table.pro-table .c,table.pro-table td.c,table.pro-table th.c{text-align:center!important;white-space:nowrap!important}
+  .pro-total td{font-weight:900!important;border-top:2px solid #0d3427!important;background:#fff!important}
+
+  /* sensible widths for the recurring report tables */
+  .pro-sold-price th:nth-child(1),.pro-sold-price td:nth-child(1){width:36%!important}
+  .pro-sold-price th:nth-child(2),.pro-sold-price td:nth-child(2){width:10%!important}
+  .pro-sold-price th:nth-child(3),.pro-sold-price td:nth-child(3){width:38%!important}
+  .pro-sold-price th:nth-child(4),.pro-sold-price td:nth-child(4){width:16%!important}
+  .pro-payout-table th,.pro-payout-table td{white-space:nowrap!important}
+
+  .pro-dot{display:inline-block!important;width:7px!important;height:7px!important;border-radius:50%!important;margin-right:4px!important;vertical-align:middle!important}
+  .pro-pos{color:#157347!important;font-weight:900!important}.pro-neg{color:#a33b20!important;font-weight:900!important}
+  .pro-empty{font-size:9.5px!important;color:#5a6b62!important;margin:5px 0!important}
+  .pro-foot{font-size:7.4px!important;color:#6c7b72!important;border-top:1px solid #d8e0dc!important;margin-top:8px!important;padding-top:5px!important}
+}
+
+
+/* Net payout visibility fix: use one full-width overall payout table in PDFs. */
+@media print{
+  table.pro-overall-payouts{table-layout:fixed!important;width:100%!important}
+  table.pro-overall-payouts th, table.pro-overall-payouts td{overflow:visible!important;text-overflow:clip!important;white-space:normal!important}
+  table.pro-overall-payouts .r, table.pro-overall-payouts .c{white-space:nowrap!important}
+}
 
 </style>
 </head>
@@ -1782,16 +1984,51 @@ function fpRecompute(){
 
 
 /* ===== ANALYTICS ===== */
+function awardRows(){
+  normalizeResults();
+  const P=activePools();
+  const rows=[];
+  const add=(spot,amt,card)=>{
+    if(!card)return;
+    const t=teams.find(x=>String(x.card)===String(card));
+    if(!t)return;
+    rows.push({spot,amount:centRound(amt),team:t,buyer:(t.bought||'').trim()||'(no buyer entered)'});
+  };
+  (payout.gross||[]).forEach((pct,i)=>add(ordinal(i+1)+' Gross', centRound(P.gPool*pct/100), results.gross[i]));
+  (payout.net||[]).forEach((pct,i)=>add(ordinal(i+1)+' Net', centRound(P.nPool*pct/100), results.net[i]));
+  if(P.mode==='flights'){
+    [1,2,3,4].forEach(f=>{
+      const rf=(results.flights||{})[f]||{};
+      add('Flight '+f+' Gross', P.fl[f].g, rf.g);
+      add('Flight '+f+' Net', P.fl[f].n, rf.n);
+    });
+  }
+  return rows.filter(r=>r.amount>0);
+}
+function buyerPrizeAgg(){
+  const map={};
+  awardRows().forEach(r=>{
+    const e=map[r.buyer]||(map[r.buyer]={name:r.buyer,totalWon:0,wins:[]});
+    e.totalWon+=r.amount; e.wins.push(r);
+  });
+  Object.values(map).forEach(e=>e.wins.sort((a,b)=>b.amount-a.amount));
+  return map;
+}
 function buyerAgg(){
   const map={};
   teams.filter(t=>t.amount>0).forEach(t=>{
     const k=(t.bought||'').trim()||'(no buyer entered)';
-    const e=map[k]||(map[k]={name:k,count:0,total:0,collected:0,owed:0,biggest:0,flights:new Set()});
-    e.count++; e.total+=t.amount; e.flights.add(t.flight);
+    const e=map[k]||(map[k]={name:k,count:0,total:0,collected:0,owed:0,biggest:0,flights:new Set(),teams:[],totalWon:0,wins:[]});
+    e.count++; e.total+=t.amount; e.flights.add(t.flight); e.teams.push(t);
     if(t.collected) e.collected+=t.amount; else e.owed+=t.amount;
     if(t.amount>e.biggest) e.biggest=t.amount;
   });
-  return Object.values(map).sort((a,b)=>b.total-a.total||b.count-a.count);
+  const prizes=buyerPrizeAgg();
+  Object.keys(prizes).forEach(k=>{
+    const e=map[k]||(map[k]={name:k,count:0,total:0,collected:0,owed:0,biggest:0,flights:new Set(),teams:[],totalWon:0,wins:[]});
+    e.totalWon=prizes[k].totalWon; e.wins=prizes[k].wins;
+  });
+  return Object.values(map).sort((a,b)=>b.total-a.total||b.totalWon-a.totalWon||b.count-a.count);
 }
 function renderAnalytics(){
   const agg=buyerAgg();
@@ -1817,17 +2054,29 @@ function renderAnalytics(){
       <div class="an-kpi"><div class="l">Outstanding</div><div class="v">${fmt(pot-coll)}</div><div class="s">${pot?Math.round(coll/pot*100):0}% collected</div></div>
     </div>`;
 
-  const maxTotal=agg.length?agg[0].total:0;
+  const maxTotal=agg.length?Math.max(...agg.map(b=>b.total)):0;
   const buyerRows=agg.length? agg.map((b,i)=>{
     const w=maxTotal?Math.max(3,Math.round(b.total/maxTotal*100)):0;
     const pctPot=pot?Math.round(b.total/pot*100):0;
-    return `<div class="an-brow">
-      <div class="rk">${i+1}</div>
-      <div class="nm">${escapeHtml(b.name)}</div>
-      <div class="barcol"><div class="bar" style="width:${w}%"></div></div>
-      <div class="nums"><div class="big">${fmt(b.total)}</div>
-        <div class="sm">${b.count} team${b.count>1?'s':''} · ${pctPot}% of pot · ${b.owed>0?`<span class="ow">${fmt(b.owed)} owed</span>`:`<span class="pd">paid</span>`}</div></div>
-    </div>`;
+    const net=(b.totalWon||0)-b.total;
+    const boughtRows=(b.teams||[]).slice().sort((a,b)=>(b.amount||0)-(a.amount||0)||a.drawPos-b.drawPos).map(t=>`<tr><td>Flight ${t.flight}</td><td>${escapeHtml(t.p1+' + '+t.p2)}</td><td class="money">${fmt(t.amount)}</td><td>${t.collected?'<span class="pd">Paid</span>':'<span class="ow">Owed</span>'}</td></tr>`).join('');
+    const winRows=(b.wins||[]).map(r=>`<tr><td>${escapeHtml(r.spot)}</td><td>${escapeHtml(r.team.p1+' + '+r.team.p2)}</td><td class="money win">${fmtC(r.amount)}</td><td></td></tr>`).join('');
+    const winSummary = b.totalWon>0 ? ` · <span class="pd">won ${fmtC(b.totalWon)}</span> · <span class="${net>=0?'pd':'ow'}">net ${net>=0?'+':''}${fmtC(net)}</span>` : '';
+    return `<details class="buyer-detail">
+      <summary><div class="an-brow">
+        <div class="rk">${i+1}</div>
+        <div class="nm">${escapeHtml(b.name)}</div>
+        <div class="barcol"><div class="bar" style="width:${w}%"></div></div>
+        <div class="nums"><div class="big">${fmt(b.total)}</div>
+          <div class="sm">${b.count} team${b.count===1?'':'s'} · ${pctPot}% of pot · ${b.owed>0?`<span class="ow">${fmt(b.owed)} owed</span>`:`<span class="pd">paid</span>`}${winSummary}</div></div>
+      </div></summary>
+      <div class="buyer-expand">
+        <div class="buyer-section-label">Teams bought</div>
+        ${boughtRows?`<table class="buyer-mini"><thead><tr><th>Flight</th><th>Team</th><th class="money">Price</th><th>Status</th></tr></thead><tbody>${boughtRows}</tbody></table>`:'<div class="buyer-empty-detail">No teams bought.</div>'}
+        <div class="buyer-section-label">Result winnings</div>
+        ${winRows?`<table class="buyer-mini"><thead><tr><th>Result</th><th>Team</th><th class="money">Won</th><th></th></tr></thead><tbody>${winRows}<tr><td colspan="2"><b>Total won</b></td><td class="money win">${fmtC(b.totalWon)}</td><td></td></tr><tr><td colspan="2"><b>Net vs spend</b></td><td class="money ${net>=0?'netpos':'netneg'}">${net>=0?'+':''}${fmtC(net)}</td><td></td></tr></tbody></table>`:'<div class="buyer-empty-detail">No result winnings entered yet.</div>'}
+      </div>
+    </details>`;
   }).join('') : '<div class="lb-empty">No buyers yet — enter bids on the Betting tab.</div>';
 
   const flMax=Math.max(1,...[1,2,3,4].map(f=>flightTotals(f).pot));
@@ -2003,6 +2252,19 @@ function onResSel(el){
 }
 function bindResSelects(root){ (root||document).querySelectorAll('.res-sel').forEach(el=>el.onchange=()=>onResSel(el)); }
 
+function buyerWinningsSummaryHtml(){
+  const awards=awardRows();
+  if(!awards.length) return `<div class="res-sec"><div class="res-head" style="border-left:4px solid var(--brass)"><span class="rt">Buyer Winnings</span><span class="rp">Pending results</span></div><div class="res-note" style="padding:14px 22px">Enter winners above to calculate how much each buyer won.</div></div>`;
+  const by={};
+  awards.forEach(r=>{ const e=by[r.buyer]||(by[r.buyer]={name:r.buyer,totalWon:0,items:[],spent:0}); e.totalWon+=r.amount; e.items.push(r); });
+  teams.filter(t=>t.amount>0).forEach(t=>{ const k=(t.bought||'').trim()||'(no buyer entered)'; if(by[k]) by[k].spent+=(+t.amount||0); });
+  const rows=Object.values(by).sort((a,b)=>b.totalWon-a.totalWon).map(b=>{
+    const net=b.totalWon-b.spent;
+    const items=b.items.map(x=>`${escapeHtml(x.spot)}: ${escapeHtml(x.team.p1+' + '+x.team.p2)} (${fmtC(x.amount)})`).join('<br>');
+    return `<tr><td><b>${escapeHtml(b.name)}</b></td><td>${items}</td><td class="r">${fmtC(b.spent)}</td><td class="r">${fmtC(b.totalWon)}</td><td class="r ${net>=0?'pr-paid':'pr-owed'}">${net>=0?'+':''}${fmtC(net)}</td></tr>`;
+  }).join('');
+  return `<div class="res-sec"><div class="res-head" style="border-left:4px solid var(--brass)"><span class="rt">Buyer Winnings</span><span class="rp">Spend / won / net</span></div><div class="tblscroll"><table class="fp-table"><thead><tr><th>Buyer</th><th>Winning Teams</th><th>Spent</th><th>Won</th><th>Net</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
 function renderResults(){
   normalizeResults();
   const P=activePools();
@@ -2026,7 +2288,8 @@ function renderResults(){
       <div class="res-head net"><span class="rt">Overall Net &mdash; Tournament Pot</span><span class="rp">${fmtC(P.nPool)}<small>pool</small></span></div>
       ${netRows||'<div class="res-row"><span class="res-buyer none">Set net places on the Payout tab.</span></div>'}
     </div>
-    ${flightSection}`;
+    ${flightSection}
+    ${buyerWinningsSummaryHtml()}`;
 
   bindResSelects(document.getElementById('resultsBody'));
 }
@@ -2148,78 +2411,116 @@ function buildReport(kind){
   kind = kind || 'auction';
   const includeResults = kind === 'results';
   const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const sold=teams.filter(t=>t.amount>0).slice();
-  const soldByPrice=sold.slice().sort((a,b)=>(b.amount||0)-(a.amount||0)||a.drawPos-b.drawPos);
+  const money=n=>fmtC(centRound(+n||0));
+  const sold=teams.filter(t=>(+t.amount||0)>0).slice();
+  const soldByPrice=sold.slice().sort((a,b)=>(+b.amount||0)-(+a.amount||0)||a.drawPos-b.drawPos);
   const pot=sold.reduce((s,t)=>s+(+t.amount||0),0);
   const coll=sold.filter(t=>t.collected).reduce((s,t)=>s+(+t.amount||0),0);
-  const staff=staffCut(pot), dist=pot-staff;
+  const uncollected=centRound(pot-coll);
+  const staff=staffCut(pot);
+  const P=activePools();
+  const isF=P.mode==='flights';
+  const methodLabel=isF?'Flight Payout':'Standard Payout';
   const now=new Date().toLocaleString('en-US',{dateStyle:'long',timeStyle:'short'});
   const logoSrc=(document.querySelector('.clublogo')||{}).src||'';
-  const isF=payout.mode==='flights';
-  const methodLabel=isF?'Flight Payout':'Standard Payout';
-  const section=(title,sub='',pb=false)=>`<div class="pr-sec"${pb?' style="page-break-before:always"':''}>${esc(title)}${sub?` <span class="tag">${esc(sub)}</span>`:''}</div>`;
+  const FCHEX={1:'#5a9bd1',2:'#3f9e66',3:'#c2962f',4:'#c2697a'};
+  const teamName=t=>`${esc(t.p1)} &amp; ${esc(t.p2)}`;
+  const section=(title,sub='',pb=false)=>`<div class="pro-sec"${pb?' style="page-break-before:always"':''}><div><h2>${esc(title)}</h2>${sub?`<p>${esc(sub)}</p>`:''}</div></div>`;
+  const topLine=`${includeResults?'Results & Awards':'Auction Record'} &middot; ${now} &middot; Official Method: ${methodLabel}`;
 
   const by={};
   sold.forEach(t=>{const k=(t.bought||'').trim()||'(no buyer entered)';(by[k]=by[k]||[]).push(t);});
-  const buyers=Object.keys(by).sort((a,b)=>lastName(a).localeCompare(lastName(b))||a.localeCompare(b));
-  const byBuyerHtml=buyers.map(name=>{
-    const list=by[name].slice().sort((a,b)=>(b.amount||0)-(a.amount||0));
-    const tot=list.reduce((s,t)=>s+(+t.amount||0),0);
-    const owed=list.filter(t=>!t.collected).reduce((s,t)=>s+(+t.amount||0),0);
-    const rows=list.map(t=>`<tr><td class="c">${t.flight}</td><td>${esc(t.p1)} &amp; ${esc(t.p2)}</td><td class="r">${fmt(t.amount)}</td><td class="c">${t.collected?'<span class="pr-paid">&#10003; Paid</span>':'<span class="pr-owed">Owed</span>'}</td></tr>`).join('');
-    return `<div class="pr-buyer"><h3>${esc(name)} <span>${list.length} team${list.length>1?'s':''} &middot; ${fmt(tot)}${owed>0?` &middot; <span class="pr-owed">${fmt(owed)} owed</span>`:' &middot; <span class="pr-paid">paid in full</span>'}</span></h3><table class="pr"><thead><tr><th class="c">Flt</th><th>Team</th><th class="r">Amount</th><th class="c">Status</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-  }).join('') || '<p style="color:#888;font-style:normal">No teams have been sold yet.</p>';
+  const prizeMap=buyerPrizeAgg();
+  const buyerNames=Array.from(new Set([...Object.keys(by),...Object.keys(prizeMap)]));
+  const buyerTotals=buyerNames.map(name=>{
+    const list=(by[name]||[]).slice().sort((a,b)=>(+b.amount||0)-(+a.amount||0)||a.drawPos-b.drawPos);
+    const spent=list.reduce((s,t)=>s+(+t.amount||0),0);
+    const collected=list.filter(t=>t.collected).reduce((s,t)=>s+(+t.amount||0),0);
+    const won=(prizeMap[name]||{totalWon:0}).totalWon||0;
+    return {name,list,spent,collected,owed:centRound(spent-collected),won,net:centRound(won-spent),count:list.length};
+  }).sort((a,b)=>b.spent-a.spent||b.won-a.won||b.count-a.count||a.name.localeCompare(b.name));
 
-  const soldPriceHtml = `<table class="pr"><thead><tr><th class="c">Rank</th><th>Team</th><th class="c">Flight</th><th>Bought By</th><th class="r">Amount</th><th class="c">Status</th></tr></thead><tbody>${
-    soldByPrice.map((t,i)=>`<tr><td class="c">${i+1}</td><td>${esc(t.p1)} &amp; ${esc(t.p2)}</td><td class="c">${t.flight}</td><td>${esc(t.bought||'')}</td><td class="r">${fmt(t.amount)}</td><td class="c">${t.collected?'<span class="pr-paid">&#10003; Paid</span>':'<span class="pr-owed">Owed</span>'}</td></tr>`).join('') || '<tr><td colspan="6" class="c"><b>Pending Bids</b><br>Teams will appear here as they are purchased.</td></tr>'
-  }</tbody></table>`;
+  const grossTotal=(payout.gross||[]).reduce((s,p)=>s+centRound(P.gPool*p/100),0);
+  const netTotal=(payout.net||[]).reduce((s,p)=>s+centRound(P.nPool*p/100),0);
+  const flightGrossTotal=isF?[1,2,3,4].reduce((s,f)=>s+P.fl[f].g,0):0;
+  const flightNetTotal=isF?[1,2,3,4].reduce((s,f)=>s+P.fl[f].n,0):0;
+  const flightWinnerTotal=centRound(flightGrossTotal+flightNetTotal);
+  const payoutTotal=centRound(staff+flightWinnerTotal+grossTotal+netTotal);
+  const prizeMoney=centRound(P.pool+flightWinnerTotal);
+  const highest=soldByPrice[0];
+  const avg=sold.length?centRound(pot/sold.length):0;
+  const largestBuyer=buyerTotals.find(b=>b.spent>0);
+  const topFive=buyerTotals.filter(b=>b.spent>0).slice(0,5);
 
-  const byFlightHtml=[1,2,3,4].map(f=>{
+  const cards=`<div class="pro-cards">
+    <div><span>Total Pot</span><b>${money(pot)}</b></div>
+    <div><span>Prize Money</span><b>${money(prizeMoney)}</b></div>
+    <div><span>Club Share</span><b>${money(staff)}</b></div>
+    <div><span>Teams Sold</span><b>${sold.length}/${teams.length}</b></div>
+    <div><span>Highest Sale</span><b>${highest?money(highest.amount):'—'}</b><small>${highest?teamName(highest):'Pending bids'}</small></div>
+    <div><span>Largest Buyer</span><b>${largestBuyer?esc(largestBuyer.name):'—'}</b><small>${largestBuyer?money(largestBuyer.spent)+' · '+largestBuyer.count+' teams':'Pending bids'}</small></div>
+  </div>`;
+
+  const potRows=`<table class="pro-table pro-tight"><thead><tr><th>Money bucket</th><th class="r">Amount</th><th>What it means</th></tr></thead><tbody>
+    <tr><td>Total pot</td><td class="r">${money(pot)}</td><td>All team purchases entered at print time</td></tr>
+    <tr><td>Collected</td><td class="r">${money(coll)}</td><td>${uncollected>0?money(uncollected)+' still open':'All marked collected'}</td></tr>
+    <tr><td>Club share / staff</td><td class="r">${money(staff)}</td><td>5% off the top</td></tr>
+    ${isF?`<tr><td>Flight winner payouts</td><td class="r">${money(flightWinnerTotal)}</td><td>1 gross + 1 net winner in each flight</td></tr>`:''}
+    <tr><td>Overall gross pool</td><td class="r">${money(P.gPool)}</td><td>${payout.grossPct}% of ${isF?'main pool after flight payouts':'prize money'}</td></tr>
+    <tr><td>Overall net pool</td><td class="r">${money(P.nPool)}</td><td>${payout.netPct}% of ${isF?'main pool after flight payouts':'prize money'}</td></tr>
+  </tbody></table>`;
+
+  const topBuyerRows=topFive.map((b,i)=>`<tr><td class="c">${i+1}</td><td>${esc(b.name)}</td><td class="c">${b.count}</td><td class="r">${money(b.spent)}</td></tr>`).join('') || '<tr><td colspan="4" class="c">Pending bids</td></tr>';
+  const topBuyerTable=`<table class="pro-table pro-tight"><thead><tr><th class="c">#</th><th>Buyer</th><th class="c">Teams</th><th class="r">Spent</th></tr></thead><tbody>${topBuyerRows}</tbody></table>`;
+
+  const payoutRows=(poolName,poolAmt,items)=>items.map((pct,i)=>`<tr><td>${poolName}</td><td>${ordinal(i+1)} ${poolName}</td><td class="r">${money(centRound(poolAmt*pct/100))}</td><td class="c">${pct}%</td></tr>`).join('');
+  const overallPayoutTable=`<div class="pro-box pro-full"><h3>Overall Gross + Net Payouts <span>Gross ${money(P.gPool)} · Net ${money(P.nPool)}</span></h3><table class="pro-table pro-tight pro-overall-payouts"><colgroup><col style="width:18%"><col style="width:42%"><col style="width:25%"><col style="width:15%"></colgroup><thead><tr><th>Pool</th><th>Place</th><th class="r">Amount</th><th class="c">Share</th></tr></thead><tbody>${payoutRows('Gross',P.gPool,payout.gross||[])}${payoutRows('Net',P.nPool,payout.net||[])}</tbody></table></div>`;
+
+  let flightPayoutTable='';
+  if(isF){
+    const rows=[1,2,3,4].map(f=>{const d=flightTotals(f), fl=P.fl[f]; return `<tr><td><span class="pro-dot" style="background:${FCHEX[f]}"></span>Flight ${f}</td><td class="r">${money(d.pot)}</td><td class="r">${money(fl.money)}</td><td class="r">${money(fl.g)}</td><td class="r">${money(fl.n)}</td></tr>`;}).join('');
+    flightPayoutTable=`<div class="pro-box pro-full"><h3>Flight Winner Payouts <span>${money(flightWinnerTotal)}</span></h3><table class="pro-table pro-tight"><thead><tr><th>Flight</th><th class="r">Flight Pot</th><th class="r">Total Flight Payout</th><th class="r">Gross Winner</th><th class="r">Net Winner</th></tr></thead><tbody>${rows}<tr class="pro-total"><td>Total</td><td></td><td class="r">${money(flightWinnerTotal)}</td><td class="r">${money(flightGrossTotal)}</td><td class="r">${money(flightNetTotal)}</td></tr></tbody></table></div>`;
+  }
+  const payoutStructure=`<div class="pro-payout-lede">
+    <div><span>Total Pot</span><b>${money(pot)}</b></div>
+    <div><span>Club Share</span><b>${money(staff)}</b></div>
+    ${isF?`<div><span>Flight Winners</span><b>${money(flightWinnerTotal)}</b></div>`:''}
+    <div><span>Overall Gross</span><b>${money(P.gPool)}</b></div>
+    <div><span>Overall Net</span><b>${money(P.nPool)}</b></div>
+  </div>${flightPayoutTable}${overallPayoutTable}`;
+
+  const buyerDetail=buyerTotals.filter(b=>b.spent>0||b.won>0).map(b=>{
+    const teamsRows=b.list.map(t=>`<tr><td class="c">${t.flight}</td><td>${teamName(t)}</td><td class="r">${money(t.amount)}</td></tr>`).join('') || '<tr><td colspan="3" class="c">No teams bought.</td></tr>';
+    const wins=(prizeMap[b.name]||{}).wins||[];
+    const winRows=includeResults && wins.length?wins.map(w=>`<tr><td>${esc(w.spot)}</td><td>${teamName(w.team)}</td><td class="r">${money(w.amount)}</td></tr>`).join(''):'';
+    return `<div class="pro-buyer-block"><h3>${esc(b.name)} <span>${b.count} team${b.count===1?'':'s'} · spent ${money(b.spent)}${includeResults?` · won ${money(b.won)} · net ${b.net>=0?'+':''}${money(b.net)}`:''}${b.owed>0?` · owed ${money(b.owed)}`:''}</span></h3><table class="pro-table pro-tight"><thead><tr><th class="c">Flt</th><th>Team bought</th><th class="r">Price</th></tr></thead><tbody>${teamsRows}</tbody></table>${winRows?`<table class="pro-table pro-tight pro-win-table"><thead><tr><th>Result</th><th>Winning team</th><th class="r">Won</th></tr></thead><tbody>${winRows}</tbody></table>`:''}</div>`;
+  }).join('') || '<p class="pro-empty">No buyers yet.</p>';
+
+  const byFlight=[1,2,3,4].map(f=>{
     const d=flightTotals(f);
-    const ts=teams.filter(t=>t.flight===f);
-    const soldT=ts.filter(t=>t.amount>0).sort((a,b)=>(b.amount||0)-(a.amount||0));
-    const unsoldT=ts.filter(t=>!(t.amount>0)).sort((a,b)=>a.drawPos-b.drawPos);
-    const rows=[...soldT,...unsoldT].map(t=>`<tr><td>${esc(t.p1)} &amp; ${esc(t.p2)}</td><td>${t.bought?esc(t.bought):'<span style="color:#999">&mdash;</span>'}</td><td class="r">${t.amount>0?fmt(t.amount):'<span style="color:#999">&mdash;</span>'}</td><td class="c">${t.amount>0?(t.collected?'<span class="pr-paid">&#10003; Paid</span>':'<span class="pr-owed">Owed</span>'):''}</td></tr>`).join('');
-    return `<div class="pr-buyer"><h3>Flight ${f} <span>${d.sold}/${d.teams} sold &middot; ${fmt(d.pot)} pot${d.pot-d.coll>0?` &middot; <span class="pr-owed">${fmt(d.pot-d.coll)} outstanding</span>`:' &middot; <span class="pr-paid">fully collected</span>'}</span></h3><table class="pr"><thead><tr><th>Team</th><th>Winning Bidder</th><th class="r">Bid</th><th class="c">Status</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    const rows=teams.filter(t=>t.flight===f && (+t.amount||0)>0).sort((a,b)=>(+b.amount||0)-(+a.amount||0)||a.drawPos-b.drawPos).map(t=>`<tr><td>${teamName(t)}</td><td>${esc(t.bought||'')}</td><td class="r">${money(t.amount)}</td></tr>`).join('') || '<tr><td colspan="3" class="c">Pending bids</td></tr>';
+    return `<div class="pro-flight-block"><h3>Flight ${f} <span>${d.sold}/${d.teams} sold · ${money(d.pot)}</span></h3><table class="pro-table pro-tight"><thead><tr><th>Team</th><th>Buyer</th><th class="r">Price</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }).join('');
 
-  const FCHEX={1:'#5a9bd1',2:'#3f9e66',3:'#c2962f',4:'#c2697a'};
-  const agg=buyerAgg();
-  const maxB=agg.length?agg[0].total:0;
-  const buyerBars=agg.map(b=>`<div class="pr-barrow"><div class="nm">${esc(b.name)}</div><div class="track"><div class="fillb" style="width:${maxB?Math.max(2,Math.round(b.total/maxB*100)):0}%"></div></div><div class="vv">${fmt(b.total)} &middot; ${b.count}t</div></div>`).join('') || '<div style="color:#8a978f;font-size:11px">No buyers yet.</div>';
-  const flMax=Math.max(1,...[1,2,3,4].map(f=>flightTotals(f).pot));
-  const flightBars=[1,2,3,4].map(f=>{const d=flightTotals(f);return `<div class="pr-barrow"><div class="nm"><span class="pr-flag" style="background:${FCHEX[f]}"></span>Flight ${f}</div><div class="track"><div class="fillb" style="width:${Math.max(2,Math.round(d.pot/flMax*100))}%;background:${FCHEX[f]}"></div></div><div class="vv">${fmt(d.pot)} &middot; ${pot?Math.round(d.pot/pot*100):0}%</div></div>`;}).join('');
+  const soldPrice=`<table class="pro-table pro-tight"><thead><tr><th>Team</th><th class="c">Flight</th><th>Buyer</th><th class="r">Price</th></tr></thead><tbody>${soldByPrice.map(t=>`<tr><td>${teamName(t)}</td><td class="c">${t.flight}</td><td>${esc(t.bought||'')}</td><td class="r">${money(t.amount)}</td></tr>`).join('') || '<tr><td colspan="4" class="c"><b>Pending Bids</b><br>Teams will appear here as they are purchased.</td></tr>'}</tbody></table>`;
 
-  const payRows=(pool,poolAmt)=>payout[pool].map((p,i)=>`<tr><td>${ordinal(i+1)} ${pool==='gross'?'Gross':'Net'}</td><td class="c">${p}%</td><td class="r">${fmtC(centRound(poolAmt*p/100))}</td></tr>`).join('');
-  const gPool=centRound(dist*payout.grossPct/100), nPool=centRound(dist*payout.netPct/100);
-  const standardPayoutHtml=`<table class="pr" style="margin-bottom:10px"><tbody><tr><td>Distributable pot after ${Math.round(STAFF_PCT*100)}% staff</td><td class="r">${fmtC(dist)}</td></tr><tr><td>Gross pool (${payout.grossPct}%)</td><td class="r">${fmtC(gPool)}</td></tr><tr><td>Net pool (${payout.netPct}%)</td><td class="r">${fmtC(nPool)}</td></tr></tbody></table><table class="pr"><thead><tr><th>Place</th><th class="c">Share</th><th class="r">Payout</th></tr></thead><tbody>${payRows('gross',gPool)}${payRows('net',nPool)}</tbody></table>`;
+  const awardList=awardRows().sort((a,b)=>b.amount-a.amount);
+  const resultsTable=awardList.length?`<table class="pro-table pro-tight"><thead><tr><th>Result</th><th>Team</th><th>Buyer</th><th class="r">Payout</th></tr></thead><tbody>${awardList.map(r=>`<tr><td>${esc(r.spot)}</td><td>${teamName(r.team)}</td><td>${esc(r.buyer)}</td><td class="r">${money(r.amount)}</td></tr>`).join('')}</tbody></table>`:'<p class="pro-empty">No results have been entered yet.</p>';
+  const settlementRows=buyerTotals.filter(b=>b.spent>0||b.won>0).sort((a,b)=>b.won-a.won||b.net-a.net||b.spent-a.spent).map(b=>`<tr><td>${esc(b.name)}</td><td class="r">${money(b.spent)}</td><td class="r">${money(b.won)}</td><td class="r ${b.net>=0?'pro-pos':'pro-neg'}">${b.net>=0?'+':''}${money(b.net)}</td></tr>`).join('') || '<tr><td colspan="4" class="c">No buyer results yet.</td></tr>';
+  const settlementTable=`<table class="pro-table pro-tight"><thead><tr><th>Buyer</th><th class="r">Spent</th><th class="r">Won</th><th class="r">Net</th></tr></thead><tbody>${settlementRows}</tbody></table>`;
 
-  const fpct=payout.flightPct/100, gsplit=payout.flightGrossPct/100, nsplit=1-gsplit;
-  let fpMoney=0;
-  const fpFlightRows=[1,2,3,4].map(f=>{const payin=flightTotals(f).pot; const money=centRound(payin*fpct); fpMoney+=money; const g=centRound(money*gsplit), n=centRound(money*nsplit); return `<tr><td><span class="pr-flag" style="background:${FCHEX[f]}"></span>Flight ${f}</td><td class="r">${fmtC(payin)}</td><td class="r">${fmtC(money)}</td><td class="r">${fmtC(g)}</td><td class="r">${fmtC(n)}</td></tr>`;}).join('');
-  const fpAfter=pot-staff-fpMoney;
-  const fpGPool=centRound(fpAfter*payout.grossPct/100), fpNPool=centRound(fpAfter*payout.netPct/100);
-  const flightPayoutHtml=`<table class="pr" style="margin-bottom:10px"><thead><tr><th>Flight</th><th class="r">Pay-In</th><th class="r">Flight Money (${payout.flightPct}%)</th><th class="r">Gross Win</th><th class="r">Net Win</th></tr></thead><tbody>${fpFlightRows}<tr class="pr-tot"><td>Paid to flights</td><td class="r">&mdash;</td><td class="r">${fmtC(fpMoney)}</td><td class="r">&mdash;</td><td class="r">&mdash;</td></tr></tbody></table><table class="pr" style="margin-bottom:10px"><tbody><tr><td>Tournament pot after staff + flight payouts</td><td class="r">${fmtC(fpAfter)}</td></tr><tr><td>Gross pool (${payout.grossPct}%)</td><td class="r">${fmtC(fpGPool)}</td></tr><tr><td>Net pool (${payout.netPct}%)</td><td class="r">${fmtC(fpNPool)}</td></tr></tbody></table><table class="pr"><thead><tr><th>Place</th><th class="c">Share</th><th class="r">Payout</th></tr></thead><tbody>${payRows('gross',fpGPool)}${payRows('net',fpNPool)}</tbody></table>`;
-  const payoutHtml=isF?flightPayoutHtml:standardPayoutHtml;
-
-  const ovG=isF?fpGPool:gPool, ovN=isF?fpNPool:nPool;
-  const winRow=(rank,amt,card)=>{const t=card?teams.find(x=>String(x.card)===String(card)):null;return `<tr><td>${esc(rank)}</td><td class="r">${fmtC(amt)}</td><td>${t?esc(t.p1)+' &amp; '+esc(t.p2):'<span style="color:#999">&mdash;</span>'}</td><td>${t&&t.bought?esc(t.bought):'<span style="color:#999">&mdash;</span>'}</td></tr>`;};
-  const rg=results.gross||{}, rn=results.net||{}, rfl=results.flights||{};
-  let resRowsHtml=payout.gross.map((p,i)=>winRow(ordinal(i+1)+' Gross',centRound(ovG*p/100),rg[i])).join('')+payout.net.map((p,i)=>winRow(ordinal(i+1)+' Net',centRound(ovN*p/100),rn[i])).join('');
-  if(isF){ resRowsHtml+=[1,2,3,4].map(f=>{const money=centRound(flightTotals(f).pot*fpct);const g=centRound(money*gsplit),n=centRound(money*nsplit);const rf=rfl[f]||{};return winRow('Flight '+f+' Gross',g,rf.g)+winRow('Flight '+f+' Net',n,rf.n);}).join(''); }
-  const resultsHtml=`<table class="pr"><thead><tr><th>Spot</th><th class="r">Payout</th><th>Winning Team</th><th>Bought By</th></tr></thead><tbody>${resRowsHtml}</tbody></table>`;
-
-  document.getElementById('printArea').innerHTML=`<div class="pr-top">${logoSrc?`<img class="pr-logo" src="${logoSrc}">`:''}<div><h1 class="pr-h1">Member&ndash;Member Calcutta</h1><div class="pr-sub">${includeResults?'Results &amp; Awards':'Auction Record'} &middot; ${now} &middot; ${methodLabel}</div></div></div>
-    ${includeResults?section('Results & Awards','winners first')+resultsHtml:''}
-    <div class="pr-summary"><div class="card"><div class="l">Total Pot</div><div class="v">${fmt(pot)}</div></div><div class="card"><div class="l">Collected</div><div class="v">${fmt(coll)}</div></div><div class="card staff"><div class="l">Staff 5%</div><div class="v">${fmt(staff)}</div></div><div class="card accent"><div class="l">Distributable</div><div class="v">${fmtC(isF?fpAfter:dist)}</div></div><div class="card"><div class="l">Teams Sold</div><div class="v">${sold.length}/${teams.length}</div></div><div class="card"><div class="l">Payout Method</div><div class="v" style="font-size:15px">${methodLabel}</div></div></div>
-    ${section('Money by Buyer')}${buyerBars}
-    ${section('Money by Flight')}${flightBars}
-    ${section(methodLabel,'active method only',true)}${payoutHtml}
-    ${section('Winning Bidders by Flight','auction board',true)}${byFlightHtml}
-    ${section('By Buyer — Detail','collection view',true)}${byBuyerHtml}
-    ${section('Teams Sold by Price','high to low',true)}${soldPriceHtml}
-    <div class="pr-foot">Montgomery Country Club Member&ndash;Member Calcutta &middot; figures reflect entries at time of printing.</div>`;
+  document.getElementById('printArea').innerHTML=`<div class="pro-report">
+    <div class="pro-top">${logoSrc?`<img class="pro-logo" src="${logoSrc}">`:''}<div><h1>Member&ndash;Member Calcutta</h1><p>${topLine}</p></div></div>
+    ${includeResults?section('Results & Awards','winner payouts and buyer settlement')+resultsTable+section('Buyer Settlement','spent, won, and net by buyer')+settlementTable:''}
+    ${section('Auction Overview','the money at a glance')}${cards}<div class="pro-two"><div>${potRows}</div><div>${topBuyerTable}</div></div>
+    ${section('Official Payouts',methodLabel,true)}${payoutStructure}
+    ${section('Buyers and Teams','sorted by total spend',true)}${buyerDetail}
+    ${section('Winning Bidders by Flight','team, buyer, and sale price',true)}<div class="pro-flight-grid">${byFlight}</div>
+    ${section('Teams Sold by Price','highest sale to lowest',true)}${soldPrice}
+    <div class="pro-foot">Montgomery Country Club Member&ndash;Member Calcutta &middot; generated ${now}</div>
+  </div>`;
 }
+
 document.getElementById('exportPdf').onclick=()=>{ buildReport('auction'); window.print(); };
 document.getElementById('exportResultsPdf').onclick=()=>{ buildReport('results'); window.print(); };
 

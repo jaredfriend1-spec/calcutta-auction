@@ -2150,7 +2150,7 @@ function renderAnalytics(){
     const net=(b.totalWon||0)-b.total;
     const boughtRows=(b.teams||[]).slice().sort((a,b)=>(b.amount||0)-(a.amount||0)||a.drawPos-b.drawPos).map(t=>`<tr><td>Flight ${t.flight}</td><td>${escapeHtml(t.p1+' + '+t.p2)}</td><td class="money">${fmt(t.amount)}</td><td>${t.collected?'<span class="pd">Paid</span>':'<span class="ow">Owed</span>'}</td></tr>`).join('');
     const winRows=(b.wins||[]).map(r=>`<tr><td>${escapeHtml(r.spot)}</td><td>${escapeHtml(r.team.p1+' + '+r.team.p2)}</td><td class="money win">${fmtC(r.amount)}</td><td></td></tr>`).join('');
-    const winSummary = b.totalWon>0 ? ` · <span class="pd">won ${fmtC(b.totalWon)}</span> · <span class="${net>=0?'pd':'ow'}">net ${net>=0?'+':''}${fmtC(net)}</span>` : '';
+    const winSummary = ` · <span class="pd">won ${fmtC(b.totalWon||0)}</span> · <span class="${net>=0?'pd':'ow'}">net ${net>=0?'+':''}${fmtC(net)}</span>`;
     return `<details class="buyer-detail">
       <summary><div class="an-brow">
         <div class="rk">${i+1}</div>
@@ -2163,7 +2163,7 @@ function renderAnalytics(){
         <div class="buyer-section-label">Teams bought</div>
         ${boughtRows?`<table class="buyer-mini"><thead><tr><th>Flight</th><th>Team</th><th class="money">Price</th><th>Status</th></tr></thead><tbody>${boughtRows}</tbody></table>`:'<div class="buyer-empty-detail">No teams bought.</div>'}
         <div class="buyer-section-label">Result winnings</div>
-        ${winRows?`<table class="buyer-mini"><thead><tr><th>Result</th><th>Team</th><th class="money">Won</th><th></th></tr></thead><tbody>${winRows}<tr><td colspan="2"><b>Total won</b></td><td class="money win">${fmtC(b.totalWon)}</td><td></td></tr><tr><td colspan="2"><b>Net vs spend</b></td><td class="money ${net>=0?'netpos':'netneg'}">${net>=0?'+':''}${fmtC(net)}</td><td></td></tr></tbody></table>`:'<div class="buyer-empty-detail">No result winnings entered yet.</div>'}
+        ${winRows?`<table class="buyer-mini"><thead><tr><th>Result</th><th>Team</th><th class="money">Won</th><th></th></tr></thead><tbody>${winRows}<tr><td colspan="2"><b>Total won</b></td><td class="money win">${fmtC(b.totalWon||0)}</td><td></td></tr><tr><td colspan="2"><b>Net vs spend</b></td><td class="money ${net>=0?'netpos':'netneg'}">${net>=0?'+':''}${fmtC(net)}</td><td></td></tr></tbody></table>`:`<table class="buyer-mini"><tbody><tr><td colspan="2"><b>Total won</b></td><td class="money win">${fmtC(0)}</td><td></td></tr><tr><td colspan="2"><b>Net vs spend</b></td><td class="money netneg">${fmtC(net)}</td><td></td></tr></tbody></table><div class="buyer-empty-detail">No winning teams for this buyer.</div>`}
       </div>
     </details>`;
   }).join('') : '<div class="lb-empty">No buyers yet — enter bids on the Betting tab.</div>';

@@ -380,6 +380,26 @@ select.field option{background:#0c3225;color:var(--ink)}
 .modechk.on .lab{color:#fff}
 body.player .modechk{opacity:.6;cursor:default}
 
+
+/* ===== Tie group results UI ===== */
+.tie-row{display:grid;grid-template-columns:150px 120px 140px 1fr 160px;gap:12px;align-items:start;padding:14px 18px;border-bottom:1px solid #ffffff12}
+.tie-row:nth-child(even){background:#ffffff05}
+.tie-row.consumed{opacity:.55;background:#ffffff08}
+.tie-place{font-family:var(--serif);font-weight:800;color:var(--brass-soft);font-size:18px}
+.tie-amt{font-family:var(--serif);font-weight:800;color:var(--ink);font-size:18px;text-align:right}
+.tie-count-wrap{display:flex;flex-direction:column;gap:5px}
+.tie-count-wrap label,.tie-teams label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:800}
+.tie-count{width:86px;background:#08231b;border:1.5px solid #ffffff33;border-radius:9px;color:var(--ink);font-weight:800;font-size:16px;text-align:center;padding:8px;outline:none}
+.tie-count:focus{border-color:var(--brass);box-shadow:0 0 0 3px #d8b65f2e}
+.tie-teams{display:flex;flex-direction:column;gap:8px}
+.tie-select{width:100%;background:#08231b;border:1.5px solid #ffffff33;border-radius:9px;color:var(--ink);font-family:var(--sans);font-size:14px;font-weight:700;padding:9px 12px;outline:none}
+.tie-select:focus{border-color:var(--brass);box-shadow:0 0 0 3px #d8b65f2e}
+.tie-split{font-family:var(--sans);font-size:12.5px;color:var(--ink-2);font-weight:700;text-align:right;line-height:1.35}
+.tie-split b{display:block;font-family:var(--serif);font-size:20px;color:var(--good);margin-bottom:2px}
+.tie-used{font-size:12px;color:var(--ink-3);font-weight:700}
+.tie-help{padding:12px 18px;color:var(--ink-2);font-size:13px;font-weight:600;border-bottom:1px solid #ffffff12;background:#ffffff05}
+@media(max-width:760px){.tie-row{grid-template-columns:1fr;gap:9px}.tie-amt,.tie-split{text-align:left}.tie-count{width:110px}}
+
 /* ===== Results board ===== */
 .res-sec{background:var(--card);border:1px solid var(--line);border-radius:18px;margin-bottom:18px;overflow:hidden;box-shadow:0 16px 36px -30px #000}
 .res-head{display:flex;align-items:center;gap:12px;padding:16px 22px;background:#0e3a2b;border-bottom:1px solid var(--line)}
@@ -1310,7 +1330,48 @@ let payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],fligh
 let results={gross:{},net:{},flights:{}};
 const blankTeams=()=>order.map(s=>({...s,bought:'',amount:null,collected:false}));
 function normalizePayout(){ if(payout.flightPct==null)payout.flightPct=10; if(payout.flightGrossPct==null)payout.flightGrossPct=50; if(payout.mode!=='standard'&&payout.mode!=='flights')payout.mode='flights'; }
-function normalizeResults(){ if(!results||typeof results!=='object')results={}; results.gross=results.gross||{}; results.net=results.net||{}; results.flights=results.flights||{}; }
+function normalizeResults(){
+  if(!results||typeof results!=='object')results={};
+  results.gross=results.gross||{};
+  results.net=results.net||{};
+  results.flights=results.flights||{};
+  results.tieGroups=results.tieGroups||{};
+  results.tieGroups.gross=results.tieGroups.gross||{};
+  results.tieGroups.net=results.tieGroups.net||{};
+  results.tieGroups.flightg=results.tieGroups.flightg||{};
+  results.tieGroups.flightn=results.tieGroups.flightn||{};
+}
+function cleanCards(arr){ return (Array.isArray(arr)?arr:[]).filter(v=>v!==''&&v!=null).map(v=>String(v)); }
+function getTieGroup(grp,key,fallbackCard){
+  normalizeResults();
+  const box=results.tieGroups[grp]||(results.tieGroups[grp]={});
+  const k=String(key);
+  if(!box[k]) box[k]={count:fallbackCard?1:1,teams:fallbackCard?[String(fallbackCard)]:[]};
+  if(!Array.isArray(box[k].teams)) box[k].teams=box[k].team?[String(box[k].team)]:[];
+  box[k].count=Math.max(1,parseInt(box[k].count||box[k].teams.length||1,10)||1);
+  return box[k];
+}
+function setTieCount(grp,key,count){
+  const g=getTieGroup(grp,key);
+  g.count=Math.max(1,Math.min(20,parseInt(count||1,10)||1));
+  while(g.teams.length<g.count) g.teams.push('');
+  if(g.teams.length>g.count) g.teams=g.teams.slice(0,g.count);
+  saveResults(); renderResults(); if(typeof renderReconciliation==='function')renderReconciliation();
+}
+function setTieTeam(grp,key,pos,card){
+  const g=getTieGroup(grp,key);
+  const n=Math.max(g.count,pos+1);
+  while(g.teams.length<n) g.teams.push('');
+  g.teams[pos]=card||'';
+  // keep legacy single-winner fields current for backward compatibility
+  if(g.count===1){
+    if(grp==='gross')results.gross[key]=card||'';
+    else if(grp==='net')results.net[key]=card||'';
+    else if(grp==='flightg'){results.flights[key]=results.flights[key]||{};results.flights[key].g=card||'';}
+    else if(grp==='flightn'){results.flights[key]=results.flights[key]||{};results.flights[key].n=card||'';}
+  }
+  saveResults(); renderResults(); if(typeof renderReconciliation==='function')renderReconciliation();
+}
 
 function note(msg){ const n=document.getElementById('savenote'); if(n) n.innerHTML=msg+' &middot; <b>'+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'</b>'; }
 
@@ -1984,26 +2045,54 @@ function fpRecompute(){
 
 
 /* ===== ANALYTICS ===== */
-function awardRows(){
-  normalizeResults();
+function payoutSlotList(grp){
   const P=activePools();
-  const rows=[];
-  const add=(spot,amt,card)=>{
-    if(!card)return;
-    const t=teams.find(x=>String(x.card)===String(card));
-    if(!t)return;
-    rows.push({spot,amount:centRound(amt),team:t,buyer:(t.bought||'').trim()||'(no buyer entered)'});
-  };
-  (payout.gross||[]).forEach((pct,i)=>add(ordinal(i+1)+' Gross', centRound(P.gPool*pct/100), results.gross[i]));
-  (payout.net||[]).forEach((pct,i)=>add(ordinal(i+1)+' Net', centRound(P.nPool*pct/100), results.net[i]));
-  if(P.mode==='flights'){
-    [1,2,3,4].forEach(f=>{
-      const rf=(results.flights||{})[f]||{};
-      add('Flight '+f+' Gross', P.fl[f].g, rf.g);
-      add('Flight '+f+' Net', P.fl[f].n, rf.n);
+  if(grp==='gross') return (payout.gross||[]).map((pct,i)=>({label:ordinal(i+1)+' Gross',amount:centRound(P.gPool*pct/100),pct:pct,index:i}));
+  if(grp==='net') return (payout.net||[]).map((pct,i)=>({label:ordinal(i+1)+' Net',amount:centRound(P.nPool*pct/100),pct:pct,index:i}));
+  return [];
+}
+function tieGroupAwards(grp){
+  normalizeResults();
+  const slots=payoutSlotList(grp), rows=[], consumed={};
+  for(let i=0;i<slots.length;i++){
+    if(consumed[i]) continue;
+    const legacy=(grp==='gross'?(results.gross||{})[i]:(results.net||{})[i])||'';
+    const g=getTieGroup(grp,i,legacy);
+    const count=Math.max(1,parseInt(g.count||1,10)||1);
+    const teamsChosen=cleanCards(g.teams).slice(0,count);
+    const usedSlots=slots.slice(i,Math.min(slots.length,i+count));
+    for(let j=i+1;j<i+usedSlots.length;j++) consumed[j]=true;
+    const pool=centRound(usedSlots.reduce((sum,x)=>sum+x.amount,0));
+    const divisor=count;
+    const each=divisor?centRound(pool/divisor):0;
+    teamsChosen.forEach(card=>{
+      const t=teams.find(x=>String(x.card)===String(card));
+      if(t&&each>0) rows.push({spot:count>1?`${slots[i].label} (${count}-way tie, ${usedSlots.map(x=>x.label.replace(/^[0-9]+.. /,'')).join(' + ')})`:slots[i].label,amount:each,pool,splitCount:count,slots:usedSlots,team:t,buyer:(t.bought||'').trim()||'(no buyer entered)'});
     });
   }
-  return rows.filter(r=>r.amount>0);
+  return rows;
+}
+function flightTieAwards(grp){
+  normalizeResults();
+  const P=activePools();
+  if(P.mode!=='flights') return [];
+  const rows=[];
+  [1,2,3,4].forEach(f=>{
+    const legacy=((results.flights||{})[f]||{})[grp==='flightg'?'g':'n']||'';
+    const g=getTieGroup(grp,f,legacy);
+    const count=Math.max(1,parseInt(g.count||1,10)||1);
+    const base=grp==='flightg'?P.fl[f].g:P.fl[f].n;
+    const teamsChosen=cleanCards(g.teams).slice(0,count);
+    const each=count?centRound(base/count):0;
+    teamsChosen.forEach(card=>{
+      const t=teams.find(x=>String(x.card)===String(card));
+      if(t&&each>0) rows.push({spot:`Flight ${f} ${grp==='flightg'?'Gross':'Net'}${count>1?` (${count}-way tie)`:''}`,amount:each,pool:base,splitCount:count,slots:[{label:`Flight ${f} ${grp==='flightg'?'Gross':'Net'}`,amount:base}],team:t,buyer:(t.bought||'').trim()||'(no buyer entered)'});
+    });
+  });
+  return rows;
+}
+function awardRows(){
+  return [].concat(tieGroupAwards('gross'),tieGroupAwards('net'),flightTieAwards('flightg'),flightTieAwards('flightn')).filter(r=>r.amount>0);
 }
 function buyerPrizeAgg(){
   const map={};
@@ -2198,13 +2287,31 @@ function resBuyerHtml(card){
   if(!t) return '<span class="none">—</span>';
   return t.bought?`Bought by <b>${escapeHtml(t.bought)}</b>`:'<span class="none">no buyer recorded</span>';
 }
-function resRow(grp,key,rankLabel,amt,sel){
-  return `<div class="res-row">
-    <span class="pl">${rankLabel}</span>
-    <span class="amt">${fmtC(amt)}</span>
-    <span class="pick"><select class="res-sel" data-grp="${grp}" data-key="${key}"${dis()}>${resTeamOptions(sel)}</select></span>
-    <span class="res-buyer">${resBuyerHtml(sel)}</span>
-  </div>`;
+function tieSelectOptions(sel){ return resTeamOptions(sel); }
+function tieResultRows(grp,slots){
+  normalizeResults();
+  const consumed={};
+  const rows=[];
+  for(let i=0;i<slots.length;i++){
+    if(consumed[i]){ rows.push(`<div class="tie-row consumed"><div class="tie-place">${slots[i].label}</div><div class="tie-amt">${fmtC(slots[i].amount)}</div><div class="tie-used" style="grid-column:span 3">Included in tie group above</div></div>`); continue; }
+    const legacy=(grp==='gross'?(results.gross||{})[i]:(results.net||{})[i])||'';
+    const g=getTieGroup(grp,i,legacy);
+    const count=Math.max(1,parseInt(g.count||1,10)||1);
+    while(g.teams.length<count) g.teams.push('');
+    const used=slots.slice(i,Math.min(slots.length,i+count));
+    for(let j=i+1;j<i+used.length;j++) consumed[j]=true;
+    const pool=centRound(used.reduce((s,x)=>s+x.amount,0));
+    const each=count?centRound(pool/count):0;
+    const selects=Array.from({length:count},(_,n)=>`<select class="tie-select" data-tiegrp="${grp}" data-key="${i}" data-pos="${n}"${dis()}>${tieSelectOptions(g.teams[n]||'')}</select>`).join('');
+    rows.push(`<div class="tie-row">
+      <div class="tie-place">${slots[i].label}</div>
+      <div class="tie-amt">${fmtC(slots[i].amount)}</div>
+      <div class="tie-count-wrap"><label>Tie count</label><input class="tie-count" type="number" min="1" max="20" value="${count}" data-tiecount="${grp}" data-key="${i}"${dis()}><div class="tie-used">Uses ${used.map(x=>x.label).join(' + ')}</div></div>
+      <div class="tie-teams"><label>${count===1?'Winning team':'Tied teams'}</label>${selects}</div>
+      <div class="tie-split"><b>${fmtC(each)}</b>${count===1?'payout':'per team'}<br><span>${fmtC(pool)} pooled</span></div>
+    </div>`);
+  }
+  return rows.join('');
 }
 /* flight gross/net payout amounts (from the flight-pay parameters) */
 function flightWinnerAmts(){
@@ -2213,18 +2320,35 @@ function flightWinnerAmts(){
   return o;
 }
 /* Flight | Gross winner | Net winner — used on Results AND If-Flights-Pay */
+/* flight gross/net payout amounts (from the flight-pay parameters) */
+function flightWinnerAmts(){
+  const fpct=payout.flightPct/100, g=payout.flightGrossPct/100, o={};
+  [1,2,3,4].forEach(f=>{ const money=centRound(flightTotals(f).pot*fpct); o[f]={money,g:centRound(money*g),n:centRound(money*(1-g))}; });
+  return o;
+}
+function flightTieCell(f,gn,amt){
+  const grp=gn==='g'?'flightg':'flightn';
+  const legacy=((results.flights||{})[f]||{})[gn]||'';
+  const g=getTieGroup(grp,f,legacy);
+  const count=Math.max(1,parseInt(g.count||1,10)||1);
+  while(g.teams.length<count) g.teams.push('');
+  const each=count?centRound(amt/count):0;
+  const selects=Array.from({length:count},(_,n)=>`<select class="tie-select" data-tiegrp="${grp}" data-key="${f}" data-pos="${n}"${dis()}>${tieSelectOptions(g.teams[n]||'')}</select>`).join('');
+  return `<div class="fw-cell"><div class="fw-lbl">${gn==='g'?'Gross':'Net'} <b>${fmtC(amt)}</b></div>
+    <div class="tie-count-wrap"><label>Tie count</label><input class="tie-count" type="number" min="1" max="20" value="${count}" data-tiecount="${grp}" data-key="${f}"${dis()}></div>
+    <div class="tie-teams"><label>${count===1?'Winning team':'Tied teams'}</label>${selects}</div>
+    <div class="res-buyer"><b>${fmtC(each)}</b> ${count===1?'winner payout':'per team'}</div></div>`;
+}
+/* Flight | Gross winner | Net winner — used on Results AND If-Flights-Pay */
 function flightWinnersSection(){
   const amt=flightWinnerAmts();
-  const cell=(f,gn)=>{const sel=((results.flights[f]||{})[gn])||''; const a=gn==='g'?amt[f].g:amt[f].n; const grp=gn==='g'?'flightg':'flightn';
-    return `<div class="fw-cell"><div class="fw-lbl">${gn==='g'?'Gross':'Net'} <b>${fmtC(a)}</b></div>
-      <select class="res-sel" data-grp="${grp}" data-key="${f}"${dis()}>${resTeamOptions(sel)}</select>
-      <div class="res-buyer">${resBuyerHtml(sel)}</div></div>`;};
   const rows=[1,2,3,4].map(f=>`<div class="fw-row" style="--fcol:${FC[f]}">
       <div class="fw-flag"><span class="dot"></span>Flight ${f}<small>${fmtC(amt[f].money)} flight money</small></div>
-      ${cell(f,'g')}${cell(f,'n')}
+      ${flightTieCell(f,'g',amt[f].g)}${flightTieCell(f,'n',amt[f].n)}
     </div>`).join('');
   return `<div class="res-sec">
-    <div class="res-head" style="border-left:4px solid var(--brass)"><span class="rt">Flight Winners</span><span class="rp">Gross &amp; Net &middot; each flight</span></div>
+    <div class="res-head" style="border-left:4px solid var(--brass)"><span class="rt">Flight Winners</span><span class="rp">Gross &amp; Net &middot; ties supported</span></div>
+    <div class="tie-help">Enter the number of tied teams for each flight prize, then select each tied team. The flight prize is split equally.</div>
     <div class="fw-headrow"><span>Flight</span><span>Gross Winner</span><span>Net Winner</span></div>
     ${rows}</div>`;
 }
@@ -2237,10 +2361,10 @@ function flightWinnersDisplay(){
       ${cell(f,'g')}${cell(f,'n')}
     </div>`).join('');
   return `<div class="res-sec">
-    <div class="res-head" style="border-left:4px solid var(--brass)"><span class="rt">Flight Winners &mdash; Payouts</span><span class="rp">What each would win</span></div>
+    <div class="res-head" style="border-left:4px solid var(--brass)"><span class="rt">Flight Winners &mdash; Payouts</span><span class="rp">What each would win before ties</span></div>
     <div class="fw-headrow"><span>Flight</span><span>Gross winner gets</span><span>Net winner gets</span></div>
     ${rows}
-    <div class="res-note" style="margin:14px 22px 4px">Record the actual winners on the <b>Results</b> tab.</div></div>`;
+    <div class="res-note" style="margin:14px 22px 4px">Record actual winners and ties on the <b>Results</b> tab.</div></div>`;
 }
 function onResSel(el){
   const grp=el.dataset.grp, key=el.dataset.key, v=el.value;
@@ -2248,10 +2372,13 @@ function onResSel(el){
   else if(grp==='net')results.net[key]=v;
   else if(grp==='flightg'){results.flights[key]=results.flights[key]||{};results.flights[key].g=v;}
   else if(grp==='flightn'){results.flights[key]=results.flights[key]||{};results.flights[key].n=v;}
-  saveResults(); renderCurrent();
+  saveResults(); renderResults(); if(typeof renderReconciliation==='function')renderReconciliation();
 }
-function bindResSelects(root){ (root||document).querySelectorAll('.res-sel').forEach(el=>el.onchange=()=>onResSel(el)); }
-
+function bindResSelects(root){
+  (root||document).querySelectorAll('.res-sel').forEach(el=>el.onchange=()=>onResSel(el));
+  (root||document).querySelectorAll('[data-tiecount]').forEach(el=>el.onchange=()=>setTieCount(el.dataset.tiecount,el.dataset.key,el.value));
+  (root||document).querySelectorAll('[data-tiegrp]').forEach(el=>el.onchange=()=>setTieTeam(el.dataset.tiegrp,el.dataset.key,parseInt(el.dataset.pos,10)||0,el.value));
+}
 function buyerWinningsSummaryHtml(){
   const awards=awardRows();
   if(!awards.length) return `<div class="res-sec"><div class="res-head" style="border-left:4px solid var(--brass)"><span class="rt">Buyer Winnings</span><span class="rp">Pending results</span></div><div class="res-note" style="padding:14px 22px">Enter winners above to calculate how much each buyer won.</div></div>`;
@@ -2273,8 +2400,8 @@ function renderResults(){
     <div class="dt staff"><div class="v">${fmt(P.staff)}</div><div class="l">Staff (${Math.round(STAFF_PCT*100)}%)</div></div>
     <div class="dt"><div class="v">${fmt(P.pool)}</div><div class="l">${P.mode==='flights'?'Tournament Pot':'Players\' Pot'}</div></div>`;
 
-  const grossRows=payout.gross.map((p,i)=>resRow('gross',i,ordinal(i+1)+' Gross',centRound(P.gPool*p/100),results.gross[i]||'')).join('');
-  const netRows=payout.net.map((p,i)=>resRow('net',i,ordinal(i+1)+' Net',centRound(P.nPool*p/100),results.net[i]||'')).join('');
+  const grossRows=tieResultRows('gross',payoutSlotList('gross'));
+  const netRows=tieResultRows('net',payoutSlotList('net'));
   const flightSection = P.mode==='flights'
     ? `<div class="res-note">Because the method is <b>Flight Payout</b>, each flight also pays a gross and a net winner.</div>${flightWinnersSection()}`
     : `<div class="res-note">Method is <b>Standard</b> — no flight winners are paid. Switch the method above to <b>Flight Payout</b> to record flight winners.</div>`;
@@ -2282,10 +2409,12 @@ function renderResults(){
   document.getElementById('resultsBody').innerHTML=`
     <div class="res-sec">
       <div class="res-head gross"><span class="rt">Overall Gross &mdash; Tournament Pot</span><span class="rp">${fmtC(P.gPool)}<small>pool</small></span></div>
+      <div class="tie-help">For ties, enter how many teams tied at that place. The app pools the payout spots covered by the tie and splits the money equally.</div>
       ${grossRows||'<div class="res-row"><span class="res-buyer none">Set gross places on the Payout tab.</span></div>'}
     </div>
     <div class="res-sec">
       <div class="res-head net"><span class="rt">Overall Net &mdash; Tournament Pot</span><span class="rp">${fmtC(P.nPool)}<small>pool</small></span></div>
+      <div class="tie-help">Example: a 6-way tie for 4th Net pools 4th, 5th, and 6th Net money, then splits it six ways.</div>
       ${netRows||'<div class="res-row"><span class="res-buyer none">Set net places on the Payout tab.</span></div>'}
     </div>
     ${flightSection}
@@ -2340,6 +2469,16 @@ function renderRoster(){
 }
 
 /* ===== POT RECONCILIATION (read-only, everyone) ===== */
+function resultsTieReconciliationHtml(){
+  const awards=awardRows();
+  if(!awards.length) return `<div class="rec-card"><div class="rec-h">Entered Results Payouts <small>pending winners</small></div><div class="rec-row"><span>No winners entered yet</span><span>$0.00</span></div></div>`;
+  const M=n=>'$'+(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const bySpot={};
+  awards.forEach(a=>{ const k=a.spot; const e=bySpot[k]||(bySpot[k]={spot:k,teams:[],paid:0,pool:a.pool||a.amount,split:a.amount}); e.teams.push(a.team.p1+' + '+a.team.p2); e.paid+=a.amount; e.split=a.amount; });
+  const rows=Object.values(bySpot).map(x=>`<div class="rec-row"><span>${escapeHtml(x.spot)}<br><small style="color:var(--ink-3)">${escapeHtml(x.teams.join(' · '))}</small></span><span>${M(x.paid)}<br><small>${M(x.split)} each</small></span></div>`).join('');
+  const total=awards.reduce((s,a)=>s+a.amount,0);
+  return `<div class="rec-card"><div class="rec-h">Entered Results Payouts <small>tie-adjusted winner payments</small></div>${rows}<div class="rec-row total"><span>Total entered winner payouts</span><span>${M(total)}</span></div></div>`;
+}
 function renderReconciliation(){
   const M=n=>'$'+(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const P=activePools(), isF=P.mode==='flights';
@@ -2391,6 +2530,7 @@ function renderReconciliation(){
     </div>
 
     ${flightPayCard}
+    ${resultsTieReconciliationHtml()}
 
     <div class="rec-card balance ${balanced?'ok':'warn'}">
       <div class="rec-h">Reconciliation</div>

@@ -1512,6 +1512,10 @@ body.demo .demo-banner{display:block}
 
 <!-- All Pages dropdown — lives OUTSIDE header to avoid overflow clipping -->
 <div class="nav-dropdown" id="navDropdown">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px 6px;border-bottom:1px solid var(--line)">
+    <span style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--brass);opacity:.8">All Pages</span>
+    <button onclick="closeNavMore()" style="background:none;border:none;color:var(--ink-2);font-size:22px;cursor:pointer;padding:0 4px;line-height:1">&times;</button>
+  </div>
   <div class="nav-dropdown-section">
     <div class="nav-dropdown-label">⚙ Pre-Event</div>
     <a onclick="navTo('guide')"><span class="phase-dot" style="background:#1f6b4d"></span>Guide</a>
@@ -3455,9 +3459,12 @@ function initPhaseNav(){
 }
 
 // close dropdown when clicking outside
-document.addEventListener('click', e => {
+// close dropdown when clicking or touching outside
+function handleNavOutside(e){
   if(!e.target.closest('.nav-more')){ closeNavMore(); }
-});
+}
+document.addEventListener('click', handleNavOutside);
+document.addEventListener('touchstart', handleNavOutside, {passive:true});
 
 function showPage(p){
   page=p;

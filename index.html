@@ -2086,12 +2086,18 @@ function saveLocal(){
 }
 
 function applySnapshot(val){
+  // if Firebase is empty (null), clear everything — don't fall back to localStorage
+  if(val===null || val===undefined){
+    order=[]; teams=[]; results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}};
+    try{localStorage.removeItem(KEY);}catch(e){}
+    rebuildPlayerLists(); applySettings(); normalizePayout(); normalizeResults();
+    return;
+  }
   val=val||{};
   const rs=getRosterFromSaved(val.roster); if(rs)order=rs;
   if(val.settings){
     appSettings={...DEFAULT_SETTINGS,...val.settings};
     if(val.settings.auctionSettings) auctionSettings={...auctionSettings,...val.settings.auctionSettings};
-    // load tournament lock state
     TOURNAMENT_LOCKED = !!val.settings.tournamentLocked;
   }
   if(val.history&&typeof val.history==='object') tournamentHistory=Object.values(val.history).sort((a,b)=>String(b.ts).localeCompare(String(a.ts)));

@@ -1783,6 +1783,8 @@ body.demo .demo-banner{display:block}
     <div id="manageImportPreview"></div>
   </div>
 </div>
+
+<div class="page admin-only" id="controlspage">
   <div class="dashwrap">
     <div class="dashhead">
       <div><div class="dash-eyebrow">Auction Setup</div><div class="dash-title">Auction Controls</div></div>
@@ -3395,9 +3397,9 @@ function toggleGuideStep(id){
   if(el) el.classList.toggle('open');
 }
 function resetResultsOnly(){ if(!confirmAdminAction('RESET RESULTS'))return; results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; saveResults(); renderCurrent(); }
-function resetRosterOnly(){ if(!confirmAdminAction('RESET ROSTER'))return; order=[]; teams=[]; rebuildPlayerLists(); saveRosterState(); persistAll(); renderCurrent(); note('Roster cleared'); }
-function resetAuctionOnly(){ if(!confirmAdminAction('RESET AUCTION'))return; teams=order.map(s=>({...s,bought:'',amount:null,collected:false})); results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; persistAll(); renderCurrent(); }
-function resetFullTournament(){ if(!confirmAdminAction('RESET FULL'))return; order=[]; teams=[]; payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:10,flightGrossPct:50,mode:'flights'}; results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; rebuildPlayerLists(); saveRosterState(); persistAll(); savePayout(); saveResults(); renderCurrent(); }
+function resetRosterOnly(){ if(!confirmAdminAction('RESET ROSTER'))return; order=[]; teams=[]; rebuildPlayerLists(); try{localStorage.removeItem(KEY);}catch(e){} persistAll(); renderCurrent(); note('Roster cleared'); }
+function resetAuctionOnly(){ if(!confirmAdminAction('RESET AUCTION'))return; teams=order.map(s=>({...s,bought:'',amount:null,collected:false})); results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; try{localStorage.removeItem(KEY);}catch(e){} persistAll(); renderCurrent(); }
+function resetFullTournament(){ if(!confirmAdminAction('RESET FULL'))return; order=[]; teams=[]; payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:10,flightGrossPct:50,mode:'flights'}; results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; rebuildPlayerLists(); try{localStorage.removeItem(KEY);}catch(e){} persistAll(); savePayout(); saveResults(); renderCurrent(); }
 
 /* ===== Admin / Player mode ===== */
 const ADMIN_PW=DEFAULT_SETTINGS.adminCode;
@@ -4380,15 +4382,17 @@ function previewRosterImport(newRoster){
   const {added,removed,moved}=rosterDiff(newRoster);
   pendingRosterImport=newRoster;
   const list=(arr,fn)=>arr.length?`<ul>${arr.slice(0,12).map(fn).join('')}${arr.length>12?`<li>...and ${arr.length-12} more</li>`:''}</ul>`:'<div class="res-note">None</div>';
-  box.innerHTML=`<div class="po-panel"><h3>Roster Import Preview</h3>
-    <div class="ph">${newRoster.length} teams found. Added ${added.length}, removed ${removed.length}, flight changes ${moved.length}.</div>
-    <div class="po-cols">
-      <div><h3>Added</h3>${list(added,t=>`<li>${escapeHtml(t.p1)} &amp; ${escapeHtml(t.p2)} — Flight ${t.flight}</li>`)}</div>
-      <div><h3>Removed</h3>${list(removed,t=>`<li>${escapeHtml(t.p1)} &amp; ${escapeHtml(t.p2)} — Flight ${t.flight}</li>`)}</div>
+  box.innerHTML=`<div class="po-panel"><h3>✅ Roster Import Preview</h3>
+    <div class="ph">${newRoster.length} teams found &nbsp;·&nbsp; ${added.length} added &nbsp;·&nbsp; ${removed.length} removed &nbsp;·&nbsp; ${moved.length} flight changes</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0">
+      <div><div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--good);margin-bottom:6px">Added</div>${list(added,t=>`<li style="font-size:13px;padding:3px 0;border-bottom:1px solid #ffffff0a">${escapeHtml(t.p1)} &amp; ${escapeHtml(t.p2)} <span style="color:var(--brass);font-size:11px">Flight ${t.flight}</span></li>`)}</div>
+      <div><div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--owed);margin-bottom:6px">Removed</div>${list(removed,t=>`<li style="font-size:13px;padding:3px 0;border-bottom:1px solid #ffffff0a">${escapeHtml(t.p1)} &amp; ${escapeHtml(t.p2)} <span style="color:var(--brass);font-size:11px">Flight ${t.flight}</span></li>`)}</div>
     </div>
-    <h3>Flight Changes</h3>${list(moved,t=>{const o=order.find(x=>teamKeyFromObject(x)===teamKeyFromObject(t));return `<li>${escapeHtml(t.p1)} &amp; ${escapeHtml(t.p2)} — Flight ${o?o.flight:'?'} → ${t.flight}</li>`;})}
-    <div class="actions"><button class="btn" id="applyRosterImportBtn">Apply Roster Update</button></div>
-    <div class="res-note">Apply only if the preview matches the official roster. This replaces teams/flights/draw order before betting starts.</div>
+    ${moved.length?`<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-bottom:6px">Flight Changes</div>${list(moved,t=>{const o=order.find(x=>teamKeyFromObject(x)===teamKeyFromObject(t));return `<li style="font-size:13px;padding:3px 0">${escapeHtml(t.p1)} &amp; ${escapeHtml(t.p2)} — Flight ${o?o.flight:'?'} → ${t.flight}</li>`;})}</div>`:''}
+    <div style="display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
+      <button class="btn" id="applyRosterImportBtn">Apply Roster Update</button>
+      <span style="font-size:12px;color:var(--ink-3)">Apply only if the preview matches your official roster.</span>
+    </div>
   </div>`;
   const btn=document.getElementById('applyRosterImportBtn');
   if(btn)btn.onclick=()=>{

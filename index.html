@@ -1605,6 +1605,14 @@ body.demo .demo-banner{display:block}
     <div class="actions" style="margin-top:16px">
       <div class="savenote" id="savenote">Ready</div>
     </div>
+    <div class="v2-card admin-only danger-zone" style="margin-top:24px">
+      <h3>Reset Auction Entries</h3>
+      <div class="ph">Clears all buyer names, amounts, and collected checks — teams and draw order stay intact</div>
+      <div class="v2-actions" style="margin-top:12px">
+        <button class="btn danger" onclick="resetAuctionOnly()">Reset Auction Entries</button>
+      </div>
+      <div class="fp-note" style="color:#e0734a;margin-top:10px">⚠ Cannot be undone. Archive the tournament first if you need a permanent record.</div>
+    </div>
     <!-- hidden file inputs kept in DOM for JS triggers -->
     <input id="importBackupXlsxFile" type="file" accept=".xlsx,.xls" style="display:none">
     <button id="exportPdf" style="display:none"></button>
@@ -3023,9 +3031,9 @@ function renderRosterManager(){
       <b>Draw Order</b> is the sequence teams go on the block — set this after your auction draw, or use <b>Auction Controls → Apply Order</b> to auto-sort.
     </div>
   </div>
-  <div class="v2-card danger-zone" style="margin-top:16px"><h3>Reset Auction Entries</h3><div class="ph">Clears all buyer names, amounts, and collected checks — teams and draw order stay</div>
-    <div class="v2-actions"><button class="btn danger" onclick="document.getElementById('resetBtn').click()">Reset Entries</button></div>
-    <div class="fp-note" style="color:#e0734a;margin-top:10px">⚠ This cannot be undone. Archive the tournament first if you need a record.</div>
+  <div class="v2-card danger-zone" style="margin-top:16px"><h3>Reset Roster</h3><div class="ph">Clears all teams — only use this to start fresh before importing a new roster</div>
+    <div class="v2-actions"><button class="btn danger" onclick="resetRosterOnly()">Reset Roster</button></div>
+    <div class="fp-note" style="color:#e0734a;margin-top:10px">⚠ This removes all teams and cannot be undone. Archive first if needed.</div>
   </div>`;
 }
 function addRosterRow(){
@@ -3389,6 +3397,7 @@ function toggleGuideStep(id){
   if(el) el.classList.toggle('open');
 }
 function resetResultsOnly(){ if(!confirmAdminAction('RESET RESULTS'))return; results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; saveResults(); renderCurrent(); }
+function resetRosterOnly(){ if(!confirmAdminAction('RESET ROSTER'))return; order=[]; teams=[]; rebuildPlayerLists(); saveRosterState(); persistAll(); renderCurrent(); note('Roster cleared'); }
 function resetAuctionOnly(){ if(!confirmAdminAction('RESET AUCTION'))return; teams=order.map(s=>({...s,bought:'',amount:null,collected:false})); results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; persistAll(); renderCurrent(); }
 function resetFullTournament(){ if(!confirmAdminAction('RESET FULL'))return; order=[]; teams=[]; payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:10,flightGrossPct:50,mode:'flights'}; results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; rebuildPlayerLists(); saveRosterState(); persistAll(); savePayout(); saveResults(); renderCurrent(); }
 
@@ -4386,7 +4395,15 @@ function previewRosterImport(newRoster){
     if(!pendingRosterImport)return;
     const ok=confirm(`Apply this roster update?\n\nTeams found: ${pendingRosterImport.length}\nAdded: ${added.length}\nRemoved: ${removed.length}\nFlight changes: ${moved.length}\n\nThis should only be used before betting starts.`);
     if(!ok)return;
-    try{ applyRosterImport(pendingRosterImport); box.innerHTML='<div class="po-panel"><h3>Roster Updated</h3><div class="ph">Roster update applied.</div></div>'; }
+    try{
+      applyRosterImport(pendingRosterImport);
+      box.innerHTML='';
+      const noteEl=document.getElementById('rosterImportNote');
+      if(noteEl) noteEl.textContent=`✅ Roster imported — ${pendingRosterImport.length} teams loaded successfully.`;
+      pendingRosterImport=null;
+      // navigate to Roster Manager so user sees the result immediately
+      showPage('manage');
+    }
     catch(err){ alert('Could not apply roster: '+(err&&err.message?err.message:err)); }
   };
 }

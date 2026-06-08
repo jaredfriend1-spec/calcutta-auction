@@ -70,6 +70,10 @@ body.tournament-locked .chk{pointer-events:none;opacity:.45}
 .pagetabs button:hover{color:var(--ink);background:#ffffff10}
 .pagetabs button.on{background:linear-gradient(165deg,#1f6b4d,#13503a);color:#fff;box-shadow:inset 0 1px 0 #ffffff22,0 2px 8px -5px #000}
 .pagetabs button.pay-active{color:#f4c64a!important;background:transparent!important}
+/* universal tabs always visible — subtle separator before them */
+.pagetabs button.tab-universal{color:var(--ink-3);opacity:.8}
+.pagetabs button.tab-universal:first-of-type{margin-left:6px;padding-left:10px;border-left:1px solid var(--line)}
+.pagetabs button.tab-universal.on{opacity:1}
 /* All-pages dropdown */
 .nav-more{position:relative;flex-shrink:0;margin-left:4px}
 .nav-more-btn{display:flex;align-items:center;gap:5px;background:#0a2a20;border:1px solid var(--line);color:var(--ink-2);font-family:var(--sans);font-weight:800;font-size:11px;padding:7px 11px;border-radius:9px;cursor:pointer;transition:.16s;white-space:nowrap}
@@ -403,7 +407,15 @@ select.field option{background:#0c3225;color:var(--ink)}
 .buyer-section-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);font-weight:800;margin:12px 0 4px}
 .buyer-empty-detail{font-size:13px;color:var(--ink-3);padding:10px 0}
 .buyer-winnings-panel{margin-top:18px}
-@media(max-width:760px){.buyer-expand{padding:0 0 12px 0}.buyer-mini th,.buyer-mini td{font-size:12px;padding:8px}.buyer-mini{display:table!important}.buyer-detail .an-brow{grid-template-columns:28px 1fr auto}.buyer-detail .barcol{display:none}}
+@media(max-width:760px){.buyer-expand{padding:0 0 12px 0}.buyer-mini th,.buyer-mini td{font-size:12px;padding:8px}.buyer-mini{display:table!important}
+  .buyer-detail .an-brow{flex-wrap:wrap;gap:6px;padding:12px 0}
+  .buyer-detail .an-brow .rk{min-width:28px;font-size:16px}
+  .buyer-detail .an-brow .nm{min-width:0;flex:1;font-size:15px}
+  .buyer-detail .an-brow .barcol{display:none}
+  .buyer-detail .an-brow .nums{min-width:0;width:100%;text-align:left;padding-left:36px}
+  .buyer-detail .an-brow .nums .big{font-size:16px}
+  .buyer-detail .an-brow .nums .sm{font-size:11.5px;line-height:1.5;white-space:normal}
+}
 
 /* ===== Mode toggle (Standard / If Flights Pay) ===== */
 .modebar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-bottom:18px}
@@ -1535,7 +1547,7 @@ body.demo .demo-banner{display:block}
     <div class="nav-dropdown-label">🏆 Post-Tournament</div>
     <a onclick="navTo('results')"><span class="phase-dot" style="background:#2a4a7f"></span>Results</a>
     <a onclick="navTo('recon')"><span class="phase-dot" style="background:#2a4a7f"></span>Reconciliation</a>
-    <a onclick="navTo('analytics')"><span class="phase-dot" style="background:#2a4a7f"></span>Buyer Summary</a>
+    <a onclick="navTo('analytics')"><span class="phase-dot" style="background:#2a4a7f"></span>Bidder Summary</a>
     <a onclick="navTo('history')"><span class="phase-dot" style="background:#2a4a7f"></span>History</a>
   </div>
   <div class="nav-dropdown-section">
@@ -1667,8 +1679,8 @@ body.demo .demo-banner{display:block}
   <div class="dashwrap">
     <div class="dashhead">
       <div>
-        <div class="dash-eyebrow">Where The Money Is</div>
-        <h2 class="dash-title">Buyer Summary</h2>
+        <div class="dash-eyebrow">Where The Bids Are</div>
+        <h2 class="dash-title">Bidder Summary</h2>
       </div>
       <div class="dashtotals" id="analyticsTotals"></div>
     </div>
@@ -1966,7 +1978,7 @@ function loadDemoData(){
       flightn:{1:{count:1,teams:['5']},2:{count:1,teams:['10']},3:{count:1,teams:['11']},4:{count:1,teams:['20']}}
     }
   };
-  normalizeResults(); rebuildPlayerLists(); applySettings(); ADMIN=true; applyMode(); showPage('dash'); hideLanding(); renderCurrent();
+  normalizeResults(); rebuildPlayerLists(); applySettings(); ADMIN=true; IS_MASTER=false; TOURNAMENT_LOCKED=false; document.body.classList.remove('tournament-locked'); applyMode(); showPage('dash'); hideLanding(); renderCurrent();
 }
 /* exitDemoReload defined further below — calls exitDemoToLive() */
 function buyerOptions(sel){ sel=sel||''; let o='<option value="">— select player —</option>'; PLAYER_OPTS.forEach(p=>{ o+=`<option value="${p.v.replace(/"/g,'&quot;')}"${sel===p.v?' selected':''}>${escapeHtml(p.l)}</option>`; }); return o; }
@@ -2809,7 +2821,7 @@ function renderAnalytics(){
 
   document.getElementById('analyticsTotals').innerHTML=`
     <div class="dt"><div class="v">${fmt(pot)}</div><div class="l">Total Spent</div></div>
-    <div class="dt"><div class="v">${buyers}</div><div class="l">Buyers</div></div>
+    <div class="dt"><div class="v">${buyers}</div><div class="l">Bidders</div></div>
     <div class="dt"><div class="v">${sold.length}/${teams.length}</div><div class="l">Teams Sold</div></div>
     <div class="dt"><div class="v">${fmt(coll)}</div><div class="l">Collected</div></div>`;
 
@@ -2859,10 +2871,16 @@ function renderAnalytics(){
 
   document.getElementById('analyticsBody').innerHTML=`
     ${kpis}
-    <div class="an-two">
-      <div class="po-panel"><h3>Money by Buyer</h3><div class="ph">Who's spending — ranked by total committed</div>${buyerRows}</div>
-      <div class="po-panel"><h3>Money by Flight</h3><div class="ph">Where the pot is concentrated</div>${flRows}
-        <div class="fp-note">Use this to see if bidding is lopsided toward one flight.</div></div>
+    <div class="po-panel">
+      <h3>Bids by Bidder</h3>
+      <div class="ph">Who's bidding — ranked by total committed</div>
+      ${buyerRows}
+    </div>
+    <div class="po-panel">
+      <h3>Bids by Flight</h3>
+      <div class="ph">Where the bids are concentrated</div>
+      ${flRows}
+      <div class="fp-note">Use this to see if bidding is lopsided toward one flight.</div>
     </div>`;
 }
 function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -3127,7 +3145,7 @@ function renderGuide(){
            </div>
            <div class="mock-card">
              <h4>🏆 Post tabs</h4>
-             <div style="font-size:11px;color:var(--ink-2);line-height:1.8">Results<br>Reconciliation<br>Buyer Summary<br>History</div>
+             <div style="font-size:11px;color:var(--ink-2);line-height:1.8">Results<br>Reconciliation<br>Bidder Summary<br>History</div>
            </div>
          </div>
        </div>
@@ -3255,7 +3273,7 @@ function renderGuide(){
      body:'After the round, click <b>🏆 Post</b>. Go to <b>Results</b> and select the winning team for each gross and net place. For ties, change the tie count and select each tied team — the app pools and splits automatically. Then check <b>Reconciliation</b> for a balanced ledger.',
      mock:`<div class="guide-mock">
        ${phaseBar('🏆 Post')}
-       ${tabs(['Results','Reconciliation','Buyer Summary','History'],'Results')}
+       ${tabs(['Results','Reconciliation','Bidder Summary','History'],'Results')}
        <div class="mock-card highlight" style="margin-top:10px">
          <h4>Overall Gross</h4>
          ${row('1st Gross','Davis + Gilchrist',true)}
@@ -3269,7 +3287,7 @@ function renderGuide(){
      body:'In <b>Post phase</b>, go to <b>Results</b>. Scroll to the bottom — the <b>Reports &amp; Exports</b> card is right there. Generate the <b>Results &amp; Awards PDF</b> to share with participants — winners, payouts, flight results, tie breakdowns. Then go to <b>History</b> to write notes and archive the tournament permanently.',
      mock:`<div class="guide-mock">
        ${phaseBar('🏆 Post')}
-       ${tabs(['Results','Reconciliation','Buyer Summary','History'],'History')}
+       ${tabs(['Results','Reconciliation','Bidder Summary','History'],'History')}
        <div class="mock-two" style="margin-top:10px">
          <div class="mock-card highlight">
            <h4>Tournament Notes</h4>
@@ -3357,14 +3375,17 @@ function pageIdFor(p){ return p==='flights'?'flightspage':p+'page'; }
 /* ===== Phase-based Navigation ===== */
 const PHASES = {
   pre:  { label:'⚙ Pre-Event',  color:'#1f6b4d', pages:['guide','setup','settings','manage','controls','payout','flightpay'] },
-  live: { label:'⚡ Live',       color:'#b5451b', pages:['bet','deck','dash','flights'] },
-  post: { label:'🏆 Post',       color:'#2a4a7f', pages:['results','recon','analytics','dash','flights','roster','history'] }
+  live: { label:'⚡ Live',       color:'#b5451b', pages:['bet','deck'] },
+  post: { label:'🏆 Post',       color:'#2a4a7f', pages:['results','recon','analytics','history'] }
 };
+/* Universal pages — always visible in every phase, never trigger a phase switch */
+const UNIVERSAL_PAGES = ['dash','flights','roster']; // shown in all phases
+const LIVE_EXCLUDED = ['roster']; // hidden during live phase
 const PAGE_LABELS = {
   guide:'Guide', setup:'Setup', settings:'Settings', manage:'Roster Manager',
   controls:'Auction Controls', payout:'Standard Payout', flightpay:'Flight Payout',
   bet:'Log Bids', deck:'On Deck ⛳', dash:'Dashboard', flights:'Flights',
-  roster:'Roster', analytics:'Buyer Summary', results:'Results',
+  roster:'Roster', analytics:'Bidder Summary', results:'Results',
   recon:'Reconciliation', history:'History'
 };
 let currentPhase = 'pre';
@@ -3372,24 +3393,27 @@ let currentPhase = 'pre';
 function setPhase(ph, noSave){
   currentPhase = ph;
   if(!noSave){ try{ localStorage.setItem('calcutta_phase', ph); }catch(e){} }
-  // update phase pills
   document.querySelectorAll('.phase-btn').forEach(b => b.classList.toggle('active', b.dataset.phase === ph));
   renderPhaseTabs();
-  // if current page not in this phase, navigate to first tab of phase
-  const phasePages = PHASES[ph].pages;
-  if(!phasePages.includes(page)) showPage(phasePages[0]);
+  // only navigate away if current page is phase-specific and not in this phase
+  const universal = UNIVERSAL_PAGES.filter(p => !(ph === 'live' && LIVE_EXCLUDED.includes(p)));
+  const phasePages = [...PHASES[ph].pages, ...universal];
+  if(!phasePages.includes(page)) showPage(PHASES[ph].pages[0]);
   updateDropdownActiveState();
 }
 
 function renderPhaseTabs(){
   const tabs = document.getElementById('pagetabs');
   if(!tabs || !ADMIN) return;
-  const pages = PHASES[currentPhase].pages;
+  // phase-specific pages first, then universal pages (filter some out per phase)
+  const universal = UNIVERSAL_PAGES.filter(p => !(currentPhase === 'live' && LIVE_EXCLUDED.includes(p)));
+  const pages = [...PHASES[currentPhase].pages, ...universal];
   tabs.innerHTML = pages.map(p => {
     const lbl = PAGE_LABELS[p] || p;
     const isActive = p === page;
     const isPay = (p==='payout'&&payout.mode==='standard')||(p==='flightpay'&&payout.mode==='flights');
-    return `<button data-page="${p}" class="${isActive?'on':''} ${isPay?'pay-active':''}" onclick="showPage('${p}')">${lbl}</button>`;
+    const isUniversal = UNIVERSAL_PAGES.includes(p);
+    return `<button data-page="${p}" class="${isActive?'on':''} ${isPay?'pay-active':''} ${isUniversal?'tab-universal':''}" onclick="showPage('${p}')">${lbl}</button>`;
   }).join('');
 }
 
@@ -3400,16 +3424,18 @@ function renderPlayerTabs(){
     {p:'dash',      l:'Dashboard'},
     {p:'flights',   l:'Flights'},
     {p:'roster',    l:'Roster'},
-    {p:'analytics', l:'Buyer Summary'},
+    {p:'analytics', l:'Bidder Summary'},
     {p:'results',   l:'Results'},
     {p:'recon',     l:'Reconciliation'}
   ].map(({p,l}) => `<button data-page="${p}" class="${p===page?'on':''}" onclick="showPage('${p}')">${l}</button>`).join('');
 }
 
 function navTo(p){
-  // find which phase this page belongs to and switch to it
-  for(const [ph, data] of Object.entries(PHASES)){
-    if(data.pages.includes(p)){ setPhase(ph, true); break; }
+  // universal pages don't change phase
+  if(!UNIVERSAL_PAGES.includes(p)){
+    for(const [ph, data] of Object.entries(PHASES)){
+      if(data.pages.includes(p)){ setPhase(ph, true); break; }
+    }
   }
   showPage(p);
   closeNavMore();
@@ -3471,8 +3497,8 @@ function showPage(p){
   allPageIds().forEach(id=>{ const el=document.getElementById(id); if(el)el.classList.toggle('show',id===pageIdFor(p)); });
   if(ADMIN){ renderPhaseTabs(); } else { renderPlayerTabs(); }
   updateDropdownActiveState();
-  // auto-switch phase if page belongs to a different phase
-  if(ADMIN){
+  // auto-switch phase only for phase-specific pages — never for universal pages
+  if(ADMIN && !UNIVERSAL_PAGES.includes(p)){
     for(const [ph, data] of Object.entries(PHASES)){
       if(data.pages.includes(p) && ph !== currentPhase){
         currentPhase = ph;
@@ -3512,18 +3538,18 @@ let TOURNAMENT_LOCKED = false;
 
 function applyTournamentLock(locked, fromRemote){
   TOURNAMENT_LOCKED = locked;
-  document.body.classList.toggle('tournament-locked', locked && !IS_MASTER);
-  // update locked badge — visible to non-master admins when locked
+  // demo mode is never locked — always fully editable
+  const effectiveLock = locked && !IS_MASTER && !DEMO_MODE;
+  document.body.classList.toggle('tournament-locked', effectiveLock);
   const badge = document.getElementById('lockedBadge');
-  if(badge) badge.style.display = (locked && ADMIN && !IS_MASTER) ? 'inline-flex' : 'none';
-  // update master lock button
+  if(badge) badge.style.display = (locked && ADMIN && !IS_MASTER && !DEMO_MODE) ? 'inline-flex' : 'none';
   const btn = document.getElementById('tournamentLockBtn');
-  if(btn && IS_MASTER){
-    btn.style.display = 'inline-flex';
+  if(btn) btn.style.display = (ADMIN && !DEMO_MODE) ? 'inline-flex' : 'none';
+  if(btn && ADMIN && !DEMO_MODE){
     btn.textContent = locked ? '🟢 Unlock Tournament' : '🔴 Lock Tournament';
     btn.className = `lockbtn master-only ${locked ? 'locked-state' : 'unlocked'}`;
   }
-  if(!fromRemote && useCloud){
+  if(!fromRemote && useCloud && !DEMO_MODE){
     root.child('settings/tournamentLocked').set(locked);
   }
 }
@@ -3556,7 +3582,7 @@ function applyMode(){
   if(nm) nm.style.display=ADMIN?'':'none';
   // lock button — visible to all admins, master password always required to use
   const lockBtn=document.getElementById('tournamentLockBtn');
-  if(lockBtn) lockBtn.style.display=ADMIN?'inline-flex':'none';
+  if(lockBtn) lockBtn.style.display=(ADMIN && !DEMO_MODE)?'inline-flex':'none';
   // apply lock state
   applyTournamentLock(TOURNAMENT_LOCKED, true);
   if(ADMIN){

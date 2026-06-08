@@ -1825,15 +1825,41 @@ const ROSTER_VERSION = "2026 Men\'s Member-Member PDF roster - 40 teams - Flight
 if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}
 const KEY='mmcalcutta_v2';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDAFsCd1ZhxVG35scW7QptEc2C81rl8U6g",
-  authDomain: "mcc-calcutta.firebaseapp.com",
-  databaseURL: "https://mcc-calcutta-default-rtdb.firebaseio.com",
-  projectId: "mcc-calcutta",
-  storageBucket: "mcc-calcutta.firebasestorage.app",
-  messagingSenderId: "437233160453",
-  appId: "1:437233160453:web:d5694d28925aabd078e76c"
+/* ===== Multi-Club Configuration =====
+   URL slug determines which club loads:
+   yoursite.vercel.app/mcc      → MCC
+   yoursite.vercel.app/club1    → New Club 1
+   Add more clubs below as needed.
+   ===================================== */
+const CLUB_CONFIGS = {
+  'mcc': {
+    apiKey: "AIzaSyDAFsCd1ZhxVG35scW7QptEc2C81rl8U6g",
+    authDomain: "mcc-calcutta.firebaseapp.com",
+    databaseURL: "https://mcc-calcutta-default-rtdb.firebaseio.com",
+    projectId: "mcc-calcutta",
+    storageBucket: "mcc-calcutta.firebasestorage.app",
+    messagingSenderId: "437233160453",
+    appId: "1:437233160453:web:d5694d28925aabd078e76c"
+  },
+  'club1': {
+    apiKey: "AIzaSyBmcRL-bgiQHBFwwnf3OAIJStPD1imC5q0",
+    authDomain: "calcutta-new-club-1.firebaseapp.com",
+    databaseURL: "https://calcutta-new-club-1-default-rtdb.firebaseio.com",
+    projectId: "calcutta-new-club-1",
+    storageBucket: "calcutta-new-club-1.firebasestorage.app",
+    messagingSenderId: "1007165103703",
+    appId: "1:1007165103703:web:5fa295944bb4e203d68d12"
+  }
+  /* Add more clubs here:
+  'riviera': { apiKey: "...", databaseURL: "https://calcutta-riviera-default-rtdb.firebaseio.com", ... },
+  */
 };
+
+/* Detect club from URL path — e.g. /mcc or /club1
+   Falls back to 'mcc' if no match found */
+const _slug = (window.location.pathname.replace(/\//g,'').split('/')[0]||'').toLowerCase();
+const _clubKey = CLUB_CONFIGS[_slug] ? _slug : 'mcc';
+const firebaseConfig = CLUB_CONFIGS[_clubKey];
 const EVENT_PATH = "calcutta/2026";
 
 let db=null, root=null, useCloud=false;

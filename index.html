@@ -4308,7 +4308,21 @@ async function readRosterFile(file){
     let txt='';
     for(let p=1;p<=pdf.numPages;p++){
       const page=await pdf.getPage(p); const tc=await page.getTextContent();
-      txt += tc.items.map(i=>i.str).join('\n')+'\n';
+      // Group items by approximate Y position to reconstruct lines
+      const rows=new Map();
+      tc.items.forEach(item=>{
+        if(!item.str.trim()) return;
+        const y=Math.round(item.transform[5]);
+        if(!rows.has(y)) rows.set(y,[]);
+        rows.get(y).push({x:item.transform[4], str:item.str});
+      });
+      // Sort rows top-to-bottom, items left-to-right within each row
+      const sorted=[...rows.entries()].sort((a,b)=>b[0]-a[0]);
+      sorted.forEach(([,items])=>{
+        items.sort((a,b)=>a.x-b.x);
+        txt += items.map(i=>i.str).join(' ').trim() + '\n';
+      });
+      txt += '\n';
     }
     return txt;
   }
@@ -4383,8 +4397,12 @@ if(rosterFile){ rosterFile.onchange=async()=>{
     if(!ADMIN){ alert('Unlock Admin before importing a roster.'); rosterFile.value=''; return; }
     if(bettingHasStarted()){ alert('Roster import is disabled after betting starts. Reset entries before changing teams/flights.'); rosterFile.value=''; return; }
     const txt=await readRosterFile(rosterFile.files[0]);
+    if(!txt.trim()){ throw new Error('Could not read text from this file. Try exporting as CSV from Golf Genius instead.'); }
     const parsed=buildRosterFromText(txt);
-    if(!parsed.length) throw new Error('No teams were found in that file.');
+    if(!parsed.length){
+      console.log('RAW TEXT EXTRACTED:\n', txt.substring(0,2000));
+      throw new Error('No teams were found. Check the console for extracted text. Try exporting as CSV from Golf Genius.');
+    }
     previewRosterImport(parsed);
     if(noteEl) noteEl.textContent='Preview loaded: '+parsed.length+' teams found. Review carefully before applying.';
   }catch(err){ alert('Could not import roster: '+err.message); if(noteEl)noteEl.textContent='Import failed'; }

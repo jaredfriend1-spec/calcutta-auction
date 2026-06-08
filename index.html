@@ -76,7 +76,7 @@ body.tournament-locked .chk{pointer-events:none;opacity:.45}
 .nav-more-btn:hover,.nav-more-btn.open{color:var(--ink);border-color:var(--brass);background:#0f3526}
 .nav-more-btn svg{transition:transform .2s}
 .nav-more-btn.open svg{transform:rotate(180deg)}
-.nav-dropdown{display:none;position:absolute;left:0;right:auto;top:calc(100% + 6px);background:linear-gradient(165deg,#0e3a2b,#08231b);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 20px 50px -20px #000,0 4px 16px -8px #000;min-width:200px;z-index:9999;overflow:hidden;animation:dropIn .14s cubic-bezier(.2,.8,.2,1)}
+.nav-dropdown{display:none;position:fixed;left:clamp(8px,2vw,20px);top:var(--nav-h);background:linear-gradient(165deg,#0e3a2b,#08231b);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 20px 50px -10px #000;min-width:220px;max-width:280px;max-height:calc(100vh - var(--nav-h) - 20px);overflow-y:auto;z-index:10000;animation:dropIn .14s cubic-bezier(.2,.8,.2,1);scrollbar-width:thin;scrollbar-color:var(--brass-deep) transparent}
 .nav-dropdown.open{display:block}
 @keyframes dropIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .nav-dropdown-section{padding:6px 0}
@@ -547,6 +547,7 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
   .pagetabs::-webkit-scrollbar{display:none}
   .pagetabs button{flex:0 0 auto;font-size:12px;padding:7px 10px}
   .nav-more-btn{font-size:10px;padding:5px 8px}
+  .nav-dropdown{left:8px!important;right:8px!important;min-width:0!important;max-width:none!important}
   .modestrip{padding:8px 10px;gap:8px}
   .modestrip .modechecks{width:100%}
   .modechk{flex:1;justify-content:center;padding:11px 12px}
@@ -1497,47 +1498,49 @@ body.demo .demo-banner{display:block}
 </div>
 <!-- Row 2: contextual tabs -->
 <div class="tabsrow" id="tabsrow">
-  <!-- All pages dropdown — LEFT side -->
+  <!-- All pages button — LEFT side, dropdown renders outside header -->
   <div class="nav-more admin-only" id="navMore">
     <button class="nav-more-btn" id="navMoreBtn" onclick="toggleNavMore()">
       All Pages
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
-    <div class="nav-dropdown" id="navDropdown">
-      <div class="nav-dropdown-section">
-        <div class="nav-dropdown-label">⚙ Pre-Event</div>
-        <a onclick="navTo('guide')"><span class="phase-dot" style="background:#1f6b4d"></span>Guide</a>
-        <a onclick="navTo('setup')"><span class="phase-dot" style="background:#1f6b4d"></span>Setup Checklist</a>
-        <a onclick="navTo('settings')"><span class="phase-dot" style="background:#1f6b4d"></span>Settings</a>
-        <a onclick="navTo('manage')"><span class="phase-dot" style="background:#1f6b4d"></span>Roster Manager</a>
-        <a onclick="navTo('controls')"><span class="phase-dot" style="background:#1f6b4d"></span>Auction Controls</a>
-        <a onclick="navTo('payout')"><span class="phase-dot" style="background:#1f6b4d"></span>Standard Payout</a>
-        <a onclick="navTo('flightpay')"><span class="phase-dot" style="background:#1f6b4d"></span>Flight Payout</a>
-      </div>
-      <div class="nav-dropdown-section">
-        <div class="nav-dropdown-label">⚡ Live Auction</div>
-        <a onclick="navTo('bet')"><span class="phase-dot" style="background:#b5451b"></span>Log Bids</a>
-        <a onclick="navTo('deck')"><span class="phase-dot" style="background:#b5451b"></span>On Deck ⛳</a>
-      </div>
-      <div class="nav-dropdown-section">
-        <div class="nav-dropdown-label">🏆 Post-Tournament</div>
-        <a onclick="navTo('results')"><span class="phase-dot" style="background:#2a4a7f"></span>Results</a>
-        <a onclick="navTo('recon')"><span class="phase-dot" style="background:#2a4a7f"></span>Reconciliation</a>
-        <a onclick="navTo('analytics')"><span class="phase-dot" style="background:#2a4a7f"></span>Buyer Summary</a>
-        <a onclick="navTo('history')"><span class="phase-dot" style="background:#2a4a7f"></span>History</a>
-      </div>
-      <div class="nav-dropdown-section">
-        <div class="nav-dropdown-label">👁 View</div>
-        <a onclick="navTo('dash')"><span class="phase-dot" style="background:#7a8a76"></span>Dashboard</a>
-        <a onclick="navTo('flights')"><span class="phase-dot" style="background:#7a8a76"></span>Flights</a>
-        <a onclick="navTo('roster')"><span class="phase-dot" style="background:#7a8a76"></span>Roster</a>
-      </div>
-    </div>
   </div>
   <div class="pagetabs" id="pagetabs"></div>
 </div>
 <div id="modeStrip" style="display:none"></div>
 </header>
+
+<!-- All Pages dropdown — lives OUTSIDE header to avoid overflow clipping -->
+<div class="nav-dropdown" id="navDropdown">
+  <div class="nav-dropdown-section">
+    <div class="nav-dropdown-label">⚙ Pre-Event</div>
+    <a onclick="navTo('guide')"><span class="phase-dot" style="background:#1f6b4d"></span>Guide</a>
+    <a onclick="navTo('setup')"><span class="phase-dot" style="background:#1f6b4d"></span>Setup Checklist</a>
+    <a onclick="navTo('settings')"><span class="phase-dot" style="background:#1f6b4d"></span>Settings</a>
+    <a onclick="navTo('manage')"><span class="phase-dot" style="background:#1f6b4d"></span>Roster Manager</a>
+    <a onclick="navTo('controls')"><span class="phase-dot" style="background:#1f6b4d"></span>Auction Controls</a>
+    <a onclick="navTo('payout')"><span class="phase-dot" style="background:#1f6b4d"></span>Standard Payout</a>
+    <a onclick="navTo('flightpay')"><span class="phase-dot" style="background:#1f6b4d"></span>Flight Payout</a>
+  </div>
+  <div class="nav-dropdown-section">
+    <div class="nav-dropdown-label">⚡ Live Auction</div>
+    <a onclick="navTo('bet')"><span class="phase-dot" style="background:#b5451b"></span>Log Bids</a>
+    <a onclick="navTo('deck')"><span class="phase-dot" style="background:#b5451b"></span>On Deck ⛳</a>
+  </div>
+  <div class="nav-dropdown-section">
+    <div class="nav-dropdown-label">🏆 Post-Tournament</div>
+    <a onclick="navTo('results')"><span class="phase-dot" style="background:#2a4a7f"></span>Results</a>
+    <a onclick="navTo('recon')"><span class="phase-dot" style="background:#2a4a7f"></span>Reconciliation</a>
+    <a onclick="navTo('analytics')"><span class="phase-dot" style="background:#2a4a7f"></span>Buyer Summary</a>
+    <a onclick="navTo('history')"><span class="phase-dot" style="background:#2a4a7f"></span>History</a>
+  </div>
+  <div class="nav-dropdown-section">
+    <div class="nav-dropdown-label">👁 View</div>
+    <a onclick="navTo('dash')"><span class="phase-dot" style="background:#7a8a76"></span>Dashboard</a>
+    <a onclick="navTo('flights')"><span class="phase-dot" style="background:#7a8a76"></span>Flights</a>
+    <a onclick="navTo('roster')"><span class="phase-dot" style="background:#7a8a76"></span>Roster</a>
+  </div>
+</div>
 
 <div class="page" id="deckpage">
   <button class="nav l" id="prev" title="Previous (←)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -3413,30 +3416,9 @@ function toggleNavMore(){
   const btn = document.getElementById('navMoreBtn');
   const dropdown = document.getElementById('navDropdown');
   if(!btn || !dropdown) return;
-  const isOpen = dropdown.classList.toggle('open');
+  const isOpen = !dropdown.classList.contains('open');
+  dropdown.classList.toggle('open', isOpen);
   btn.classList.toggle('open', isOpen);
-  // on mobile use fixed positioning below the header
-  if(isOpen && window.innerWidth <= 760){
-    const hdr = document.getElementById('appHeader');
-    if(hdr){
-      const bottom = hdr.getBoundingClientRect().bottom;
-      dropdown.style.position = 'fixed';
-      dropdown.style.top = (bottom + 4) + 'px';
-      dropdown.style.left = '8px';
-      dropdown.style.right = '8px';
-      dropdown.style.width = 'auto';
-      dropdown.style.maxHeight = '70vh';
-      dropdown.style.overflowY = 'auto';
-    }
-  } else {
-    // desktop: reset to CSS defaults
-    dropdown.style.position = '';
-    dropdown.style.top = '';
-    dropdown.style.left = '';
-    dropdown.style.right = '';
-    dropdown.style.width = '';
-    dropdown.style.maxHeight = '';
-  }
 }
 function closeNavMore(){
   const btn = document.getElementById('navMoreBtn');

@@ -2067,6 +2067,11 @@ function setTieTeam(grp,key,pos,card){
 
 function note(msg){ const n=document.getElementById('savenote'); if(n) n.innerHTML=msg+' &middot; <b>'+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'</b>'; }
 
+function clearAllLocalStorage(){
+  try{
+    [KEY, KEY+'_roster_v2', KEY+'_settings_v2', KEY+'_payout_v2', KEY+'_results', KEY+'_history_v2'].forEach(k=>localStorage.removeItem(k));
+  }catch(e){}
+}
 function loadLocal(){
   let saved=null; try{saved=JSON.parse(localStorage.getItem(KEY))}catch(e){}
   try{const rs=getRosterFromSaved(JSON.parse(localStorage.getItem(KEY+'_roster_v2'))); if(rs)order=rs;}catch(e){}
@@ -2086,15 +2091,17 @@ function saveLocal(){
 }
 
 function applySnapshot(val){
-  // if Firebase is empty (null), clear everything — don't fall back to localStorage
+  // if Firebase is empty (null), clear everything
   if(val===null || val===undefined){
     order=[]; teams=[]; results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}};
-    try{localStorage.removeItem(KEY);}catch(e){}
+    clearAllLocalStorage();
     rebuildPlayerLists(); applySettings(); normalizePayout(); normalizeResults();
     return;
   }
   val=val||{};
-  const rs=getRosterFromSaved(val.roster); if(rs)order=rs;
+  // if Firebase has no roster node, roster is empty — don't fall back to localStorage
+  if(val.roster){ const rs=getRosterFromSaved(val.roster); if(rs) order=rs; }
+  else { order=[]; }
   if(val.settings){
     appSettings={...DEFAULT_SETTINGS,...val.settings};
     if(val.settings.auctionSettings) auctionSettings={...auctionSettings,...val.settings.auctionSettings};
@@ -3407,15 +3414,9 @@ function resetRosterOnly(){
   if(!confirmAdminAction('RESET ROSTER'))return;
   order=[]; teams=[];
   rebuildPlayerLists();
-  try{localStorage.removeItem(KEY);}catch(e){}
-  // explicitly null Firebase nodes — Firebase ignores empty arrays
-  if(useCloud){
-    root.child('roster').set(null);
-    root.child('teams').set(null);
-    note('Roster cleared');
-  }
-  persistAll();
-  renderCurrent();
+  clearAllLocalStorage();
+  if(useCloud){ root.child('roster').set(null); root.child('teams').set(null); note('Roster cleared'); }
+  persistAll(); renderCurrent();
 }
 function resetAuctionOnly(){ if(!confirmAdminAction('RESET AUCTION'))return; teams=order.map(s=>({...s,bought:'',amount:null,collected:false})); results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; try{localStorage.removeItem(KEY);}catch(e){} persistAll(); renderCurrent(); }
 function resetFullTournament(){
@@ -3424,12 +3425,8 @@ function resetFullTournament(){
   payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:10,flightGrossPct:50,mode:'flights'};
   results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}};
   rebuildPlayerLists();
-  try{localStorage.removeItem(KEY);}catch(e){}
-  if(useCloud){
-    root.child('roster').set(null);
-    root.child('teams').set(null);
-    root.child('results').set(null);
-  }
+  clearAllLocalStorage();
+  if(useCloud){ root.child('roster').set(null); root.child('teams').set(null); root.child('results').set(null); }
   persistAll(); savePayout(); saveResults(); renderCurrent();
 }
 

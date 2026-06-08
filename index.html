@@ -1247,7 +1247,7 @@ body.player .admin-only{display:none !important}
 .pmt-active-badge{position:absolute;top:14px;right:14px;background:var(--brass);color:#0c3225;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
 .pmt-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
 @media(max-width:700px){.payout-method-toggle{grid-template-columns:1fr}.pmt-links{flex-direction:column}}
-.notes-field{width:100%;min-height:220px;max-height:600px;background:#08231b;border:1.5px solid #ffffff33;border-radius:12px;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;padding:14px 16px;outline:none;resize:vertical;transition:.15s}
+.notes-field{width:100%;min-height:220px;background:#08231b;border:1.5px solid #ffffff33;border-radius:12px;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;padding:14px 16px;outline:none;resize:none;overflow:hidden;transition:border-color .15s;box-sizing:border-box}
 .notes-field:focus{border-color:var(--brass);box-shadow:0 0 0 3px #d8b65f2e}
 .notes-field::placeholder{color:#ffffff33}
 .guide-step{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:10px}
@@ -3005,6 +3005,7 @@ function renderHistory(){
     <textarea id="tournamentNotesField" class="notes-field" placeholder="Enter any notes about this tournament — results, stories, things to change next year, weather, anything...">${escapeHtml(notes)}</textarea>
     <div class="v2-actions" style="margin-top:10px">
       <button class="btn" onclick="saveTournamentNotes()">Save Notes</button>
+      <button class="btn ghost" onclick="printTournamentNotes()">⎙ Print Notes</button>
       <span class="savenote" id="noteSaveStatus" style="margin-left:8px"></span>
     </div>
   </div>
@@ -3013,6 +3014,13 @@ function renderHistory(){
     <div class="v2-card danger-zone"><h3>Reset Tools</h3><div class="ph">Organizer password and typed confirmation required</div><div class="v2-actions"><button class="btn ghost" onclick="resetResultsOnly()">Reset Results Only</button><button class="btn ghost" onclick="resetAuctionOnly()">Reset Auction Only</button><button class="btn danger" onclick="resetFullTournament()">Full Reset</button></div></div>
   </div>
   <div class="v2-card"><h3>History</h3><div class="ph">View archives or restore an editable copy</div><div class="history-list">${list}</div></div>`;
+  // auto-expand textarea to fit content
+  const ta=document.getElementById('tournamentNotesField');
+  if(ta){
+    const expand=()=>{ ta.style.height='auto'; ta.style.height=(ta.scrollHeight+4)+'px'; };
+    ta.addEventListener('input',expand);
+    setTimeout(expand,0);
+  }
 }
 function saveTournamentNotes(){
   const field=document.getElementById('tournamentNotesField');
@@ -3022,6 +3030,61 @@ function saveTournamentNotes(){
   if(useCloud){ root.child('settings').set(appSettings); }
   else { try{localStorage.setItem(KEY+'_settings_v2',JSON.stringify(appSettings));}catch(e){} }
   const s=document.getElementById('noteSaveStatus'); if(s){ s.textContent='Notes saved ✓'; setTimeout(()=>{ if(s)s.textContent=''; },2500); }
+}
+function printTournamentNotes(){
+  // get current text from the textarea (may be unsaved edits)
+  const field=document.getElementById('tournamentNotesField');
+  const text=(field?field.value:appSettings.tournamentNotes)||'';
+  const club=escapeHtml(appSettings.clubName||'Golf Calcutta Portal');
+  const event=escapeHtml(appSettings.eventName||'Tournament');
+  const year=escapeHtml(String(appSettings.eventYear||new Date().getFullYear()));
+  const date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  // convert newlines to paragraphs for clean print layout
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const body=text.split(/\n\n+/).map(para=>{
+    const lines=para.split('\n');
+    // if most lines start with a bullet marker, render as a list
+    const bulletLines=lines.filter(l=>/^\s*[•\-\*]\s+/.test(l));
+    if(bulletLines.length>0 && bulletLines.length>=lines.length-1){
+      const items=lines.filter(l=>l.trim()).map(l=>`<li>${esc(l.replace(/^\s*[•\-\*]\s+/,''))}</li>`).join('');
+      return `<ul>${items}</ul>`;
+    }
+    // check for numbered lists like "1." or "1)"
+    const numberedLines=lines.filter(l=>/^\s*\d+[.)]\s+/.test(l));
+    if(numberedLines.length>0 && numberedLines.length>=lines.length-1){
+      const items=lines.filter(l=>l.trim()).map(l=>`<li>${esc(l.replace(/^\s*\d+[.)]\s+/,''))}</li>`).join('');
+      return `<ol>${items}</ol>`;
+    }
+    // plain paragraph
+    return `<p>${lines.map(esc).join('<br>')}</p>`;
+  }).join('');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${club} — ${event} Notes</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Georgia',serif;color:#1a2e1a;background:#fff;padding:54px 64px;max-width:820px;margin:0 auto;line-height:1.7}
+    .top{border-bottom:3px solid #0c3225;padding-bottom:16px;margin-bottom:28px}
+    .club{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#1a5c3f;font-weight:700;margin-bottom:6px;font-family:'Arial',sans-serif}
+    h1{font-size:28px;font-weight:900;color:#0c3225;letter-spacing:-.02em;margin-bottom:4px}
+    .meta{font-size:13px;color:#5a6b5a;font-family:'Arial',sans-serif}
+    .notes-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#1a5c3f;font-weight:700;font-family:'Arial',sans-serif;margin-bottom:14px}
+    p{font-size:14.5px;margin-bottom:14px;color:#1a2e1a}
+    ul,ol{font-size:14.5px;margin:0 0 14px 22px;color:#1a2e1a}
+    li{margin-bottom:5px;line-height:1.6}
+    .empty{font-style:italic;color:#8a9a8a;font-size:14px}
+    .foot{border-top:1px solid #d4e4d4;margin-top:40px;padding-top:10px;font-size:11px;color:#8a9a8a;font-family:'Arial',sans-serif}
+    @media print{body{padding:0}@page{margin:20mm 22mm}}
+  </style></head><body>
+  <div class="top">
+    <div class="club">${club}</div>
+    <h1>${event} — ${year}</h1>
+    <div class="meta">Tournament Notes &nbsp;·&nbsp; Printed ${date}</div>
+  </div>
+  <div class="notes-label">Notes</div>
+  ${body||'<div class="empty">No notes entered.</div>'}
+  <div class="foot">${club} &nbsp;·&nbsp; ${event} ${year} &nbsp;·&nbsp; Confidential</div>
+  </body></html>`;
+  const w=window.open('','_blank','width=900,height=700');
+  if(w){ w.document.write(html); w.document.close(); w.focus(); setTimeout(()=>w.print(),400); }
 }
 function confirmAdminAction(words){ const pw=prompt('Organizer password required:'); if(pw!==getAdminCode()&&pw!==MASTER_CODE)return false; const c=prompt('Type '+words+' to continue:'); return c===words; }
 function renderGuide(){
@@ -3475,9 +3538,9 @@ function applyMode(){
   const nm=document.getElementById('navMore');
   if(ps) ps.style.display=ADMIN?'':'none';
   if(nm) nm.style.display=ADMIN?'':'none';
-  // master lock button — only visible to master admin
+  // lock button — visible to all admins, master password always required to use
   const lockBtn=document.getElementById('tournamentLockBtn');
-  if(lockBtn) lockBtn.style.display=(ADMIN && IS_MASTER)?'inline-flex':'none';
+  if(lockBtn) lockBtn.style.display=ADMIN?'inline-flex':'none';
   // apply lock state
   applyTournamentLock(TOURNAMENT_LOCKED, true);
   if(ADMIN){

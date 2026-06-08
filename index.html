@@ -3397,9 +3397,35 @@ function toggleGuideStep(id){
   if(el) el.classList.toggle('open');
 }
 function resetResultsOnly(){ if(!confirmAdminAction('RESET RESULTS'))return; results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; saveResults(); renderCurrent(); }
-function resetRosterOnly(){ if(!confirmAdminAction('RESET ROSTER'))return; order=[]; teams=[]; rebuildPlayerLists(); try{localStorage.removeItem(KEY);}catch(e){} persistAll(); renderCurrent(); note('Roster cleared'); }
+function resetRosterOnly(){
+  if(!confirmAdminAction('RESET ROSTER'))return;
+  order=[]; teams=[];
+  rebuildPlayerLists();
+  try{localStorage.removeItem(KEY);}catch(e){}
+  // explicitly null Firebase nodes — Firebase ignores empty arrays
+  if(useCloud){
+    root.child('roster').set(null);
+    root.child('teams').set(null);
+    note('Roster cleared');
+  }
+  persistAll();
+  renderCurrent();
+}
 function resetAuctionOnly(){ if(!confirmAdminAction('RESET AUCTION'))return; teams=order.map(s=>({...s,bought:'',amount:null,collected:false})); results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; try{localStorage.removeItem(KEY);}catch(e){} persistAll(); renderCurrent(); }
-function resetFullTournament(){ if(!confirmAdminAction('RESET FULL'))return; order=[]; teams=[]; payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:10,flightGrossPct:50,mode:'flights'}; results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; rebuildPlayerLists(); try{localStorage.removeItem(KEY);}catch(e){} persistAll(); savePayout(); saveResults(); renderCurrent(); }
+function resetFullTournament(){
+  if(!confirmAdminAction('RESET FULL'))return;
+  order=[]; teams=[];
+  payout={grossPct:35,netPct:65,gross:[50,30,20],net:[29,22,15,13,11,10],flightPct:10,flightGrossPct:50,mode:'flights'};
+  results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}};
+  rebuildPlayerLists();
+  try{localStorage.removeItem(KEY);}catch(e){}
+  if(useCloud){
+    root.child('roster').set(null);
+    root.child('teams').set(null);
+    root.child('results').set(null);
+  }
+  persistAll(); savePayout(); saveResults(); renderCurrent();
+}
 
 /* ===== Admin / Player mode ===== */
 const ADMIN_PW=DEFAULT_SETTINGS.adminCode;

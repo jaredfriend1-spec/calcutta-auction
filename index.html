@@ -4317,19 +4317,29 @@ async function readRosterFile(file){
     let txt='';
     for(let p=1;p<=pdf.numPages;p++){
       const page=await pdf.getPage(p); const tc=await page.getTextContent();
-      // Group items by approximate Y position to reconstruct lines
+      // Group items by approximate Y position
       const rows=new Map();
       tc.items.forEach(item=>{
         if(!item.str.trim()) return;
         const y=Math.round(item.transform[5]);
         if(!rows.has(y)) rows.set(y,[]);
-        rows.get(y).push({x:item.transform[4], str:item.str});
+        rows.get(y).push({x:Math.round(item.transform[4]), str:item.str});
       });
-      // Sort rows top-to-bottom, items left-to-right within each row
+      // Sort rows top-to-bottom
       const sorted=[...rows.entries()].sort((a,b)=>b[0]-a[0]);
       sorted.forEach(([,items])=>{
         items.sort((a,b)=>a.x-b.x);
-        txt += items.map(i=>i.str).join(' ').trim() + '\n';
+        // For Golf Genius PDFs: emit each column item on its own line
+        // This prevents team-name columns from merging with player-name columns
+        const fullLine = items.map(i=>i.str).join(' ').trim();
+        // If line contains a team pattern (Name + Name (hcp)), emit full line
+        // Otherwise emit each column separately to preserve individual entries
+        if(/\w+\s*\+\s*\w+\s*\(/.test(fullLine)){
+          txt += fullLine + '\n';
+        } else {
+          // emit each distinct column chunk separately
+          items.forEach(i=>{ if(i.str.trim()) txt += i.str.trim() + '\n'; });
+        }
       });
       txt += '\n';
     }

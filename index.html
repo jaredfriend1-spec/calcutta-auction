@@ -4399,17 +4399,20 @@ function previewRosterImport(newRoster){
       const count=pendingRosterImport.length;
       applyRosterImport(pendingRosterImport);
       pendingRosterImport=null;
-      // explicitly navigate and render
+      // show the manage page first
       page='manage';
       allPageIds().forEach(id=>{ const el=document.getElementById(id); if(el)el.classList.toggle('show',id==='managepage'); });
-      renderRosterManager();
       renderPhaseTabs();
       updateCounter();
-      // set success note on freshly rendered page
-      const noteEl=document.getElementById('rosterImportNote');
-      if(noteEl) noteEl.textContent=`✅ ${count} teams imported successfully.`;
-      const box2=document.getElementById('rosterImportPreview');
-      if(box2) box2.innerHTML='';
+      try{ window.scrollTo(0,0); }catch(e){}
+      // render after DOM paint so user sees it immediately
+      setTimeout(()=>{
+        renderRosterManager();
+        const noteEl=document.getElementById('rosterImportNote');
+        if(noteEl) noteEl.textContent=`✅ ${count} teams imported successfully.`;
+        const box2=document.getElementById('rosterImportPreview');
+        if(box2) box2.innerHTML='';
+      }, 50);
     }
     catch(err){ alert('Could not apply roster: '+(err&&err.message?err.message:err)); }
   };

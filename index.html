@@ -1780,11 +1780,9 @@ body.demo .demo-banner{display:block}
       <div class="dashtotals" id="manageTotals"></div>
     </div>
     <div id="manageBody"></div>
+    <div id="manageImportPreview"></div>
   </div>
-
 </div>
-
-<div class="page admin-only" id="controlspage">
   <div class="dashwrap">
     <div class="dashhead">
       <div><div class="dash-eyebrow">Auction Setup</div><div class="dash-title">Auction Controls</div></div>
@@ -4376,7 +4374,9 @@ function applyRosterImport(newRoster){
   // caller is responsible for rendering after import
 }
 function previewRosterImport(newRoster){
-  const box=document.getElementById('rosterImportPreview'); if(!box)return;
+  // render preview in the correct page's div
+  const box = document.getElementById('manageImportPreview') || document.getElementById('rosterImportPreview');
+  if(!box) return;
   const {added,removed,moved}=rosterDiff(newRoster);
   pendingRosterImport=newRoster;
   const list=(arr,fn)=>arr.length?`<ul>${arr.slice(0,12).map(fn).join('')}${arr.length>12?`<li>...and ${arr.length-12} more</li>`:''}</ul>`:'<div class="res-note">None</div>';
@@ -4410,7 +4410,7 @@ function previewRosterImport(newRoster){
         renderRosterManager();
         const noteEl=document.getElementById('rosterImportNote');
         if(noteEl) noteEl.textContent=`✅ ${count} teams imported successfully.`;
-        const box2=document.getElementById('rosterImportPreview');
+        const box2 = document.getElementById('manageImportPreview') || document.getElementById('rosterImportPreview');
         if(box2) box2.innerHTML='';
       }, 50);
     }

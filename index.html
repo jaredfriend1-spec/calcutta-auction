@@ -547,7 +547,7 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
   .pagetabs::-webkit-scrollbar{display:none}
   .pagetabs button{flex:0 0 auto;font-size:12px;padding:7px 10px}
   .nav-more-btn{font-size:10px;padding:5px 8px}
-  .nav-dropdown{left:0;right:auto;min-width:200px}
+  .nav-dropdown{position:fixed!important;left:8px!important;right:8px!important;top:auto!important;width:auto!important;min-width:0!important;max-height:70vh;overflow-y:auto;border-radius:14px;z-index:10000!important}
   .modestrip{padding:8px 10px;gap:8px}
   .modestrip .modechecks{width:100%}
   .modechk{flex:1;justify-content:center;padding:11px 12px}
@@ -846,6 +846,8 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
   table.roster td.nm{font-size:15.5px;color:var(--ink);font-weight:800}
   table.roster td.num,table.roster td.thcp{text-align:left!important}
   table.roster td:not(.nm)::before{display:inline-block;min-width:78px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:800}
+  table.roster td.nm{display:flex;flex-direction:column;gap:1px}
+  table.roster td.nm::before{display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:800;margin-bottom:1px}
   table.roster td:nth-child(1)::before{content:'Player 1'}
   table.roster td:nth-child(2)::before{content:'Player 2'}
   table.roster td:nth-child(3)::before{content:'Flight'}
@@ -3410,7 +3412,16 @@ function navTo(p){
 
 function toggleNavMore(){
   const btn = document.getElementById('navMoreBtn');
-  if(btn) btn.classList.toggle('open');
+  if(!btn) return;
+  const isOpen = btn.classList.toggle('open');
+  // on mobile, position the fixed dropdown just below the app header
+  if(isOpen && window.innerWidth <= 760){
+    const hdr = document.getElementById('appHeader');
+    const dropdown = document.getElementById('navDropdown');
+    if(hdr && dropdown){
+      dropdown.style.top = (hdr.getBoundingClientRect().bottom + 4) + 'px';
+    }
+  }
 }
 function closeNavMore(){
   const btn = document.getElementById('navMoreBtn');

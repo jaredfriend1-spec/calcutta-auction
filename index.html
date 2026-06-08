@@ -76,8 +76,8 @@ body.tournament-locked .chk{pointer-events:none;opacity:.45}
 .nav-more-btn:hover,.nav-more-btn.open{color:var(--ink);border-color:var(--brass);background:#0f3526}
 .nav-more-btn svg{transition:transform .2s}
 .nav-more-btn.open svg{transform:rotate(180deg)}
-.nav-dropdown{display:none;position:absolute;left:0;right:auto;top:calc(100% + 6px);background:linear-gradient(165deg,#0e3a2b,#08231b);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 20px 50px -20px #000,0 4px 16px -8px #000;min-width:200px;z-index:999;overflow:hidden;animation:dropIn .14s cubic-bezier(.2,.8,.2,1)}
-.nav-more-btn.open + .nav-dropdown{display:block}
+.nav-dropdown{display:none;position:absolute;left:0;right:auto;top:calc(100% + 6px);background:linear-gradient(165deg,#0e3a2b,#08231b);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 20px 50px -20px #000,0 4px 16px -8px #000;min-width:200px;z-index:9999;overflow:hidden;animation:dropIn .14s cubic-bezier(.2,.8,.2,1)}
+.nav-dropdown.open{display:block}
 @keyframes dropIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .nav-dropdown-section{padding:6px 0}
 .nav-dropdown-section + .nav-dropdown-section{border-top:1px solid var(--line)}
@@ -547,7 +547,6 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
   .pagetabs::-webkit-scrollbar{display:none}
   .pagetabs button{flex:0 0 auto;font-size:12px;padding:7px 10px}
   .nav-more-btn{font-size:10px;padding:5px 8px}
-  .nav-dropdown{position:fixed!important;left:8px!important;right:8px!important;top:auto!important;width:auto!important;min-width:0!important;max-height:70vh;overflow-y:auto;border-radius:14px;z-index:10000!important}
   .modestrip{padding:8px 10px;gap:8px}
   .modestrip .modechecks{width:100%}
   .modechk{flex:1;justify-content:center;padding:11px 12px}
@@ -3412,20 +3411,38 @@ function navTo(p){
 
 function toggleNavMore(){
   const btn = document.getElementById('navMoreBtn');
-  if(!btn) return;
-  const isOpen = btn.classList.toggle('open');
-  // on mobile, position the fixed dropdown just below the app header
+  const dropdown = document.getElementById('navDropdown');
+  if(!btn || !dropdown) return;
+  const isOpen = dropdown.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  // on mobile use fixed positioning below the header
   if(isOpen && window.innerWidth <= 760){
     const hdr = document.getElementById('appHeader');
-    const dropdown = document.getElementById('navDropdown');
-    if(hdr && dropdown){
-      dropdown.style.top = (hdr.getBoundingClientRect().bottom + 4) + 'px';
+    if(hdr){
+      const bottom = hdr.getBoundingClientRect().bottom;
+      dropdown.style.position = 'fixed';
+      dropdown.style.top = (bottom + 4) + 'px';
+      dropdown.style.left = '8px';
+      dropdown.style.right = '8px';
+      dropdown.style.width = 'auto';
+      dropdown.style.maxHeight = '70vh';
+      dropdown.style.overflowY = 'auto';
     }
+  } else {
+    // desktop: reset to CSS defaults
+    dropdown.style.position = '';
+    dropdown.style.top = '';
+    dropdown.style.left = '';
+    dropdown.style.right = '';
+    dropdown.style.width = '';
+    dropdown.style.maxHeight = '';
   }
 }
 function closeNavMore(){
   const btn = document.getElementById('navMoreBtn');
+  const dropdown = document.getElementById('navDropdown');
   if(btn) btn.classList.remove('open');
+  if(dropdown) dropdown.classList.remove('open');
 }
 function updateDropdownActiveState(){
   document.querySelectorAll('.nav-dropdown a').forEach(a => {

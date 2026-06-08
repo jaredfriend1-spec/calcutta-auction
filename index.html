@@ -4396,13 +4396,17 @@ function previewRosterImport(newRoster){
     const ok=confirm(`Apply this roster update?\n\nTeams found: ${pendingRosterImport.length}\nAdded: ${added.length}\nRemoved: ${removed.length}\nFlight changes: ${moved.length}\n\nThis should only be used before betting starts.`);
     if(!ok)return;
     try{
+      const count=pendingRosterImport.length;
       applyRosterImport(pendingRosterImport);
-      box.innerHTML='';
-      const noteEl=document.getElementById('rosterImportNote');
-      if(noteEl) noteEl.textContent=`✅ Roster imported — ${pendingRosterImport.length} teams loaded successfully.`;
       pendingRosterImport=null;
-      // navigate to Roster Manager so user sees the result immediately
+      // navigate to Roster Manager — renderRosterManager fires inside showPage
       showPage('manage');
+      // set success note on freshly rendered page
+      const noteEl=document.getElementById('rosterImportNote');
+      if(noteEl) noteEl.textContent=`✅ ${count} teams imported successfully.`;
+      // also clear the preview box on the source page
+      const box2=document.getElementById('rosterImportPreview');
+      if(box2) box2.innerHTML='';
     }
     catch(err){ alert('Could not apply roster: '+(err&&err.message?err.message:err)); }
   };

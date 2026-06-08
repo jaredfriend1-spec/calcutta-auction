@@ -4373,7 +4373,7 @@ function applyRosterImport(newRoster){
   rebuildPlayerLists();
   localStorage.removeItem(KEY);
   persistAll();
-  renderCurrent();
+  // caller is responsible for rendering after import
 }
 function previewRosterImport(newRoster){
   const box=document.getElementById('rosterImportPreview'); if(!box)return;
@@ -4399,12 +4399,15 @@ function previewRosterImport(newRoster){
       const count=pendingRosterImport.length;
       applyRosterImport(pendingRosterImport);
       pendingRosterImport=null;
-      // navigate to Roster Manager — renderRosterManager fires inside showPage
-      showPage('manage');
+      // explicitly navigate and render
+      page='manage';
+      allPageIds().forEach(id=>{ const el=document.getElementById(id); if(el)el.classList.toggle('show',id==='managepage'); });
+      renderRosterManager();
+      renderPhaseTabs();
+      updateCounter();
       // set success note on freshly rendered page
       const noteEl=document.getElementById('rosterImportNote');
       if(noteEl) noteEl.textContent=`✅ ${count} teams imported successfully.`;
-      // also clear the preview box on the source page
       const box2=document.getElementById('rosterImportPreview');
       if(box2) box2.innerHTML='';
     }

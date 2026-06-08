@@ -4279,34 +4279,68 @@ function parsePlayerPairLine(line){
   return {p1:cleanNamePart(m[1]),h1:m[2],p2:cleanNamePart(m[3]),h2:m[4],key:normalizeTeamKey(m[1],m[3])};
 }
 function buildRosterFromText(txt){
-  const raw=String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-  const lines=[];
-  raw.forEach(x=>{ String(x).split(/(?=Flight:\s*Flight\s*\d)/i).forEach(y=>{ y=y.trim(); if(y)lines.push(y); }); });
-  const memberMap=new Map();
-  lines.forEach(line=>{ const pair=parsePlayerPairLine(line); if(pair) memberMap.set(pair.key,pair); });
-  let out=[], currentFlight=null;
-  for(let i=0;i<lines.length;i++){
-    const line=lines[i];
-    const fm=line.match(/Flight:\s*Flight\s*(\d)/i) || line.match(/^Flight\s*(\d)$/i);
-    if(fm){ currentFlight=+fm[1]; continue; }
-    if(!currentFlight || /Team Name|Members|Divisions|Member-Member/i.test(line)) continue;
-    const tm=line.match(/^(.+?)\s*\+\s*(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)$/);
-    if(tm){
-      const key=normalizeTeamKey(tm[1],tm[2]);
-      const full=memberMap.get(key);
-      const pA=(lines[i+1]||'').match(/^(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)$/);
-      const pB=(lines[i+2]||'').match(/^(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)$/);
-      let p1=full?full.p1:cleanNamePart(tm[1]), h1=full?full.h1:'', p2=full?full.p2:cleanNamePart(tm[2]), h2=full?full.h2:'';
-      if(pA && pB && !/Flight|Team Name|Members/i.test(lines[i+1]+lines[i+2])){
-        p1=cleanNamePart(pA[1]); h1=pA[2]; p2=cleanNamePart(pB[1]); h2=pB[2];
-      }
-      out.push({flight:currentFlight,teamName:`${cleanNamePart(tm[1])} + ${cleanNamePart(tm[2])}`,teamHcp:tm[3],key,p1,h1,p2,h2});
+  const lines = String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  let out = [], currentFlight = null;
+
+  for(let i=0; i<lines.length; i++){
+    const line = lines[i];
+
+    // Flight header
+    const fm = line.match(/Flight[:\s]+Flight\s*(\d)/i) || line.match(/^Flight\s*(\d)$/i);
+    if(fm){ currentFlight = +fm[1]; continue; }
+
+    // Skip headers/titles
+    if(!currentFlight) continue;
+    if(/Team\s*Name|Members|Divisions|Member.Member/i.test(line)) continue;
+
+    // Golf Genius format (all on one line):
+    // "LastName + LastName (team_hcp) FirstName LastName (p1_hcp) FirstName LastName (p2_hcp)"
+    // Match: anything + anything (hcp) then capture two "Name (hcp)" groups
+    const fullLine = line.replace(/\s+/g,' ');
+
+    // Try to find pattern: TEAM_NAME (team_hcp) P1_FULLNAME (p1_hcp) P2_FULLNAME (p2_hcp)
+    // Team name ends at first (hcp), then we have two more (hcp) groups
+    const hcpPattern = /^(.+?)\s*\([+\-]?\d+(?:\.\d+)?\)\s+(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)\s+(.+?)\s*\(([+\-]?\d+(?:\.\d+)?)\)\s*$/;
+    const m = fullLine.match(hcpPattern);
+    if(m && currentFlight){
+      const teamPart = m[1]; // e.g. "Weiss + Williams"
+      const p1Full   = m[2]; // e.g. "Steven Weiss"
+      const h1       = m[3]; // e.g. "2.7"
+      const p2Full   = m[4]; // e.g. "Jeff Williams"
+      const h2       = m[5]; // e.g. "+0.3" or "3.3"
+
+      // Must contain + to be a valid team line
+      if(!teamPart.includes('+')) continue;
+
+      const p1 = cleanNamePart(p1Full);
+      const p2 = cleanNamePart(p2Full);
+      if(!p1 || !p2) continue;
+
+      const key = normalizeTeamKey(p1, p2);
+      out.push({flight: currentFlight, p1, h1, p2, h2, key,
+                teamName: `${p1} + ${p2}`, teamHcp: ''});
+      continue;
+    }
+
+    // Fallback: just team name line without member columns (older format)
+    const tm = fullLine.match(/^(.+?)\s*\+\s*(.+?)\s*\([+\-]?\d+(?:\.\d+)?\)\s*$/);
+    if(tm && currentFlight){
+      const p1 = cleanNamePart(tm[1]);
+      const p2 = cleanNamePart(tm[2]);
+      if(!p1 || !p2) continue;
+      const key = normalizeTeamKey(p1, p2);
+      out.push({flight: currentFlight, p1, h1:'', p2, h2:'', key,
+                teamName: `${p1} + ${p2}`, teamHcp: ''});
     }
   }
-  // de-dupe by key + flight, keeping first occurrence
-  const seen=new Set();
-  out=out.filter(t=>{ const k=t.key+'@'+t.flight; if(seen.has(k))return false; seen.add(k); return true; });
-  return out;
+
+  // de-dupe by key + flight
+  const seen = new Set();
+  return out.filter(t=>{
+    const k = t.key+'@'+t.flight;
+    if(seen.has(k)) return false;
+    seen.add(k); return true;
+  });
 }
 async function readRosterFile(file){
   if(!file) return '';
@@ -4317,29 +4351,18 @@ async function readRosterFile(file){
     let txt='';
     for(let p=1;p<=pdf.numPages;p++){
       const page=await pdf.getPage(p); const tc=await page.getTextContent();
-      // Group items by approximate Y position
+      // Group by Y position — each row becomes one line with all columns joined
       const rows=new Map();
       tc.items.forEach(item=>{
         if(!item.str.trim()) return;
         const y=Math.round(item.transform[5]);
         if(!rows.has(y)) rows.set(y,[]);
-        rows.get(y).push({x:Math.round(item.transform[4]), str:item.str});
+        rows.get(y).push({x:item.transform[4], str:item.str});
       });
-      // Sort rows top-to-bottom
       const sorted=[...rows.entries()].sort((a,b)=>b[0]-a[0]);
       sorted.forEach(([,items])=>{
         items.sort((a,b)=>a.x-b.x);
-        // For Golf Genius PDFs: emit each column item on its own line
-        // This prevents team-name columns from merging with player-name columns
-        const fullLine = items.map(i=>i.str).join(' ').trim();
-        // If line contains a team pattern (Name + Name (hcp)), emit full line
-        // Otherwise emit each column separately to preserve individual entries
-        if(/\w+\s*\+\s*\w+\s*\(/.test(fullLine)){
-          txt += fullLine + '\n';
-        } else {
-          // emit each distinct column chunk separately
-          items.forEach(i=>{ if(i.str.trim()) txt += i.str.trim() + '\n'; });
-        }
+        txt += items.map(i=>i.str).join(' ').trim() + '\n';
       });
       txt += '\n';
     }

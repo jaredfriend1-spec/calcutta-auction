@@ -526,22 +526,28 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
   .page,.appheader,.topbar,.tabsrow,.modestrip,.betwrap,.dashwrap,.deckwrap,.tablecard,.po-panel,.res-sec,.flsec{max-width:100%;overflow-x:hidden}
   html,body{overflow-x:hidden}
   body{background-attachment:scroll}
-  .topbar{padding:7px 10px;gap:7px}
-  .brandwrap{gap:7px}
-  .clublogo{height:30px}
+  /* topbar wraps to two rows on mobile:
+     Row 1: brand (left) + exit/organiser buttons (right)
+     Row 2: phase switcher full width */
+  .topbar{flex-wrap:wrap;padding:6px 10px;gap:6px;min-height:0}
+  .brandwrap{flex:1 1 auto;gap:7px;min-width:0;order:1}
+  .clublogo{height:28px}
   .brandtext .b1{font-size:13px}
   .brandtext .b2{display:none}
-  .phase-switcher{gap:2px;padding:2px}
-  .phase-btn{font-size:9.5px;padding:5px 8px;letter-spacing:.04em}
-  .topright{gap:5px}
+  .topright{order:2;gap:5px;flex-shrink:0}
+  .locked-badge{font-size:10px;padding:4px 7px}
   .lockbtn{font-size:10px;padding:5px 8px;border-radius:8px}
   .counter{display:none!important}
+  /* phase switcher drops to its own full-width row */
+  .phase-switcher{order:3;flex:0 0 100%;width:100%;justify-content:stretch;gap:3px;padding:3px}
+  .phase-btn{flex:1;text-align:center;font-size:10px;padding:6px 4px;letter-spacing:.03em}
+  /* tab row */
   .tabsrow{padding:2px 6px;gap:4px}
   .pagetabs{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .pagetabs::-webkit-scrollbar{display:none}
   .pagetabs button{flex:0 0 auto;font-size:12px;padding:7px 10px}
   .nav-more-btn{font-size:10px;padding:5px 8px}
-  .nav-dropdown{right:0;min-width:180px}
+  .nav-dropdown{left:0;right:auto;min-width:200px}
   .modestrip{padding:8px 10px;gap:8px}
   .modestrip .modechecks{width:100%}
   .modechk{flex:1;justify-content:center;padding:11px 12px}
@@ -698,15 +704,8 @@ table.roster .fdotR{display:inline-block;width:10px;height:10px;border-radius:50
   html,body{width:100%;max-width:100%;overflow-x:hidden}
   body{font-size:15.5px;background-attachment:scroll}
   .page,.appheader,.topbar,.tabsrow,.modestrip,.betwrap,.dashwrap,.deckwrap,.tablecard,.po-panel,.res-sec,.flsec{max-width:100%;overflow-x:hidden}
-  .topbar{padding:8px 10px;align-items:center;gap:8px}
   .tabsrow{padding:3px 6px}
-  .brandwrap{flex:1 1 auto;min-width:0;max-width:calc(100% - 80px)}
   .brandtext{min-width:0;white-space:normal}
-  .brandtext .b1{font-size:13px;line-height:1.05}
-  .clublogo{height:30px}
-  .topright{margin-left:auto;gap:6px}
-  .lockbtn{font-size:10px;padding:6px 8px;border-radius:8px}
-  .counter{display:none!important}
   .pagetabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;gap:1px}
   .pagetabs::-webkit-scrollbar{display:none}
   .pagetabs button{font-size:11px;padding:7px 9px;flex:0 0 auto}

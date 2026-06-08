@@ -52,6 +52,16 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 .lockbtn{background:#0a2a20;border:1px solid var(--line);color:var(--ink-2);font-family:var(--sans);font-weight:800;font-size:11px;padding:6px 11px;border-radius:9px;cursor:pointer;transition:.16s;white-space:nowrap;letter-spacing:.02em}
 .lockbtn:hover{color:var(--ink);border-color:var(--brass)}
 .lockbtn.admin{color:#0c3225;background:var(--brass);border-color:var(--brass)}
+.lockbtn.master-only.unlocked{background:#8a2010;border-color:#c0392b;color:#fff}
+.lockbtn.master-only.unlocked:hover{background:#a02816;border-color:#e04030}
+.lockbtn.master-only.locked-state{background:#1a5c3f;border-color:#27ae60;color:#fff}
+.lockbtn.master-only.locked-state:hover{background:#1e6e4a;border-color:#2ecc71}
+.locked-badge{display:inline-flex;align-items:center;gap:5px;background:#8a201022;border:1px solid #c0392b88;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:800;color:#e07060;letter-spacing:.04em;white-space:nowrap}
+body.tournament-locked input,body.tournament-locked select,body.tournament-locked textarea{pointer-events:none;opacity:.5}
+body.tournament-locked .btn:not(#tournamentLockBtn):not(#adminBtn):not(#exitToLandingBtn){pointer-events:none;opacity:.45}
+body.tournament-locked .chk{pointer-events:none;opacity:.45}
+/* lock button only ever shown to IS_MASTER — enforced in JS, belt-and-suspenders in CSS */
+#tournamentLockBtn{display:none}
 .counter{font-size:clamp(9px,1vw,11px);letter-spacing:.18em;text-transform:uppercase;color:var(--brass);font-weight:800;white-space:nowrap}
 /* Row 2: contextual tabs + all-pages dropdown */
 .tabsrow{display:flex;align-items:center;gap:0;background:#061a12cc;border-top:1px solid var(--line);padding:3px clamp(8px,1.8vw,20px);position:relative}
@@ -1478,6 +1488,8 @@ body.demo .demo-banner{display:block}
     <button class="phase-btn" data-phase="post" onclick="setPhase('post')">🏆 Post</button>
   </div>
   <div class="topright">
+    <div class="locked-badge" id="lockedBadge" style="display:none">🔒 Locked</div>
+    <button class="lockbtn master-only" id="tournamentLockBtn" style="display:none" onclick="toggleTournamentLock()"></button>
     <button class="lockbtn exitbtn" id="exitToLandingBtn">⬅ Exit</button>
     <button class="lockbtn" id="adminBtn"></button>
     <div class="counter" id="counter"></div>
@@ -2026,6 +2038,8 @@ function applySnapshot(val){
   if(val.settings){
     appSettings={...DEFAULT_SETTINGS,...val.settings};
     if(val.settings.auctionSettings) auctionSettings={...auctionSettings,...val.settings.auctionSettings};
+    // load tournament lock state
+    TOURNAMENT_LOCKED = !!val.settings.tournamentLocked;
   }
   if(val.history&&typeof val.history==='object') tournamentHistory=Object.values(val.history).sort((a,b)=>String(b.ts).localeCompare(String(a.ts)));
   applySettings();
@@ -3413,6 +3427,45 @@ function setPlayerReadOnly(){
     modeStrip.querySelectorAll('input').forEach(el=>{ el.disabled=readOnly; });
   }
 }
+/* ===== Tournament Lock (Master Admin only) ===== */
+let IS_MASTER = false;
+let TOURNAMENT_LOCKED = false;
+
+function applyTournamentLock(locked, fromRemote){
+  TOURNAMENT_LOCKED = locked;
+  document.body.classList.toggle('tournament-locked', locked && !IS_MASTER);
+  // update locked badge — visible to non-master admins when locked
+  const badge = document.getElementById('lockedBadge');
+  if(badge) badge.style.display = (locked && ADMIN && !IS_MASTER) ? 'inline-flex' : 'none';
+  // update master lock button
+  const btn = document.getElementById('tournamentLockBtn');
+  if(btn && IS_MASTER){
+    btn.style.display = 'inline-flex';
+    btn.textContent = locked ? '🟢 Unlock Tournament' : '🔴 Lock Tournament';
+    btn.className = `lockbtn master-only ${locked ? 'locked-state' : 'unlocked'}`;
+  }
+  if(!fromRemote && useCloud){
+    root.child('settings/tournamentLocked').set(locked);
+  }
+}
+
+function toggleTournamentLock(){
+  // always require master password — no cached state
+  const pwd = prompt('Enter master admin code to ' + (TOURNAMENT_LOCKED ? 'unlock' : 'lock') + ' this tournament:');
+  if(!pwd) return;
+  if(pwd !== MASTER_CODE){ alert('Incorrect master code.'); return; }
+  const newState = !TOURNAMENT_LOCKED;
+  const msg = newState
+    ? 'Lock this tournament? Organisers will be able to view everything but cannot make any changes.'
+    : 'Unlock this tournament? Organisers will be able to edit again.';
+  if(!confirm(msg)) return;
+  applyTournamentLock(newState, false);
+}
+
+function checkMasterLogin(code){
+  return code === MASTER_CODE;
+}
+
 function applyMode(){
   document.body.classList.toggle('player',!ADMIN);
   document.body.classList.toggle('admin',ADMIN);
@@ -3422,6 +3475,11 @@ function applyMode(){
   const nm=document.getElementById('navMore');
   if(ps) ps.style.display=ADMIN?'':'none';
   if(nm) nm.style.display=ADMIN?'':'none';
+  // master lock button — only visible to master admin
+  const lockBtn=document.getElementById('tournamentLockBtn');
+  if(lockBtn) lockBtn.style.display=(ADMIN && IS_MASTER)?'inline-flex':'none';
+  // apply lock state
+  applyTournamentLock(TOURNAMENT_LOCKED, true);
   if(ADMIN){
     initPhaseNav();
     const adminOnlyPages=['deck','bet','setup','settings','manage','controls','history','payout','flightpay','guide'];
@@ -4343,8 +4401,20 @@ function enterPlayerView(){
 function enterOrganizerView(){
   const p=prompt('Enter organizer code:');
   if(p===null)return;
-  if(p===MASTER_CODE||p===getAdminCode()){
+  if(p===MASTER_CODE){
     ADMIN=true;
+    IS_MASTER=true;
+    showPage('setup');
+    applyMode();
+    hideLanding();
+    renderCurrent();
+  } else if(p===getAdminCode()){
+    ADMIN=true;
+    IS_MASTER=false;
+    // if tournament is locked, show a notice but still let them in read-only
+    if(TOURNAMENT_LOCKED){
+      alert('This tournament has been locked by the administrator. You can view everything but editing is disabled.');
+    }
     showPage('setup');
     applyMode();
     hideLanding();
@@ -4410,7 +4480,7 @@ if(tosAgree&&tosAcceptBtn){
 if(!tosAccepted()){ showTos(); } else { hideTos(); }
 
 const exitToLandingBtn=document.getElementById('exitToLandingBtn');
-if(exitToLandingBtn){ exitToLandingBtn.onclick=()=>{ if(DEMO_MODE){ exitDemoToLive(); return; } ADMIN=false; applyMode(); showLanding(); }; }
+if(exitToLandingBtn){ exitToLandingBtn.onclick=()=>{ if(DEMO_MODE){ exitDemoToLive(); return; } ADMIN=false; IS_MASTER=false; applyMode(); showLanding(); }; }
 
 const enterPlayerBtn=document.getElementById('enterPlayer'); if(enterPlayerBtn)enterPlayerBtn.onclick=enterPlayerView;
 const enterOrgBtn=document.getElementById('enterOrganizer'); if(enterOrgBtn)enterOrgBtn.onclick=enterOrganizerView;
@@ -4420,9 +4490,10 @@ const exitDemoBtn=document.getElementById('exitDemoBtn'); if(exitDemoBtn)exitDem
 
 /* admin unlock / lock */
 document.getElementById('adminBtn').onclick=()=>{
-  if(DEMO_MODE){ return; } /* in demo, use exit button */
+  if(DEMO_MODE){ return; }
   if(ADMIN){
     ADMIN=false;
+    IS_MASTER=false; // always clear on logout
     applyMode();
     renderCurrent();
   } else {

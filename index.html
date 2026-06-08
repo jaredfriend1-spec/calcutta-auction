@@ -2090,7 +2090,10 @@ function saveLocal(){
   note('Saved locally');
 }
 
+let _suppressNextSnapshot = false;
 function applySnapshot(val){
+  // skip if we just wrote data — the snapshot reflects stale state
+  if(_suppressNextSnapshot){ _suppressNextSnapshot=false; return; }
   // if Firebase is empty (null), clear everything
   if(val===null || val===undefined){
     order=[]; teams=[]; results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}};
@@ -3415,7 +3418,7 @@ function resetRosterOnly(){
   order=[]; teams=[];
   rebuildPlayerLists();
   clearAllLocalStorage();
-  if(useCloud){ root.child('roster').set(null); root.child('teams').set(null); note('Roster cleared'); }
+  if(useCloud){ _suppressNextSnapshot=true; root.child('roster').set(null); root.child('teams').set(null); note('Roster cleared'); }
   persistAll(); renderCurrent();
 }
 function resetAuctionOnly(){ if(!confirmAdminAction('RESET AUCTION'))return; teams=order.map(s=>({...s,bought:'',amount:null,collected:false})); results={gross:{},net:{},flights:{},tieGroups:{gross:{},net:{},flightg:{},flightn:{}}}; try{localStorage.removeItem(KEY);}catch(e){} persistAll(); renderCurrent(); }
@@ -4433,7 +4436,8 @@ function applyRosterImport(newRoster){
   order=merged.map(t=>({card:t.card,team:t.team,p1:t.p1,p2:t.p2,flight:t.flight,draw:t.draw,drawPos:t.drawPos,h1:t.h1,h2:t.h2}));
   teams=merged.map(t=>({...t,bought:t.bought||'',amount:(t.amount===0||t.amount)?t.amount:null,collected:!!t.collected}));
   rebuildPlayerLists();
-  localStorage.removeItem(KEY);
+  clearAllLocalStorage();
+  _suppressNextSnapshot = true; // prevent Firebase echo from wiping the just-imported roster
   persistAll();
   // caller is responsible for rendering after import
 }

@@ -1055,6 +1055,105 @@ body.player #payoutpage .dashhead,body.player #flightpaypage .dashhead{align-ite
   table.pro-overall-payouts .r, table.pro-overall-payouts .c{white-space:nowrap!important}
 }
 
+
+
+/* ===== PDF v2 redesign: compact professional report ===== */
+@media print{
+  @page{size:Letter landscape;margin:0.28in 0.32in 0.32in 0.32in!important}
+  #printArea{display:block!important;width:100%!important;max-width:none!important;overflow:visible!important;color:#13211c!important}
+  .pro-report-v2{font-family:Arial,Helvetica,sans-serif!important;color:#13211c!important;font-size:8.2px!important;line-height:1.15!important;overflow:visible!important}
+  .pro-report-v2 .pro-top{display:flex!important;align-items:center!important;gap:12px!important;border-bottom:3px solid #0d3427!important;padding-bottom:7px!important;margin-bottom:6px!important;break-inside:avoid!important}
+  .pro-report-v2 .pro-logo{height:42px!important;width:auto!important;object-fit:contain!important}
+  .pro-report-v2 h1{font-size:18px!important;line-height:1.05!important;margin:0!important;color:#0d3427!important;font-weight:900!important}
+  .pro-report-v2 .pro-top p{font-size:8.2px!important;margin:2px 0 0!important;color:#4d6257!important;font-weight:700!important}
+  .pro-report-v2 .pro-sec{display:flex!important;align-items:flex-end!important;justify-content:space-between!important;background:#0d3427!important;color:#fff!important;border-radius:7px!important;padding:6px 8px!important;margin:8px 0 6px!important;break-after:avoid!important;page-break-after:avoid!important;break-inside:avoid!important}
+  .pro-report-v2 .pro-sec h2{font-size:12.5px!important;line-height:1.05!important;margin:0!important;color:#fff!important;font-weight:900!important;letter-spacing:.01em!important}
+  .pro-report-v2 .pro-sec p{font-size:7.2px!important;line-height:1.05!important;margin:2px 0 0!important;color:#d7e4dd!important;font-weight:700!important}
+  .pro-report-v2 .pro-cards{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:6px!important;margin:6px 0 8px!important;break-inside:avoid!important}
+  .pro-report-v2 .pro-cards>div{background:#0d3427!important;color:#fff!important;border-radius:8px!important;padding:7px 8px!important;min-width:0!important;overflow:visible!important}
+  .pro-report-v2 .pro-cards span{display:block!important;font-size:6.8px!important;text-transform:uppercase!important;letter-spacing:.055em!important;color:#d7e4dd!important;font-weight:900!important;white-space:nowrap!important}
+  .pro-report-v2 .pro-cards b{display:block!important;font-size:12.5px!important;line-height:1.08!important;margin-top:2px!important;color:#fff!important;font-weight:900!important;white-space:nowrap!important}
+  .pro-report-v2 .pro-cards small{display:block!important;font-size:6.9px!important;line-height:1.1!important;color:#d7e4dd!important;margin-top:2px!important;overflow:visible!important}
+  .pro-report-v2 .pro-two{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;align-items:start!important}
+  .pro-report-v2 .pro-three-results{display:grid!important;grid-template-columns:1fr!important;gap:7px!important}
+  .pro-report-v2 .pro-box{break-inside:avoid!important;page-break-inside:avoid!important;margin-bottom:7px!important}
+  .pro-report-v2 .pro-box h3,.pro-report-v2 .pro-bars h3,.pro-report-v2 .pro-mini-title{font-size:10.2px!important;margin:0 0 4px!important;color:#0d3427!important;font-weight:900!important;line-height:1.1!important}
+  .pro-report-v2 .pro-box h3 span,.pro-report-v2 .pro-bars h3 span{font-size:7.2px!important;color:#5a6b62!important;font-weight:700!important;margin-left:4px!important}
+  .pro-report-v2 table.pro-table{width:100%!important;max-width:100%!important;border-collapse:collapse!important;table-layout:auto!important;margin:0 0 5px!important;font-size:7.8px!important;line-height:1.12!important;break-inside:auto!important;page-break-inside:auto!important}
+  .pro-report-v2 table.pro-table thead{display:table-header-group!important}
+  .pro-report-v2 table.pro-table tr{break-inside:avoid!important;page-break-inside:avoid!important}
+  .pro-report-v2 table.pro-table th{background:#0d3427!important;color:#fff!important;text-align:left!important;font-size:6.6px!important;text-transform:uppercase!important;letter-spacing:.03em!important;font-weight:900!important;padding:3.5px 4px!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important}
+  .pro-report-v2 table.pro-table td{border-bottom:1px solid #dfe5e1!important;padding:3.5px 4px!important;vertical-align:top!important;overflow:visible!important;text-overflow:clip!important;word-break:normal!important;overflow-wrap:normal!important;white-space:normal!important}
+  .pro-report-v2 table.pro-table tr:nth-child(even) td{background:#f7faf8!important}
+  .pro-report-v2 table.pro-table .r,.pro-report-v2 table.pro-table td.r,.pro-report-v2 table.pro-table th.r{text-align:right!important;white-space:nowrap!important;overflow-wrap:normal!important}
+  .pro-report-v2 table.pro-table .c,.pro-report-v2 table.pro-table td.c,.pro-report-v2 table.pro-table th.c{text-align:center!important;white-space:nowrap!important}
+  .pro-report-v2 .pro-total td{font-weight:900!important;border-top:2px solid #0d3427!important;background:#fff!important}
+  .pro-report-v2 .pro-dot{display:inline-block!important;width:7px!important;height:7px!important;border-radius:50%!important;margin-right:4px!important;vertical-align:-1px!important}
+  .pro-report-v2 .pro-payout-lede{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:6px!important;margin:0 0 7px!important;break-inside:avoid!important}
+  .pro-report-v2 .pro-payout-lede>div{background:#eef4f0!important;border-left:4px solid #0d3427!important;border-radius:6px!important;padding:6px 7px!important}
+  .pro-report-v2 .pro-payout-lede span{display:block!important;font-size:6.8px!important;text-transform:uppercase!important;color:#5a6b62!important;font-weight:900!important;letter-spacing:.04em!important}
+  .pro-report-v2 .pro-payout-lede b{display:block!important;font-size:12px!important;color:#0d3427!important;font-weight:900!important;margin-top:2px!important;white-space:nowrap!important}
+  .pro-report-v2 .pro-barrow{display:flex!important;align-items:center!important;gap:6px!important;padding:2.8px 0!important;font-size:7.4px!important;break-inside:avoid!important}
+  .pro-report-v2 .pro-barrow .nm{width:135px!important;font-weight:900!important;color:#13211c!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .pro-report-v2 .pro-barrow .track{flex:1!important;background:#e7ece8!important;border-radius:4px!important;height:11px!important;overflow:hidden!important}
+  .pro-report-v2 .pro-barrow .track i{display:block!important;height:100%!important;background:#1c6b4d!important;border-radius:4px!important}
+  .pro-report-v2 .pro-barrow .vv{width:88px!important;text-align:right!important;font-weight:900!important;color:#0d3427!important;white-space:nowrap!important}
+  .pro-report-v2 .pro-buyer-block{break-inside:avoid!important;page-break-inside:avoid!important;margin:0 0 7px!important;border:1px solid #d7dfda!important;border-radius:6px!important;padding:5px!important}
+  .pro-report-v2 .pro-buyer-block h3{font-size:9.5px!important;line-height:1.15!important;margin:0 0 4px!important;color:#0d3427!important;font-weight:900!important;display:flex!important;justify-content:space-between!important;gap:8px!important}
+  .pro-report-v2 .pro-buyer-block h3 span{font-size:7.4px!important;color:#5a6b62!important;font-weight:800!important;text-align:right!important}
+  .pro-report-v2 .pro-settlement-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  .pro-report-v2 .pro-settle-card{border:1px solid #d7dfda!important;border-radius:8px!important;padding:6px 7px!important;break-inside:avoid!important;page-break-inside:avoid!important;background:#fff!important}
+  .pro-report-v2 .pro-settle-card h3{font-size:10.2px!important;color:#0d3427!important;margin:0 0 4px!important;font-weight:900!important}
+  .pro-report-v2 .pro-settle-stats{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:4px!important;margin-bottom:5px!important}
+  .pro-report-v2 .pro-settle-stats span{font-size:7px!important;color:#5a6b62!important;text-transform:uppercase!important;font-weight:900!important;background:#eef4f0!important;padding:4px!important;border-radius:4px!important}
+  .pro-report-v2 .pro-settle-stats b{display:block!important;font-size:9.2px!important;color:#0d3427!important;margin-top:1px!important;white-space:nowrap!important}
+  .pro-report-v2 .pro-winlist strong{display:block!important;font-size:7px!important;text-transform:uppercase!important;color:#5a6b62!important;margin-bottom:3px!important;letter-spacing:.04em!important}
+  .pro-report-v2 .pro-winlist p{font-size:7.4px!important;margin:0!important;color:#5a6b62!important;font-weight:700!important}
+  .pro-report-v2 .pro-winlist ul{margin:0!important;padding-left:13px!important}
+  .pro-report-v2 .pro-winlist li{font-size:7.3px!important;margin:1px 0!important;line-height:1.16!important}
+  .pro-report-v2 .pro-winlist li span{float:right!important;font-weight:900!important;color:#0d3427!important;margin-left:4px!important}
+  .pro-report-v2 .pro-pos{color:#197a4e!important;font-weight:900!important}
+  .pro-report-v2 .pro-neg{color:#b5471f!important;font-weight:900!important}
+  .pro-report-v2 .pro-empty{font-size:8px!important;color:#5a6b62!important;font-weight:700!important;margin:5px 0!important}
+  .pro-report-v2 .pro-foot{margin-top:9px!important;font-size:7px!important;color:#8a978f!important;border-top:1px solid #dde3df!important;padding-top:5px!important}
+}
+
+
+/* PDF v2 payout overflow fix: stack payout tables full-width */
+@media print{
+  .pro-report-v2 .pro-payout-stack{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:10px !important;
+    width:100% !important;
+    align-items:start !important;
+  }
+  .pro-report-v2 .pro-payout-stack .pro-box{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    overflow:visible !important;
+    break-inside:avoid !important;
+    page-break-inside:avoid !important;
+  }
+  .pro-report-v2 .pro-payout-stack table{
+    width:100% !important;
+    table-layout:auto !important;
+  }
+  .pro-report-v2 .pro-payout-stack th,
+  .pro-report-v2 .pro-payout-stack td{
+    overflow:visible !important;
+    white-space:nowrap !important;
+    text-overflow:clip !important;
+  }
+  .pro-report-v2 .pro-payout-stack th:first-child,
+  .pro-report-v2 .pro-payout-stack td:first-child,
+  .pro-report-v2 .pro-payout-stack th:nth-child(2),
+  .pro-report-v2 .pro-payout-stack td:nth-child(2){
+    white-space:normal !important;
+  }
+}
+
 </style>
 </head>
 <body class="player">
@@ -2546,6 +2645,7 @@ function renderReconciliation(){
 }
 
 /* export/import */
+
 function buildReport(kind){
   kind = kind || 'auction';
   const includeResults = kind === 'results';
@@ -2555,8 +2655,6 @@ function buildReport(kind){
   const soldByPrice=sold.slice().sort((a,b)=>(+b.amount||0)-(+a.amount||0)||a.drawPos-b.drawPos);
   const pot=sold.reduce((s,t)=>s+(+t.amount||0),0);
   const coll=sold.filter(t=>t.collected).reduce((s,t)=>s+(+t.amount||0),0);
-  const uncollected=centRound(pot-coll);
-  const staff=staffCut(pot);
   const P=activePools();
   const isF=P.mode==='flights';
   const methodLabel=isF?'Flight Payout':'Standard Payout';
@@ -2567,97 +2665,125 @@ function buildReport(kind){
   const section=(title,sub='',pb=false)=>`<div class="pro-sec"${pb?' style="page-break-before:always"':''}><div><h2>${esc(title)}</h2>${sub?`<p>${esc(sub)}</p>`:''}</div></div>`;
   const topLine=`${includeResults?'Results & Awards':'Auction Record'} &middot; ${now} &middot; Official Method: ${methodLabel}`;
 
+  const staff=staffCut(pot);
+  const fls=[1,2,3,4];
+  const flightGrossTotal=isF?fls.reduce((s,f)=>s+P.fl[f].g,0):0;
+  const flightNetTotal=isF?fls.reduce((s,f)=>s+P.fl[f].n,0):0;
+  const flightWinnerTotal=centRound(flightGrossTotal+flightNetTotal);
+  const grossSlots=payoutSlotList('gross');
+  const netSlots=payoutSlotList('net');
+  const grossAvailable=centRound(grossSlots.reduce((s,x)=>s+x.amount,0));
+  const netAvailable=centRound(netSlots.reduce((s,x)=>s+x.amount,0));
+  const prizeMoney=centRound(grossAvailable+netAvailable+flightWinnerTotal);
+  const highest=soldByPrice[0];
+  const avg=sold.length?centRound(pot/sold.length):0;
+
+  const awards=awardRows();
+  const prizeMap=buyerPrizeAgg();
   const by={};
   sold.forEach(t=>{const k=(t.bought||'').trim()||'(no buyer entered)';(by[k]=by[k]||[]).push(t);});
-  const prizeMap=buyerPrizeAgg();
   const buyerNames=Array.from(new Set([...Object.keys(by),...Object.keys(prizeMap)]));
   const buyerTotals=buyerNames.map(name=>{
     const list=(by[name]||[]).slice().sort((a,b)=>(+b.amount||0)-(+a.amount||0)||a.drawPos-b.drawPos);
     const spent=list.reduce((s,t)=>s+(+t.amount||0),0);
     const collected=list.filter(t=>t.collected).reduce((s,t)=>s+(+t.amount||0),0);
+    const wins=(prizeMap[name]||{wins:[]}).wins||[];
     const won=(prizeMap[name]||{totalWon:0}).totalWon||0;
-    return {name,list,spent,collected,owed:centRound(spent-collected),won,net:centRound(won-spent),count:list.length};
-  }).sort((a,b)=>b.spent-a.spent||b.won-a.won||b.count-a.count||a.name.localeCompare(b.name));
+    return {name,list,spent,collected,owed:centRound(spent-collected),won,net:centRound(won-spent),count:list.length,wins};
+  });
+  const buyersBySpend=buyerTotals.slice().filter(b=>b.spent>0||b.won>0).sort((a,b)=>b.spent-a.spent||b.won-a.won||b.count-a.count||a.name.localeCompare(b.name));
+  const buyersByNet=buyerTotals.slice().filter(b=>b.spent>0||b.won>0).sort((a,b)=>b.net-a.net||b.won-a.won||b.spent-a.spent||a.name.localeCompare(b.name));
+  const largestBuyer=buyersBySpend.find(b=>b.spent>0);
 
-  const grossTotal=(payout.gross||[]).reduce((s,p)=>s+centRound(P.gPool*p/100),0);
-  const netTotal=(payout.net||[]).reduce((s,p)=>s+centRound(P.nPool*p/100),0);
-  const flightGrossTotal=isF?[1,2,3,4].reduce((s,f)=>s+P.fl[f].g,0):0;
-  const flightNetTotal=isF?[1,2,3,4].reduce((s,f)=>s+P.fl[f].n,0):0;
-  const flightWinnerTotal=centRound(flightGrossTotal+flightNetTotal);
-  const payoutTotal=centRound(staff+flightWinnerTotal+grossTotal+netTotal);
-  const prizeMoney=centRound(P.pool+flightWinnerTotal);
-  const highest=soldByPrice[0];
-  const avg=sold.length?centRound(pot/sold.length):0;
-  const largestBuyer=buyerTotals.find(b=>b.spent>0);
-  const topFive=buyerTotals.filter(b=>b.spent>0).slice(0,5);
-
-  const cards=`<div class="pro-cards">
-    <div><span>Total Pot</span><b>${money(pot)}</b></div>
-    <div><span>Prize Money</span><b>${money(prizeMoney)}</b></div>
-    <div><span>Club Share</span><b>${money(staff)}</b></div>
-    <div><span>Teams Sold</span><b>${sold.length}/${teams.length}</b></div>
+  const cards=`<div class="pro-cards pro-snapshot">
+    <div><span>Total Pot</span><b>${money(pot)}</b><small>all winning bids</small></div>
+    <div><span>Prize Pool</span><b>${money(prizeMoney)}</b><small>gross + net${isF?' + flight':''}</small></div>
+    <div><span>Club Share</span><b>${money(staff)}</b><small>5% off the top</small></div>
+    <div><span>Teams Sold</span><b>${sold.length}/${teams.length}</b><small>${sold.length===teams.length?'auction complete':'auction in progress'}</small></div>
+    <div><span>Avg Sale</span><b>${money(avg)}</b><small>per sold team</small></div>
     <div><span>Highest Sale</span><b>${highest?money(highest.amount):'—'}</b><small>${highest?teamName(highest):'Pending bids'}</small></div>
-    <div><span>Largest Buyer</span><b>${largestBuyer?esc(largestBuyer.name):'—'}</b><small>${largestBuyer?money(largestBuyer.spent)+' · '+largestBuyer.count+' teams':'Pending bids'}</small></div>
   </div>`;
 
-  const potRows=`<table class="pro-table pro-tight"><thead><tr><th>Money bucket</th><th class="r">Amount</th><th>What it means</th></tr></thead><tbody>
-    <tr><td>Total pot</td><td class="r">${money(pot)}</td><td>All team purchases entered at print time</td></tr>
-    <tr><td>Collected</td><td class="r">${money(coll)}</td><td>${uncollected>0?money(uncollected)+' still open':'All marked collected'}</td></tr>
-    <tr><td>Club share / staff</td><td class="r">${money(staff)}</td><td>5% off the top</td></tr>
-    ${isF?`<tr><td>Flight winner payouts</td><td class="r">${money(flightWinnerTotal)}</td><td>1 gross + 1 net winner in each flight</td></tr>`:''}
-    <tr><td>Overall gross pool</td><td class="r">${money(P.gPool)}</td><td>${payout.grossPct}% of ${isF?'main pool after flight payouts':'prize money'}</td></tr>
-    <tr><td>Overall net pool</td><td class="r">${money(P.nPool)}</td><td>${payout.netPct}% of ${isF?'main pool after flight payouts':'prize money'}</td></tr>
-  </tbody></table>`;
+  const flightPotRows=fls.map(f=>{const d=flightTotals(f); const pct=pot?Math.round(d.pot/pot*100):0; return `<tr><td><span class="pro-dot" style="background:${FCHEX[f]}"></span>Flight ${f}</td><td class="c">${d.sold}/${d.teams}</td><td class="r">${money(d.pot)}</td><td class="c">${pct}%</td></tr>`;}).join('');
+  const flightPotSummary=`<table class="pro-table pro-tight"><thead><tr><th>Flight</th><th class="c">Sold</th><th class="r">Pot</th><th class="c">Share</th></tr></thead><tbody>${flightPotRows}</tbody></table>`;
 
-  const topBuyerRows=topFive.map((b,i)=>`<tr><td class="c">${i+1}</td><td>${esc(b.name)}</td><td class="c">${b.count}</td><td class="r">${money(b.spent)}</td></tr>`).join('') || '<tr><td colspan="4" class="c">Pending bids</td></tr>';
-  const topBuyerTable=`<table class="pro-table pro-tight"><thead><tr><th class="c">#</th><th>Buyer</th><th class="c">Teams</th><th class="r">Spent</th></tr></thead><tbody>${topBuyerRows}</tbody></table>`;
+  const maxBuyer=Math.max(1,...buyersBySpend.map(b=>b.spent));
+  const buyerBars=buyersBySpend.slice(0,12).map((b,i)=>`<div class="pro-barrow"><span class="nm">${i+1}. ${esc(b.name)}</span><span class="track"><i style="width:${Math.max(3,Math.round(b.spent/maxBuyer*100))}%"></i></span><span class="vv">${money(b.spent)} · ${b.count}</span></div>`).join('') || '<p class="pro-empty">Pending bids.</p>';
+  const moneyByBuyer=`<div class="pro-bars"><h3>Money by Buyer <span>top spenders</span></h3>${buyerBars}</div>`;
 
-  const payoutRows=(poolName,poolAmt,items)=>items.map((pct,i)=>`<tr><td>${poolName}</td><td>${ordinal(i+1)} ${poolName}</td><td class="r">${money(centRound(poolAmt*pct/100))}</td><td class="c">${pct}%</td></tr>`).join('');
-  const overallPayoutTable=`<div class="pro-box pro-full"><h3>Overall Gross + Net Payouts <span>Gross ${money(P.gPool)} · Net ${money(P.nPool)}</span></h3><table class="pro-table pro-tight pro-overall-payouts"><colgroup><col style="width:18%"><col style="width:42%"><col style="width:25%"><col style="width:15%"></colgroup><thead><tr><th>Pool</th><th>Place</th><th class="r">Amount</th><th class="c">Share</th></tr></thead><tbody>${payoutRows('Gross',P.gPool,payout.gross||[])}${payoutRows('Net',P.nPool,payout.net||[])}</tbody></table></div>`;
+  const payoutRows=(label,slots)=>slots.map(x=>`<tr><td>${esc(label)}</td><td>${esc(x.label)}</td><td class="r">${money(x.amount)}</td><td class="c">${x.pct}%</td></tr>`).join('');
+  const overallPayoutTable=`<table class="pro-table pro-tight pro-payout-table"><thead><tr><th>Pool</th><th>Place</th><th class="r">Amount</th><th class="c">Share</th></tr></thead><tbody>${payoutRows('Overall Gross',grossSlots)}${payoutRows('Overall Net',netSlots)}</tbody></table>`;
+  const flightPayoutTable=isF?`<table class="pro-table pro-tight pro-payout-table"><thead><tr><th>Flight</th><th class="r">Flight Pot</th><th class="r">Gross Winner</th><th class="r">Net Winner</th><th class="r">Total</th></tr></thead><tbody>${fls.map(f=>{const d=flightTotals(f), fl=P.fl[f]; return `<tr><td><span class="pro-dot" style="background:${FCHEX[f]}"></span>Flight ${f}</td><td class="r">${money(d.pot)}</td><td class="r">${money(fl.g)}</td><td class="r">${money(fl.n)}</td><td class="r">${money(fl.g+fl.n)}</td></tr>`;}).join('')}<tr class="pro-total"><td>Total flight payouts</td><td></td><td class="r">${money(flightGrossTotal)}</td><td class="r">${money(flightNetTotal)}</td><td class="r">${money(flightWinnerTotal)}</td></tr></tbody></table>`:'';
+  const payoutSummary=`<div class="pro-payout-lede">
+      <div><span>Total Pot</span><b>${money(pot)}</b></div>
+      <div><span>Club Share</span><b>${money(staff)}</b></div>
+      ${isF?`<div><span>Flight Payouts</span><b>${money(flightWinnerTotal)}</b></div>`:''}
+      <div><span>Overall Gross</span><b>${money(grossAvailable)}</b></div>
+      <div><span>Overall Net</span><b>${money(netAvailable)}</b></div>
+    </div>
+    <div class="pro-payout-stack"><div class="pro-box"><h3>Overall Payouts <span>amount first</span></h3>${overallPayoutTable}</div>${isF?`<div class="pro-box"><h3>Flight Payouts <span>gross + net</span></h3>${flightPayoutTable}</div>`:''}</div>`;
 
-  let flightPayoutTable='';
-  if(isF){
-    const rows=[1,2,3,4].map(f=>{const d=flightTotals(f), fl=P.fl[f]; return `<tr><td><span class="pro-dot" style="background:${FCHEX[f]}"></span>Flight ${f}</td><td class="r">${money(d.pot)}</td><td class="r">${money(fl.money)}</td><td class="r">${money(fl.g)}</td><td class="r">${money(fl.n)}</td></tr>`;}).join('');
-    flightPayoutTable=`<div class="pro-box pro-full"><h3>Flight Winner Payouts <span>${money(flightWinnerTotal)}</span></h3><table class="pro-table pro-tight"><thead><tr><th>Flight</th><th class="r">Flight Pot</th><th class="r">Total Flight Payout</th><th class="r">Gross Winner</th><th class="r">Net Winner</th></tr></thead><tbody>${rows}<tr class="pro-total"><td>Total</td><td></td><td class="r">${money(flightWinnerTotal)}</td><td class="r">${money(flightGrossTotal)}</td><td class="r">${money(flightNetTotal)}</td></tr></tbody></table></div>`;
-  }
-  const payoutStructure=`<div class="pro-payout-lede">
-    <div><span>Total Pot</span><b>${money(pot)}</b></div>
-    <div><span>Club Share</span><b>${money(staff)}</b></div>
-    ${isF?`<div><span>Flight Winners</span><b>${money(flightWinnerTotal)}</b></div>`:''}
-    <div><span>Overall Gross</span><b>${money(P.gPool)}</b></div>
-    <div><span>Overall Net</span><b>${money(P.nPool)}</b></div>
-  </div>${flightPayoutTable}${overallPayoutTable}`;
-
-  const buyerDetail=buyerTotals.filter(b=>b.spent>0||b.won>0).map(b=>{
-    const teamsRows=b.list.map(t=>`<tr><td class="c">${t.flight}</td><td>${teamName(t)}</td><td class="r">${money(t.amount)}</td></tr>`).join('') || '<tr><td colspan="3" class="c">No teams bought.</td></tr>';
-    const wins=(prizeMap[b.name]||{}).wins||[];
-    const winRows=includeResults && wins.length?wins.map(w=>`<tr><td>${esc(w.spot)}</td><td>${teamName(w.team)}</td><td class="r">${money(w.amount)}</td></tr>`).join(''):'';
-    return `<div class="pro-buyer-block"><h3>${esc(b.name)} <span>${b.count} team${b.count===1?'':'s'} · spent ${money(b.spent)}${includeResults?` · won ${money(b.won)} · net ${b.net>=0?'+':''}${money(b.net)}`:''}${b.owed>0?` · owed ${money(b.owed)}`:''}</span></h3><table class="pro-table pro-tight"><thead><tr><th class="c">Flt</th><th>Team bought</th><th class="r">Price</th></tr></thead><tbody>${teamsRows}</tbody></table>${winRows?`<table class="pro-table pro-tight pro-win-table"><thead><tr><th>Result</th><th>Winning team</th><th class="r">Won</th></tr></thead><tbody>${winRows}</tbody></table>`:''}</div>`;
-  }).join('') || '<p class="pro-empty">No buyers yet.</p>';
-
-  const byFlight=[1,2,3,4].map(f=>{
-    const d=flightTotals(f);
-    const rows=teams.filter(t=>t.flight===f && (+t.amount||0)>0).sort((a,b)=>(+b.amount||0)-(+a.amount||0)||a.drawPos-b.drawPos).map(t=>`<tr><td>${teamName(t)}</td><td>${esc(t.bought||'')}</td><td class="r">${money(t.amount)}</td></tr>`).join('') || '<tr><td colspan="3" class="c">Pending bids</td></tr>';
-    return `<div class="pro-flight-block"><h3>Flight ${f} <span>${d.sold}/${d.teams} sold · ${money(d.pot)}</span></h3><table class="pro-table pro-tight"><thead><tr><th>Team</th><th>Buyer</th><th class="r">Price</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-  }).join('');
+  const byFlightCompact=`<table class="pro-table pro-tight"><thead><tr><th class="c">Flight</th><th>Team</th><th>Buyer</th><th class="r">Price</th></tr></thead><tbody>${fls.map(f=>teams.filter(t=>t.flight===f && (+t.amount||0)>0).sort((a,b)=>(+b.amount||0)-(+a.amount||0)||a.drawPos-b.drawPos).map(t=>`<tr><td class="c"><span class="pro-dot" style="background:${FCHEX[f]}"></span>${f}</td><td>${teamName(t)}</td><td>${esc(t.bought||'')}</td><td class="r">${money(t.amount)}</td></tr>`).join('')).join('') || '<tr><td colspan="4" class="c">Pending bids</td></tr>'}</tbody></table>`;
 
   const soldPrice=`<table class="pro-table pro-tight"><thead><tr><th>Team</th><th class="c">Flight</th><th>Buyer</th><th class="r">Price</th></tr></thead><tbody>${soldByPrice.map(t=>`<tr><td>${teamName(t)}</td><td class="c">${t.flight}</td><td>${esc(t.bought||'')}</td><td class="r">${money(t.amount)}</td></tr>`).join('') || '<tr><td colspan="4" class="c"><b>Pending Bids</b><br>Teams will appear here as they are purchased.</td></tr>'}</tbody></table>`;
 
-  const awardList=awardRows().sort((a,b)=>b.amount-a.amount);
-  const resultsTable=awardList.length?`<table class="pro-table pro-tight"><thead><tr><th>Result</th><th>Team</th><th>Buyer</th><th class="r">Payout</th></tr></thead><tbody>${awardList.map(r=>`<tr><td>${esc(r.spot)}</td><td>${teamName(r.team)}</td><td>${esc(r.buyer)}</td><td class="r">${money(r.amount)}</td></tr>`).join('')}</tbody></table>`:'<p class="pro-empty">No results have been entered yet.</p>';
-  const settlementRows=buyerTotals.filter(b=>b.spent>0||b.won>0).sort((a,b)=>b.won-a.won||b.net-a.net||b.spent-a.spent).map(b=>`<tr><td>${esc(b.name)}</td><td class="r">${money(b.spent)}</td><td class="r">${money(b.won)}</td><td class="r ${b.net>=0?'pro-pos':'pro-neg'}">${b.net>=0?'+':''}${money(b.net)}</td></tr>`).join('') || '<tr><td colspan="4" class="c">No buyer results yet.</td></tr>';
-  const settlementTable=`<table class="pro-table pro-tight"><thead><tr><th>Buyer</th><th class="r">Spent</th><th class="r">Won</th><th class="r">Net</th></tr></thead><tbody>${settlementRows}</tbody></table>`;
+  const buyerDetail=buyersBySpend.map(b=>{
+    const teamsRows=b.list.map(t=>`<tr><td class="c">${t.flight}</td><td>${teamName(t)}</td><td class="r">${money(t.amount)}</td></tr>`).join('') || '<tr><td colspan="3" class="c">No teams bought.</td></tr>';
+    return `<div class="pro-buyer-block"><h3>${esc(b.name)} <span>${b.count} team${b.count===1?'':'s'} · spent ${money(b.spent)}${b.owed>0?` · owed ${money(b.owed)}`:''}</span></h3><table class="pro-table pro-tight"><thead><tr><th class="c">Flt</th><th>Team bought</th><th class="r">Price</th></tr></thead><tbody>${teamsRows}</tbody></table></div>`;
+  }).join('') || '<p class="pro-empty">No buyers yet.</p>';
 
-  document.getElementById('printArea').innerHTML=`<div class="pro-report">
-    <div class="pro-top">${logoSrc?`<img class="pro-logo" src="${logoSrc}">`:''}<div><h1>Member&ndash;Member Calcutta</h1><p>${topLine}</p></div></div>
-    ${includeResults?section('Results & Awards','winner payouts and buyer settlement')+resultsTable+section('Buyer Settlement','spent, won, and net by buyer')+settlementTable:''}
-    ${section('Auction Overview','the money at a glance')}${cards}<div class="pro-two"><div>${potRows}</div><div>${topBuyerTable}</div></div>
-    ${section('Official Payouts',methodLabel,true)}${payoutStructure}
-    ${section('Buyers and Teams','sorted by total spend',true)}${buyerDetail}
-    ${section('Winning Bidders by Flight','team, buyer, and sale price',true)}<div class="pro-flight-grid">${byFlight}</div>
-    ${section('Teams Sold by Price','highest sale to lowest',true)}${soldPrice}
-    <div class="pro-foot">Montgomery Country Club Member&ndash;Member Calcutta &middot; generated ${now}</div>
+  const awardType=(r)=>r.spot.indexOf('Flight ')===0?'flight':(r.spot.indexOf('Gross')>-1?'gross':'net');
+  const awardGroups={gross:[],net:[],flight:[]};
+  awards.forEach(r=>awardGroups[awardType(r)].push(r));
+  const resultRows=(arr)=>arr.length?arr.map(r=>`<tr><td>${esc(r.spot)}</td><td>${teamName(r.team)}</td><td>${esc(r.buyer)}</td><td class="r">${money(r.amount)}</td></tr>`).join(''):'<tr><td colspan="4" class="c">No winners entered.</td></tr>';
+  const winnersHtml=`<div class="pro-three-results">
+    <div class="pro-box"><h3>Overall Gross</h3><table class="pro-table pro-tight"><thead><tr><th>Result</th><th>Team</th><th>Buyer</th><th class="r">Payout</th></tr></thead><tbody>${resultRows(awardGroups.gross)}</tbody></table></div>
+    <div class="pro-box"><h3>Overall Net</h3><table class="pro-table pro-tight"><thead><tr><th>Result</th><th>Team</th><th>Buyer</th><th class="r">Payout</th></tr></thead><tbody>${resultRows(awardGroups.net)}</tbody></table></div>
+    <div class="pro-box"><h3>Flight Winners</h3><table class="pro-table pro-tight"><thead><tr><th>Result</th><th>Team</th><th>Buyer</th><th class="r">Payout</th></tr></thead><tbody>${resultRows(awardGroups.flight)}</tbody></table></div>
   </div>`;
+
+  const settlementCards=buyersByNet.map(b=>{
+    const winList=(b.wins||[]).length?`<ul>${b.wins.map(w=>`<li><b>${esc(w.spot)}</b> &mdash; ${teamName(w.team)} <span>${money(w.amount)}</span></li>`).join('')}</ul>`:'<p>No winning teams.</p>';
+    return `<div class="pro-settle-card"><h3>${esc(b.name)}</h3><div class="pro-settle-stats"><span>Spent <b>${money(b.spent)}</b></span><span>Won <b>${money(b.won)}</b></span><span class="${b.net>=0?'pro-pos':'pro-neg'}">Net <b>${b.net>=0?'+':''}${money(b.net)}</b></span></div><div class="pro-winlist"><strong>Contributing winning teams</strong>${winList}</div></div>`;
+  }).join('') || '<p class="pro-empty">No buyer settlement yet.</p>';
+
+  const grossPaid=centRound(awardGroups.gross.reduce((s,r)=>s+r.amount,0));
+  const netPaid=centRound(awardGroups.net.reduce((s,r)=>s+r.amount,0));
+  const flightPaid=centRound(awardGroups.flight.reduce((s,r)=>s+r.amount,0));
+  const availTotal=centRound(grossAvailable+netAvailable+flightWinnerTotal);
+  const paidTotal=centRound(grossPaid+netPaid+flightPaid);
+  const diff=centRound(availTotal-paidTotal);
+  const reconTable=`<table class="pro-table pro-tight"><thead><tr><th>Category</th><th class="r">Available</th><th class="r">Paid</th><th class="r">Difference</th></tr></thead><tbody>
+    <tr><td>Overall Gross</td><td class="r">${money(grossAvailable)}</td><td class="r">${money(grossPaid)}</td><td class="r">${money(centRound(grossAvailable-grossPaid))}</td></tr>
+    <tr><td>Overall Net</td><td class="r">${money(netAvailable)}</td><td class="r">${money(netPaid)}</td><td class="r">${money(centRound(netAvailable-netPaid))}</td></tr>
+    ${isF?`<tr><td>Flight Winners</td><td class="r">${money(flightWinnerTotal)}</td><td class="r">${money(flightPaid)}</td><td class="r">${money(centRound(flightWinnerTotal-flightPaid))}</td></tr>`:''}
+    <tr class="pro-total"><td>Total Prize Distribution</td><td class="r">${money(availTotal)}</td><td class="r">${money(paidTotal)}</td><td class="r ${Math.abs(diff)<0.01?'pro-pos':'pro-neg'}">${money(diff)}</td></tr>
+  </tbody></table>`;
+
+  const tieMap={};
+  awards.filter(r=>(+r.splitCount||1)>1).forEach(r=>{const k=r.spot+'|'+r.pool+'|'+r.splitCount; const e=tieMap[k]||(tieMap[k]={spot:r.spot,pool:r.pool,count:r.splitCount,amount:r.amount,teams:[]}); e.teams.push(r.team);});
+  const tieDetails=Object.values(tieMap);
+  const tieHtml=tieDetails.length?`<table class="pro-table pro-tight"><thead><tr><th>Tie Group</th><th>Teams</th><th class="r">Combined Pool</th><th class="r">Per Team</th></tr></thead><tbody>${tieDetails.map(t=>`<tr><td>${esc(t.spot)}</td><td>${t.teams.map(teamName).join('<br>')}</td><td class="r">${money(t.pool)}</td><td class="r">${money(t.amount)}</td></tr>`).join('')}</tbody></table>`:'';
+
+  const reportTitle=includeResults?'Results & Awards':'Auction Record';
+  const header=`<div class="pro-top">${logoSrc?`<img class="pro-logo" src="${logoSrc}">`:''}<div><h1>Member&ndash;Member Calcutta</h1><p>${topLine}</p></div></div>`;
+
+  let body='';
+  if(includeResults){
+    body += `${section('Tournament Winners','gross, net, flight winners, and tie-adjusted payouts')}${winnersHtml}`;
+    body += `${section('Buyer Settlement Summary','who made money, who lost money, and which teams contributed',true)}<div class="pro-settlement-grid">${settlementCards}</div>`;
+    body += `${section('Payout Summary','official prize structure in dollars',true)}${payoutSummary}`;
+    body += `${section('Reconciliation','available prize money versus entered winner payouts',true)}${reconTable}`;
+    if(tieHtml) body += `${section('Tie Breakdown','pooled spots and per-team splits',true)}${tieHtml}`;
+  }else{
+    body += `${section('Auction Snapshot','the money at a glance')}${cards}<div class="pro-two"><div>${moneyByBuyer}</div><div><h3 class="pro-mini-title">Flight Pot Summary</h3>${flightPotSummary}</div></div>`;
+    body += `${section('Payout Structure','official auction payout setup',true)}${payoutSummary}`;
+    body += `${section('Winning Bidders by Flight','compact buyer and price record',true)}${byFlightCompact}`;
+    body += `${section('Teams Sold by Price','highest sale to lowest',true)}${soldPrice}`;
+    body += `${section('Appendix: Buyer Detail','sorted by total spend',true)}${buyerDetail}`;
+  }
+
+  document.getElementById('printArea').innerHTML=`<div class="pro-report pro-report-v2 pro-${includeResults?'results':'auction'}">${header}${body}<div class="pro-foot">${reportTitle} &middot; generated ${now}</div></div>`;
 }
 
 document.getElementById('exportPdf').onclick=()=>{ buildReport('auction'); window.print(); };

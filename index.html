@@ -1877,7 +1877,7 @@ try{
 }catch(e){ console.warn('Firebase init failed, using local storage:',e); useCloud=false; }
 
 const FC={1:'var(--f1)',2:'var(--f2)',3:'var(--f3)',4:'var(--f4)'};
-const MASTER_CODE='Calcutta#Admin'; /* always works, never shown, never cleared */
+let MASTER_CODE='Calcutta#Admin'; /* default fallback — overridden by Firebase settings/masterCode per club */
 const DEFAULT_SETTINGS={clubName:'Golf Calcutta Portal',eventName:'Tournament Auction Portal',eventYear:new Date().getFullYear(),logoMode:'none',displayUnit:'dollars',customUnit:'$',showPrices:true,showBuyerNames:true,staffPct:5,requirePlayerCode:false,playerCode:'Player',adminCode:'Admin'};
 let appSettings={...DEFAULT_SETTINGS};
 let tournamentHistory=[];
@@ -2109,6 +2109,7 @@ function applySnapshot(val){
     appSettings={...DEFAULT_SETTINGS,...val.settings};
     if(val.settings.auctionSettings) auctionSettings={...auctionSettings,...val.settings.auctionSettings};
     TOURNAMENT_LOCKED = !!val.settings.tournamentLocked;
+    if(val.settings.masterCode) MASTER_CODE = val.settings.masterCode;
   }
   if(val.history&&typeof val.history==='object') tournamentHistory=Object.values(val.history).sort((a,b)=>String(b.ts).localeCompare(String(a.ts)));
   applySettings();

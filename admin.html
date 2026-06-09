@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golf Calcutta — Admin Portal</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a1f15;color:#e8f0e8;min-height:100vh;padding:0}
+  .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+  .login-card{background:#0e2d1e;border:1px solid #1a4a2e;border-radius:20px;padding:40px;width:100%;max-width:400px;text-align:center}
+  .login-card h1{font-size:22px;font-weight:900;color:#f4c64a;margin-bottom:6px}
+  .login-card p{font-size:13px;color:#6a9a7a;margin-bottom:24px}
+  .login-card input{width:100%;background:#061a12;border:1.5px solid #1a4a2e;border-radius:10px;color:#e8f0e8;font-size:15px;padding:12px 14px;outline:none;margin-bottom:12px}
+  .login-card input:focus{border-color:#4a9a6a}
+  .btn{background:#1a5c3f;color:#fff;border:none;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%}
+  .btn:hover{background:#1f6b4a}
+  .btn.danger{background:#7a2a1a}
+  .btn.danger:hover{background:#8a3a2a}
+  .btn.ghost{background:transparent;border:1.5px solid #1a4a2e;color:#a0c0a0}
+  .btn.ghost:hover{border-color:#4a9a6a;color:#e8f0e8}
+  .btn.small{padding:7px 14px;font-size:12px;width:auto}
+
+  /* portal */
+  .portal{display:none;padding:0}
+  .portal.show{display:block}
+  .topbar{background:#061a12;border-bottom:1px solid #1a4a2e;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+  .topbar h1{font-size:18px;font-weight:900;color:#f4c64a}
+  .topbar .sub{font-size:11px;color:#4a7a5a;margin-top:2px}
+  .content{padding:24px;max-width:960px;margin:0 auto}
+  .section-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#4a7a5a;font-weight:800;margin:28px 0 12px}
+  .club-card{background:#0e2d1e;border:1px solid #1a4a2e;border-radius:16px;padding:20px;margin-bottom:16px}
+  .club-card h2{font-size:16px;font-weight:900;color:#e8f0e8;margin-bottom:4px}
+  .club-url{font-size:12px;color:#4a9a6a;margin-bottom:16px;font-family:monospace}
+  .fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+  @media(max-width:600px){.fields{grid-template-columns:1fr}}
+  .field-group label{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#4a7a5a;font-weight:800;margin-bottom:5px}
+  .field-group input{width:100%;background:#061a12;border:1.5px solid #1a4a2e;border-radius:8px;color:#e8f0e8;font-size:13px;padding:9px 11px;outline:none;font-family:monospace}
+  .field-group input:focus{border-color:#4a9a6a}
+  .field-group input.changed{border-color:#f4c64a}
+  .card-actions{display:flex;gap:8px;align-items:center}
+  .save-note{font-size:11px;color:#4a9a6a;margin-left:8px}
+  .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+  .status-dot.ok{background:#2a9a5a}
+  .status-dot.warn{background:#f4c64a}
+  .club-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .badge{font-size:10px;padding:3px 8px;border-radius:99px;font-weight:700;letter-spacing:.06em}
+  .badge.live{background:#1a5c3f;color:#4ae49a}
+  .add-club-card{background:#0a1f15;border:1.5px dashed #1a4a2e;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:.15s}
+  .add-club-card:hover{border-color:#4a9a6a;background:#0e2d1e}
+  .add-club-card p{font-size:13px;color:#4a7a5a;margin-top:6px}
+  .warning{background:#2a1a0a;border:1px solid #7a4a1a;border-radius:10px;padding:12px 14px;font-size:12px;color:#c09a5a;margin-bottom:20px}
+  .loading{text-align:center;padding:40px;color:#4a7a5a;font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <h1>⛳ Admin Portal</h1>
+    <p>Golf Calcutta — Club Management</p>
+    <input type="password" id="adminPwd" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn" onclick="doLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- PORTAL -->
+<div class="portal" id="portal">
+  <div class="topbar">
+    <div>
+      <h1>⛳ Golf Calcutta Admin</h1>
+      <div class="sub">Club Management Portal</div>
+    </div>
+    <button class="btn ghost small" onclick="doLogout()">Sign Out</button>
+  </div>
+  <div class="content">
+    <div class="warning">⚠ This page is private. Do not share this URL or password. All changes save directly to each club's Firebase database.</div>
+    <div class="section-title">Active Clubs</div>
+    <div id="clubsContainer"><div class="loading">Loading clubs…</div></div>
+  </div>
+</div>
+
+<script>
+const SUPER_ADMIN_PWD = 'G0lf#create#app1';
+const BASE_URL = 'https://calcutta-auction-amber.vercel.app';
+
+const CLUB_CONFIGS = {
+  'mcc': {
+    label: 'MCC — Member Member Calcutta',
+    apiKey: "AIzaSyDAFsCd1ZhxVG35scW7QptEc2C81rl8U6g",
+    authDomain: "mcc-calcutta.firebaseapp.com",
+    databaseURL: "https://mcc-calcutta-default-rtdb.firebaseio.com",
+    projectId: "mcc-calcutta"
+  },
+  'club1': {
+    label: 'Club 1 — Cress Creek CC (Test)',
+    apiKey: "AIzaSyBmcRL-bgiQHBFwwnf3OAIJStPD1imC5q0",
+    authDomain: "calcutta-new-club-1.firebaseapp.com",
+    databaseURL: "https://calcutta-new-club-1-default-rtdb.firebaseio.com",
+    projectId: "calcutta-new-club-1"
+  }
+  // Add more clubs here as you create them
+};
+
+const EVENT_PATH = 'calcutta/2026';
+let fbApps = {};
+let fbRoots = {};
+
+function getRoot(slug){
+  if(fbRoots[slug]) return fbRoots[slug];
+  const cfg = CLUB_CONFIGS[slug];
+  if(!cfg) return null;
+  try {
+    fbApps[slug] = firebase.initializeApp(cfg, slug);
+  } catch(e) {
+    fbApps[slug] = firebase.app(slug);
+  }
+  fbRoots[slug] = firebase.database(fbApps[slug]).ref(EVENT_PATH);
+  return fbRoots[slug];
+}
+
+function doLogin(){
+  const pwd = document.getElementById('adminPwd').value;
+  if(pwd === SUPER_ADMIN_PWD){
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('portal').classList.add('show');
+    loadAllClubs();
+  } else {
+    alert('Incorrect password.');
+    document.getElementById('adminPwd').value = '';
+  }
+}
+
+function doLogout(){
+  document.getElementById('portal').classList.remove('show');
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('adminPwd').value = '';
+  document.getElementById('clubsContainer').innerHTML = '<div class="loading">Loading clubs…</div>';
+}
+
+async function loadAllClubs(){
+  const container = document.getElementById('clubsContainer');
+  container.innerHTML = '';
+
+  for(const [slug, cfg] of Object.entries(CLUB_CONFIGS)){
+    const card = document.createElement('div');
+    card.className = 'club-card';
+    card.id = 'club-'+slug;
+    card.innerHTML = `
+      <div class="club-header">
+        <h2>${cfg.label}</h2>
+        <span class="badge live">LIVE</span>
+      </div>
+      <div class="club-url">🔗 ${BASE_URL}/${slug}</div>
+      <div class="fields">
+        <div class="field-group">
+          <label>Master Code</label>
+          <input type="text" id="${slug}_master" placeholder="Calcutta#Admin" oninput="markChanged(this)">
+        </div>
+        <div class="field-group">
+          <label>Organizer Code</label>
+          <input type="text" id="${slug}_admin" placeholder="Admin" oninput="markChanged(this)">
+        </div>
+        <div class="field-group">
+          <label>Player Code</label>
+          <input type="text" id="${slug}_player" placeholder="Player" oninput="markChanged(this)">
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn small" onclick="saveClub('${slug}')">Save Changes</button>
+        <button class="btn ghost small" onclick="copyUrl('${slug}')">Copy URL</button>
+        <span class="save-note" id="${slug}_note"></span>
+      </div>`;
+    container.appendChild(card);
+    loadClubSettings(slug);
+  }
+}
+
+async function loadClubSettings(slug){
+  const root = getRoot(slug);
+  if(!root) return;
+  try {
+    const snap = await root.child('settings').once('value');
+    const s = snap.val() || {};
+    const masterEl = document.getElementById(slug+'_master');
+    const adminEl  = document.getElementById(slug+'_admin');
+    const playerEl = document.getElementById(slug+'_player');
+    if(masterEl) masterEl.value = s.masterCode || '';
+    if(adminEl)  adminEl.value  = s.adminCode  || '';
+    if(playerEl) playerEl.value = s.playerCode || '';
+  } catch(e){
+    showNote(slug, '⚠ Could not load — check Firebase rules', true);
+  }
+}
+
+async function saveClub(slug){
+  const root = getRoot(slug);
+  if(!root){ alert('Firebase not configured for '+slug); return; }
+  const master = document.getElementById(slug+'_master').value.trim();
+  const admin  = document.getElementById(slug+'_admin').value.trim();
+  const player = document.getElementById(slug+'_player').value.trim();
+  try {
+    const snap = await root.child('settings').once('value');
+    const existing = snap.val() || {};
+    const updates = {...existing};
+    if(master) updates.masterCode = master; else delete updates.masterCode;
+    if(admin)  updates.adminCode  = admin;
+    if(player) updates.playerCode = player;
+    await root.child('settings').set(updates);
+    // clear changed highlights
+    [slug+'_master', slug+'_admin', slug+'_player'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.classList.remove('changed');
+    });
+    showNote(slug, '✅ Saved');
+  } catch(e){
+    showNote(slug, '❌ Save failed: '+e.message, true);
+  }
+}
+
+function markChanged(el){
+  el.classList.add('changed');
+}
+
+function showNote(slug, msg, isErr){
+  const el = document.getElementById(slug+'_note');
+  if(!el) return;
+  el.textContent = msg;
+  el.style.color = isErr ? '#e07a5a' : '#4a9a6a';
+  setTimeout(() => { el.textContent = ''; }, 3000);
+}
+
+function copyUrl(slug){
+  navigator.clipboard.writeText(BASE_URL+'/'+slug).then(()=>{
+    showNote(slug, '📋 URL copied!');
+  });
+}
+
+document.getElementById('adminPwd').focus();
+</script>
+</body>
+</html>

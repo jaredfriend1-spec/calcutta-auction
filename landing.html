@@ -21,6 +21,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <style>
 :root{
   --felt-0:#0c3225;--felt-edge:#06190f;
@@ -45,178 +49,57 @@ body::before{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
   mix-blend-mode:overlay;
 }
-
-/* ===== Layout ===== */
 .page{
   position:relative;z-index:1;
   min-height:100vh;display:flex;flex-direction:column;
   align-items:center;justify-content:center;
   padding:32px 16px 48px;
 }
-
-/* ===== Header ===== */
 .site-header{text-align:center;margin-bottom:40px}
 .site-logo{font-size:52px;margin-bottom:12px;display:block}
-.site-kicker{
-  font-size:11px;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--brass);font-weight:900;margin-bottom:12px;
-}
-.site-title{
-  font-family:var(--serif);font-size:clamp(36px,6vw,58px);
-  line-height:.95;font-weight:900;color:#fff;letter-spacing:-.045em;
-  margin-bottom:10px;
-}
-.site-sub{
-  color:var(--brass-soft);font-family:var(--serif);font-weight:700;
-  font-size:clamp(16px,2vw,22px);line-height:1.2;letter-spacing:-.01em;
-}
-
-/* ===== Club grid ===== */
-.clubs-label{
-  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-3);font-weight:800;margin-bottom:16px;text-align:center;
-}
-.clubs-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:14px;
-  width:100%;max-width:760px;
-  margin-bottom:32px;
-}
-.club-card{
-  background:linear-gradient(165deg,#0e4030f4,#08231bf6);
-  border:1px solid var(--line-strong);
-  border-radius:20px;padding:24px 22px;
-  cursor:pointer;text-align:center;
-  transition:.18s;
-  box-shadow:0 14px 40px -28px #000;
-  position:relative;overflow:hidden;
-}
-.club-card::after{
-  content:"";position:absolute;left:15%;right:15%;top:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--brass),transparent);
-  opacity:.7;
-}
-.club-card:hover{
-  border-color:var(--brass);
-  transform:translateY(-2px);
-  box-shadow:0 22px 52px -28px #000, 0 0 0 1px var(--brass-deep);
-}
+.site-kicker{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--brass);font-weight:900;margin-bottom:12px}
+.site-title{font-family:var(--serif);font-size:clamp(36px,6vw,58px);line-height:.95;font-weight:900;color:#fff;letter-spacing:-.045em;margin-bottom:10px}
+.site-sub{color:var(--brass-soft);font-family:var(--serif);font-weight:700;font-size:clamp(16px,2vw,22px);line-height:1.2;letter-spacing:-.01em}
+.clubs-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:800;margin-bottom:16px;text-align:center}
+.clubs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;width:100%;max-width:760px;margin-bottom:32px}
+.clubs-grid.single .club-card{max-width:400px;margin:0 auto}
+.club-card{background:linear-gradient(165deg,#0e4030f4,#08231bf6);border:1px solid var(--line-strong);border-radius:20px;padding:24px 22px;cursor:pointer;text-align:center;transition:.18s;box-shadow:0 14px 40px -28px #000;position:relative;overflow:hidden;width:100%}
+.club-card::after{content:"";position:absolute;left:15%;right:15%;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--brass),transparent);opacity:.7}
+.club-card:hover{border-color:var(--brass);transform:translateY(-2px);box-shadow:0 22px 52px -28px #000,0 0 0 1px var(--brass-deep)}
 .club-card:active{transform:translateY(0)}
 .club-icon{font-size:32px;margin-bottom:10px;display:block}
-.club-name{
-  font-family:var(--serif);font-size:clamp(20px,2.4vw,26px);
-  font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:6px;
-}
-.club-url{
-  font-size:11px;color:var(--ink-3);font-family:monospace;
-  letter-spacing:.04em;
-}
-.club-arrow{
-  display:inline-block;margin-top:14px;
-  font-size:12px;color:var(--brass);font-weight:800;
-  letter-spacing:.1em;text-transform:uppercase;
-}
-
-/* single club full-width */
-.clubs-grid.single .club-card{max-width:400px;margin:0 auto}
-
-/* ===== Disclaimer ===== */
-.disclaimer{
-  max-width:580px;text-align:center;
-  font-size:12px;color:var(--ink-3);line-height:1.6;
-  margin-bottom:14px;
-}
-.tos-link{
-  background:none;border:none;cursor:pointer;
-  color:var(--brass);font-size:12px;font-weight:700;
-  text-decoration:underline;text-underline-offset:3px;
-  font-family:var(--sans);padding:0;
-}
+.club-name{font-family:var(--serif);font-size:clamp(20px,2.4vw,26px);font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:6px}
+.club-url{font-size:11px;color:var(--ink-3);font-family:monospace;letter-spacing:.04em}
+.club-arrow{display:inline-block;margin-top:14px;font-size:12px;color:var(--brass);font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.loading-clubs{color:var(--ink-3);font-size:14px;text-align:center;padding:20px}
+.disclaimer{max-width:580px;text-align:center;font-size:12px;color:var(--ink-3);line-height:1.6;margin-bottom:14px}
+.tos-link{background:none;border:none;cursor:pointer;color:var(--brass);font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px;font-family:var(--sans);padding:0}
 .tos-link:hover{color:var(--brass-soft)}
-
-/* ===== PWA install banner ===== */
-.install-banner{
-  display:none;
-  background:#0e2d1e;border:1px solid var(--line-strong);
-  border-radius:14px;padding:14px 18px;
-  max-width:580px;width:100%;
-  margin-top:24px;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-}
-.install-banner.hidden{display:none!important}
+.install-banner{background:#0e2d1e;border:1px solid var(--line-strong);border-radius:14px;padding:14px 18px;max-width:580px;width:100%;margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.install-banner.hidden{display:none}
 .install-text{font-size:13px;color:var(--ink-2)}
 .install-text strong{color:var(--brass);display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
-.install-btn{
-  background:var(--brass);color:#0c3225;border:none;
-  border-radius:9px;padding:9px 16px;font-size:13px;font-weight:800;
-  cursor:pointer;white-space:nowrap;font-family:var(--sans);
-  flex-shrink:0;
-}
+.install-btn{background:var(--brass);color:#0c3225;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:var(--sans);flex-shrink:0}
 .install-btn:hover{background:var(--brass-soft)}
-.install-dismiss{
-  background:none;border:none;cursor:pointer;
-  color:var(--ink-3);font-size:18px;line-height:1;padding:0 4px;
-  flex-shrink:0;
-}
-
-/* ===== TOS Overlay ===== */
-.tos-overlay{
-  position:fixed;inset:0;z-index:9999;
-  background:#000000cc;backdrop-filter:blur(6px);
-  display:flex;align-items:center;justify-content:center;
-  padding:20px;
-}
+.install-dismiss{background:none;border:none;cursor:pointer;color:var(--ink-3);font-size:18px;line-height:1;padding:0 4px;flex-shrink:0}
+.tos-overlay{position:fixed;inset:0;z-index:9999;background:#000000cc;backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px}
 .tos-overlay.hide{display:none}
-.tos-modal{
-  background:linear-gradient(165deg,#0e4030,#08231b);
-  border:1px solid var(--line-strong);
-  border-radius:20px;width:100%;max-width:600px;
-  max-height:90vh;display:flex;flex-direction:column;
-  box-shadow:0 40px 100px -40px #000;
-}
-.tos-header{
-  padding:24px 28px 16px;border-bottom:1px solid var(--line);
-  flex-shrink:0;
-}
-.tos-header h2{
-  font-family:var(--serif);font-size:24px;font-weight:900;
-  color:#fff;margin-bottom:4px;
-}
+.tos-modal{background:linear-gradient(165deg,#0e4030,#08231b);border:1px solid var(--line-strong);border-radius:20px;width:100%;max-width:600px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 40px 100px -40px #000}
+.tos-header{padding:24px 28px 16px;border-bottom:1px solid var(--line);flex-shrink:0}
+.tos-header h2{font-family:var(--serif);font-size:24px;font-weight:900;color:#fff;margin-bottom:4px}
 .tos-sub{font-size:13px;color:var(--brass);font-weight:700;margin:0}
-.tos-body{
-  flex:1;overflow-y:auto;padding:20px 28px;
-  scrollbar-width:thin;scrollbar-color:var(--brass-deep) transparent;
-}
+.tos-body{flex:1;overflow-y:auto;padding:20px 28px;scrollbar-width:thin;scrollbar-color:var(--brass-deep) transparent}
 .tos-body::-webkit-scrollbar{width:6px}
 .tos-body::-webkit-scrollbar-thumb{background:var(--brass-deep);border-radius:3px}
 .tos-section{margin-bottom:20px}
-.tos-section h3{
-  font-size:13px;font-weight:800;color:var(--brass);
-  letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;
-}
-.tos-section p{
-  font-size:13px;color:var(--ink-2);line-height:1.6;margin-bottom:8px;
-}
-.tos-footer{
-  padding:18px 28px;border-top:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  flex-shrink:0;flex-wrap:wrap;
-}
-.tos-check-label{
-  display:flex;align-items:center;gap:10px;
-  font-size:13px;color:var(--ink-2);cursor:pointer;
-}
+.tos-section h3{font-size:13px;font-weight:800;color:var(--brass);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.tos-section p{font-size:13px;color:var(--ink-2);line-height:1.6;margin-bottom:8px}
+.tos-footer{padding:18px 28px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-shrink:0;flex-wrap:wrap}
+.tos-check-label{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-2);cursor:pointer}
 .tos-check-label input{width:16px;height:16px;cursor:pointer;accent-color:var(--brass)}
-.tos-accept-btn{
-  background:linear-gradient(135deg,#1a5c3f,#0f4030);
-  color:#fff;border:none;border-radius:10px;
-  padding:11px 22px;font-size:14px;font-weight:800;
-  cursor:pointer;font-family:var(--sans);white-space:nowrap;
-}
+.tos-accept-btn{background:linear-gradient(135deg,#1a5c3f,#0f4030);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:800;cursor:pointer;font-family:var(--sans);white-space:nowrap}
 .tos-accept-btn:disabled{opacity:.4;cursor:not-allowed}
 .tos-accept-btn:not(:disabled):hover{background:linear-gradient(135deg,#1f6b4a,#13503a)}
-
 @media(max-width:500px){
   .tos-modal{border-radius:14px;max-height:95vh}
   .tos-header,.tos-body,.tos-footer{padding-left:18px;padding-right:18px}
@@ -285,7 +168,7 @@ body::before{
 
   <div class="clubs-label">Active Clubs</div>
   <div class="clubs-grid" id="clubsGrid">
-    <!-- Populated by JS -->
+    <div class="loading-clubs">Loading clubs…</div>
   </div>
 
   <p class="disclaimer">
@@ -293,7 +176,6 @@ body::before{
   </p>
   <button class="tos-link" onclick="showTos()">View Full Terms of Use</button>
 
-  <!-- PWA install prompt -->
   <div class="install-banner hidden" id="installBanner">
     <div class="install-text">
       <strong>Install App</strong>
@@ -306,102 +188,153 @@ body::before{
 
 <script>
 /* =====================================================
-   CLUB_CONFIGS — add new clubs here as you create them
-   Label is what shows on the landing card
+   CLUB_CONFIGS — Firebase credentials per club.
+   label / icon / visible are DEFAULTS only —
+   they are overridden by values saved in Firebase
+   via the /admin portal.
    ===================================================== */
 const CLUB_CONFIGS = {
   'mcc': {
     label: 'MCC Member-Member',
-    icon: '⛳'
+    icon: '⛳',
+    apiKey: "AIzaSyDAFsCd1ZhxVG35scW7QptEc2C81rl8U6g",
+    authDomain: "mcc-calcutta.firebaseapp.com",
+    databaseURL: "https://mcc-calcutta-default-rtdb.firebaseio.com",
+    projectId: "mcc-calcutta"
   },
   'club1': {
     label: 'Cress Creek CC',
-    icon: '🏌️'
+    icon: '🏌️',
+    apiKey: "AIzaSyBmcRL-bgiQHBFwwnf3OAIJStPD1imC5q0",
+    authDomain: "calcutta-new-club-1.firebaseapp.com",
+    databaseURL: "https://calcutta-new-club-1-default-rtdb.firebaseio.com",
+    projectId: "calcutta-new-club-1"
   }
-  /* Add more clubs here:
-  'club2': { label: 'Riviera CC', icon: '⛳' },
+  /* Add more clubs here when onboarding a new club:
+  'club2': {
+    label: 'Riviera CC',
+    icon: '⛳',
+    apiKey: "...",
+    authDomain: "...",
+    databaseURL: "...",
+    projectId: "..."
+  },
   */
 };
 
-/* ===== Build club cards ===== */
-const grid = document.getElementById('clubsGrid');
-const slugs = Object.keys(CLUB_CONFIGS);
+const EVENT_PATH = 'calcutta/2026';
+let fbApps = {};
 
-if(slugs.length === 1) grid.classList.add('single');
-
-slugs.forEach(slug => {
+function getFbRoot(slug){
   const cfg = CLUB_CONFIGS[slug];
-  const card = document.createElement('button');
-  card.className = 'club-card';
-  card.type = 'button';
-  card.innerHTML = `
-    <span class="club-icon">${cfg.icon}</span>
-    <div class="club-name">${cfg.label}</div>
-    <div class="club-url">/${slug}</div>
-    <span class="club-arrow">Enter Portal →</span>
-  `;
-  card.addEventListener('click', () => enterClub(slug));
-  grid.appendChild(card);
-});
+  if(!cfg) return null;
+  try {
+    fbApps[slug] = firebase.initializeApp(cfg, 'landing_'+slug);
+  } catch(e) {
+    fbApps[slug] = firebase.app('landing_'+slug);
+  }
+  return firebase.database(fbApps[slug]).ref(EVENT_PATH);
+}
 
-function enterClub(slug) {
-  // Mark TOS accepted in sessionStorage so clubs can check if needed
+/* Load settings from Firebase for one club, fall back to defaults */
+async function loadClubDisplay(slug){
+  const cfg = CLUB_CONFIGS[slug];
+  const defaults = { label: cfg.label, icon: cfg.icon, visible: true };
+  try {
+    const root = getFbRoot(slug);
+    if(!root) return defaults;
+    const snap = await root.child('settings').once('value');
+    const s = snap.val() || {};
+    return {
+      label:   s.landingName    || cfg.label,
+      icon:    s.landingIcon    || cfg.icon,
+      visible: s.landingVisible !== false  // default true
+    };
+  } catch(e){
+    return defaults;
+  }
+}
+
+/* Build club cards after loading from Firebase */
+async function buildClubGrid(){
+  const grid = document.getElementById('clubsGrid');
+  const slugs = Object.keys(CLUB_CONFIGS);
+  const displays = await Promise.all(slugs.map(s => loadClubDisplay(s)));
+
+  // Filter to only visible clubs
+  const visible = slugs.map((s,i) => ({slug:s, ...displays[i]})).filter(c => c.visible);
+
+  grid.innerHTML = '';
+  if(visible.length === 0){
+    grid.innerHTML = '<div class="loading-clubs">No clubs available.</div>';
+    return;
+  }
+  if(visible.length === 1) grid.classList.add('single');
+
+  visible.forEach(club => {
+    const card = document.createElement('button');
+    card.className = 'club-card';
+    card.type = 'button';
+    card.innerHTML = `
+      <span class="club-icon">${club.icon}</span>
+      <div class="club-name">${club.label}</div>
+      <div class="club-url">/${club.slug}</div>
+      <span class="club-arrow">Enter Portal →</span>
+    `;
+    card.addEventListener('click', () => enterClub(club.slug));
+    grid.appendChild(card);
+  });
+}
+
+function enterClub(slug){
   sessionStorage.setItem('tosAccepted', '1');
   window.location.href = '/' + slug;
 }
 
 /* ===== Terms of Use ===== */
-function showTos() {
+function showTos(){
   document.getElementById('tosOverlay').classList.remove('hide');
 }
-
-document.getElementById('tosAgree').addEventListener('change', function() {
+document.getElementById('tosAgree').addEventListener('change', function(){
   document.getElementById('tosAcceptBtn').disabled = !this.checked;
 });
-
-document.getElementById('tosAcceptBtn').addEventListener('click', function() {
+document.getElementById('tosAcceptBtn').addEventListener('click', function(){
   if(!document.getElementById('tosAgree').checked) return;
   document.getElementById('tosOverlay').classList.add('hide');
 });
-
-// Close TOS on backdrop click
-document.getElementById('tosOverlay').addEventListener('click', function(e) {
+document.getElementById('tosOverlay').addEventListener('click', function(e){
   if(e.target === this) this.classList.add('hide');
 });
 
 /* ===== PWA Install Prompt ===== */
 let deferredPrompt = null;
 const installBanner = document.getElementById('installBanner');
-const installBtn = document.getElementById('installBtn');
-const installDismiss = document.getElementById('installDismiss');
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  // Only show if not dismissed before
-  if(!localStorage.getItem('pwaInstallDismissed')) {
+  if(!localStorage.getItem('pwaInstallDismissed')){
     installBanner.classList.remove('hidden');
   }
 });
-
-installBtn.addEventListener('click', async () => {
+document.getElementById('installBtn').addEventListener('click', async () => {
   if(!deferredPrompt) return;
   deferredPrompt.prompt();
   const { outcome } = await deferredPrompt.userChoice;
   deferredPrompt = null;
   installBanner.classList.add('hidden');
 });
-
-installDismiss.addEventListener('click', () => {
+document.getElementById('installDismiss').addEventListener('click', () => {
   installBanner.classList.add('hidden');
   localStorage.setItem('pwaInstallDismissed', '1');
 });
-
-// Hide banner if already installed
 window.addEventListener('appinstalled', () => {
   installBanner.classList.add('hidden');
   deferredPrompt = null;
 });
+
+/* ===== Init ===== */
+buildClubGrid();
 </script>
 </body>
 </html>

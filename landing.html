@@ -16,22 +16,18 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="shortcut icon" href="/favicon.ico">
 
-<!-- Fonts — same as main app -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
 :root{
   --felt-0:#0c3225;--felt-edge:#06190f;
-  --card:#103a2b;--card-2:#0e4030;
   --ink:#f7f1e1;--ink-2:#d9d5c1;--ink-3:#aeb8a3;
   --brass:#d8b65f;--brass-soft:#f1dca2;--brass-deep:#b8922f;
-  --good:#74d3a2;
   --line:#ffffff1f;--line-strong:#d8b65f4d;
   --sans:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --serif:'Bricolage Grotesque','Manrope',sans-serif;
@@ -49,39 +45,55 @@ body::before{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
   mix-blend-mode:overlay;
 }
-.page{
-  position:relative;z-index:1;
-  min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  padding:32px 16px 48px;
-}
-.site-header{text-align:center;margin-bottom:40px}
-.site-logo{font-size:52px;margin-bottom:12px;display:block}
-.site-kicker{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--brass);font-weight:900;margin-bottom:12px}
-.site-title{font-family:var(--serif);font-size:clamp(36px,6vw,58px);line-height:.95;font-weight:900;color:#fff;letter-spacing:-.045em;margin-bottom:10px}
-.site-sub{color:var(--brass-soft);font-family:var(--serif);font-weight:700;font-size:clamp(16px,2vw,22px);line-height:1.2;letter-spacing:-.01em}
-.clubs-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:800;margin-bottom:16px;text-align:center}
-.clubs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;width:100%;max-width:760px;margin-bottom:32px}
-.clubs-grid.single .club-card{max-width:400px;margin:0 auto}
-.club-card{background:linear-gradient(165deg,#0e4030f4,#08231bf6);border:1px solid var(--line-strong);border-radius:20px;padding:24px 22px;cursor:pointer;text-align:center;transition:.18s;box-shadow:0 14px 40px -28px #000;position:relative;overflow:hidden;width:100%}
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px 48px}
+.site-header{text-align:center;margin-bottom:36px}
+.site-logo{font-size:48px;margin-bottom:10px;display:block}
+.site-kicker{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--brass);font-weight:900;margin-bottom:10px}
+.site-title{font-family:var(--serif);font-size:clamp(34px,6vw,56px);line-height:.95;font-weight:900;color:#fff;letter-spacing:-.045em;margin-bottom:8px}
+.site-sub{color:var(--brass-soft);font-family:var(--serif);font-weight:700;font-size:clamp(15px,2vw,21px);line-height:1.2;letter-spacing:-.01em}
+
+/* ===== Club grid ===== */
+.section-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:800;margin-bottom:14px;text-align:center}
+.clubs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;width:100%;max-width:740px;margin-bottom:20px}
+.clubs-grid.single .club-card{max-width:380px;margin:0 auto}
+.club-card{background:linear-gradient(165deg,#0e4030f4,#08231bf6);border:1px solid var(--line-strong);border-radius:18px;padding:22px 20px;cursor:pointer;text-align:center;transition:.18s;box-shadow:0 14px 40px -28px #000;position:relative;overflow:hidden;width:100%}
 .club-card::after{content:"";position:absolute;left:15%;right:15%;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--brass),transparent);opacity:.7}
 .club-card:hover{border-color:var(--brass);transform:translateY(-2px);box-shadow:0 22px 52px -28px #000,0 0 0 1px var(--brass-deep)}
 .club-card:active{transform:translateY(0)}
-.club-icon{font-size:32px;margin-bottom:10px;display:block}
-.club-name{font-family:var(--serif);font-size:clamp(20px,2.4vw,26px);font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:6px}
+.club-icon{font-size:30px;margin-bottom:8px;display:block}
+.club-name{font-family:var(--serif);font-size:clamp(19px,2.4vw,24px);font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:5px}
 .club-url{font-size:11px;color:var(--ink-3);font-family:monospace;letter-spacing:.04em}
-.club-arrow{display:inline-block;margin-top:14px;font-size:12px;color:var(--brass);font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.club-arrow{display:inline-block;margin-top:12px;font-size:11px;color:var(--brass);font-weight:800;letter-spacing:.1em;text-transform:uppercase}
 .loading-clubs{color:var(--ink-3);font-size:14px;text-align:center;padding:20px}
-.disclaimer{max-width:580px;text-align:center;font-size:12px;color:var(--ink-3);line-height:1.6;margin-bottom:14px}
+
+/* ===== Demo section ===== */
+.demo-section{width:100%;max-width:740px;margin-bottom:28px}
+.demo-card{background:#08231b;border:1px solid var(--line);border-radius:18px;padding:22px 24px;text-align:center}
+.demo-kicker{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);font-weight:800;margin-bottom:8px}
+.demo-title{font-family:var(--serif);font-size:clamp(18px,2vw,22px);font-weight:900;color:var(--ink-2);margin-bottom:4px}
+.demo-sub{font-size:12px;color:var(--ink-3);margin-bottom:16px}
+.demo-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.demo-btn{background:#0d3326;border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:center;transition:.15s;font-family:var(--sans);color:var(--ink)}
+.demo-btn:hover{border-color:var(--brass);background:#102e22}
+.demo-btn strong{display:block;font-size:14px;font-weight:800;color:var(--ink);margin-bottom:3px}
+.demo-btn span{font-size:11px;color:var(--ink-3);line-height:1.3}
+
+/* ===== Footer ===== */
+.footer-area{max-width:580px;text-align:center}
+.disclaimer{font-size:12px;color:var(--ink-3);line-height:1.6;margin-bottom:10px}
 .tos-link{background:none;border:none;cursor:pointer;color:var(--brass);font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px;font-family:var(--sans);padding:0}
 .tos-link:hover{color:var(--brass-soft)}
-.install-banner{background:#0e2d1e;border:1px solid var(--line-strong);border-radius:14px;padding:14px 18px;max-width:580px;width:100%;margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+
+/* ===== PWA install banner ===== */
+.install-banner{background:#0e2d1e;border:1px solid var(--line-strong);border-radius:14px;padding:14px 18px;max-width:580px;width:100%;margin-top:20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .install-banner.hidden{display:none}
 .install-text{font-size:13px;color:var(--ink-2)}
-.install-text strong{color:var(--brass);display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.install-text strong{color:var(--brass);display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
 .install-btn{background:var(--brass);color:#0c3225;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;font-family:var(--sans);flex-shrink:0}
 .install-btn:hover{background:var(--brass-soft)}
 .install-dismiss{background:none;border:none;cursor:pointer;color:var(--ink-3);font-size:18px;line-height:1;padding:0 4px;flex-shrink:0}
+
+/* ===== TOS Overlay ===== */
 .tos-overlay{position:fixed;inset:0;z-index:9999;background:#000000cc;backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px}
 .tos-overlay.hide{display:none}
 .tos-modal{background:linear-gradient(165deg,#0e4030,#08231b);border:1px solid var(--line-strong);border-radius:20px;width:100%;max-width:600px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 40px 100px -40px #000}
@@ -105,7 +117,7 @@ body::before{
   .tos-header,.tos-body,.tos-footer{padding-left:18px;padding-right:18px}
   .tos-footer{flex-direction:column;align-items:stretch}
   .tos-accept-btn{text-align:center}
-  .clubs-grid{grid-template-columns:1fr}
+  .clubs-grid,.demo-choices{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -166,15 +178,36 @@ body::before{
     <p class="site-sub">Select your club to enter</p>
   </header>
 
-  <div class="clubs-label">Active Clubs</div>
+  <div class="section-label">Active Clubs</div>
   <div class="clubs-grid" id="clubsGrid">
     <div class="loading-clubs">Loading clubs…</div>
   </div>
 
-  <p class="disclaimer">
-    This platform tracks virtual auction points for golf events. Any real-money arrangements are solely between participants and their club, and are subject to applicable local laws. This platform does not facilitate, process, or hold funds of any kind.
-  </p>
-  <button class="tos-link" onclick="showTos()">View Full Terms of Use</button>
+  <!-- Demo section -->
+  <div class="demo-section">
+    <div class="demo-card">
+      <div class="demo-kicker">Sample Experience</div>
+      <div class="demo-title">Explore Demo</div>
+      <div class="demo-sub">Sample data only — does not affect any live tournament</div>
+      <div class="demo-choices">
+        <button class="demo-btn" onclick="enterDemo('player')">
+          <strong>Demo Player View</strong>
+          <span>See the read-only player experience</span>
+        </button>
+        <button class="demo-btn" onclick="enterDemo('admin')">
+          <strong>Demo Organizer View</strong>
+          <span>Preview setup, admin tools and reports</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-area">
+    <p class="disclaimer">
+      This platform tracks virtual auction points for golf events. Any real-money arrangements are solely between participants and their club, and are subject to applicable local laws. This platform does not facilitate, process, or hold funds of any kind.
+    </p>
+    <button class="tos-link" onclick="showTos()">View Full Terms of Use</button>
+  </div>
 
   <div class="install-banner hidden" id="installBanner">
     <div class="install-text">
@@ -188,10 +221,9 @@ body::before{
 
 <script>
 /* =====================================================
-   CLUB_CONFIGS — Firebase credentials per club.
-   label / icon / visible are DEFAULTS only —
-   they are overridden by values saved in Firebase
-   via the /admin portal.
+   CLUB_CONFIGS — Firebase credentials + defaults.
+   Name/icon/visibility are overridden by /admin portal
+   values saved in Firebase.
    ===================================================== */
 const CLUB_CONFIGS = {
   'mcc': {
@@ -210,17 +242,13 @@ const CLUB_CONFIGS = {
     databaseURL: "https://calcutta-new-club-1-default-rtdb.firebaseio.com",
     projectId: "calcutta-new-club-1"
   }
-  /* Add more clubs here when onboarding a new club:
-  'club2': {
-    label: 'Riviera CC',
-    icon: '⛳',
-    apiKey: "...",
-    authDomain: "...",
-    databaseURL: "...",
-    projectId: "..."
-  },
+  /* Add more clubs here when onboarding:
+  'club2': { label: 'Riviera CC', icon: '⛳', apiKey: "...", ... },
   */
 };
+
+/* Demo always uses MCC's app (has sample data baked in) */
+const DEMO_SLUG = 'mcc';
 
 const EVENT_PATH = 'calcutta/2026';
 let fbApps = {};
@@ -228,15 +256,11 @@ let fbApps = {};
 function getFbRoot(slug){
   const cfg = CLUB_CONFIGS[slug];
   if(!cfg) return null;
-  try {
-    fbApps[slug] = firebase.initializeApp(cfg, 'landing_'+slug);
-  } catch(e) {
-    fbApps[slug] = firebase.app('landing_'+slug);
-  }
+  try { fbApps[slug] = firebase.initializeApp(cfg, 'landing_'+slug); }
+  catch(e) { fbApps[slug] = firebase.app('landing_'+slug); }
   return firebase.database(fbApps[slug]).ref(EVENT_PATH);
 }
 
-/* Load settings from Firebase for one club, fall back to defaults */
 async function loadClubDisplay(slug){
   const cfg = CLUB_CONFIGS[slug];
   const defaults = { label: cfg.label, icon: cfg.icon, visible: true };
@@ -248,20 +272,15 @@ async function loadClubDisplay(slug){
     return {
       label:   s.landingName    || cfg.label,
       icon:    s.landingIcon    || cfg.icon,
-      visible: s.landingVisible !== false  // default true
+      visible: s.landingVisible !== false
     };
-  } catch(e){
-    return defaults;
-  }
+  } catch(e){ return defaults; }
 }
 
-/* Build club cards after loading from Firebase */
 async function buildClubGrid(){
   const grid = document.getElementById('clubsGrid');
   const slugs = Object.keys(CLUB_CONFIGS);
   const displays = await Promise.all(slugs.map(s => loadClubDisplay(s)));
-
-  // Filter to only visible clubs
   const visible = slugs.map((s,i) => ({slug:s, ...displays[i]})).filter(c => c.visible);
 
   grid.innerHTML = '';
@@ -291,6 +310,12 @@ function enterClub(slug){
   window.location.href = '/' + slug;
 }
 
+function enterDemo(mode){
+  /* Routes to the MCC app with ?demo=player or ?demo=admin
+     app.html reads this param and auto-enters demo mode */
+  window.location.href = '/' + DEMO_SLUG + '?demo=' + mode;
+}
+
 /* ===== Terms of Use ===== */
 function showTos(){
   document.getElementById('tosOverlay').classList.remove('hide');
@@ -309,13 +334,10 @@ document.getElementById('tosOverlay').addEventListener('click', function(e){
 /* ===== PWA Install Prompt ===== */
 let deferredPrompt = null;
 const installBanner = document.getElementById('installBanner');
-
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  if(!localStorage.getItem('pwaInstallDismissed')){
-    installBanner.classList.remove('hidden');
-  }
+  if(!localStorage.getItem('pwaInstallDismissed')) installBanner.classList.remove('hidden');
 });
 document.getElementById('installBtn').addEventListener('click', async () => {
   if(!deferredPrompt) return;
@@ -333,7 +355,6 @@ window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
 });
 
-/* ===== Init ===== */
 buildClubGrid();
 </script>
 </body>

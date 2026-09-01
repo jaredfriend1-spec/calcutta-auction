@@ -1467,14 +1467,10 @@ body.demo .demo-banner{display:block}
       </div>
     </div>
 
-    <div class="landing-card demo-access">
-      <div class="landing-kicker">Sample Experience</div>
-      <div class="landing-title small">Explore Demo</div>
-      <p class="landing-sub">Sample data only. Does not affect the live tournament.</p>
-      <div class="demo-choices show" id="demoChoices">
-        <button class="landing-choice player-choice" id="enterDemoPlayer" type="button"><strong>Demo Player View</strong><span>See the read-only player experience</span></button>
-        <button class="landing-choice organizer" id="enterDemoAdmin" type="button"><strong>Demo Organizer View</strong><span>Preview setup, admin tools and reports</span></button>
-      </div>
+    <!-- Demo entry moved to landing page (/) — accessed via ?demo=player or ?demo=admin URL params -->
+    <div id="demoChoices" style="display:none">
+      <button id="enterDemoPlayer" type="button" style="display:none"></button>
+      <button id="enterDemoAdmin" type="button" style="display:none"></button>
     </div>
 
     <div class="landing-disclaimer">
@@ -4774,6 +4770,15 @@ if(useCloud){
   loadLocal();
   renderCurrent();
 }
+
+/* Auto-enter demo mode if landing page sent ?demo=player or ?demo=admin */
+(function(){
+  const demoParam = new URLSearchParams(window.location.search).get('demo');
+  if(demoParam === 'player' || demoParam === 'admin'){
+    // Wait for Firebase/local data to settle, then enter demo
+    setTimeout(() => enterDemoMode(demoParam === 'admin'), 800);
+  }
+})();
 </script>
 </body>
 </html>

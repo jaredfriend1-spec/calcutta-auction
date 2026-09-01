@@ -32,27 +32,46 @@
   .content{padding:24px;max-width:960px;margin:0 auto}
   .section-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#4a7a5a;font-weight:800;margin:28px 0 12px}
   .club-card{background:#0e2d1e;border:1px solid #1a4a2e;border-radius:16px;padding:20px;margin-bottom:16px}
+  .club-card.hidden-club{opacity:.6;border-style:dashed}
   .club-card h2{font-size:16px;font-weight:900;color:#e8f0e8;margin-bottom:4px}
   .club-url{font-size:12px;color:#4a9a6a;margin-bottom:16px;font-family:monospace}
-  .fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
-  @media(max-width:600px){.fields{grid-template-columns:1fr}}
+
+  /* field grid — 3 cols for codes, 2 cols for landing display */
+  .fields{display:grid;gap:12px;margin-bottom:14px}
+  .fields.cols-3{grid-template-columns:1fr 1fr 1fr}
+  .fields.cols-2{grid-template-columns:1fr 1fr}
+  @media(max-width:600px){.fields.cols-3,.fields.cols-2{grid-template-columns:1fr}}
+
   .field-group label{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#4a7a5a;font-weight:800;margin-bottom:5px}
   .field-group input{width:100%;background:#061a12;border:1.5px solid #1a4a2e;border-radius:8px;color:#e8f0e8;font-size:13px;padding:9px 11px;outline:none;font-family:monospace}
   .field-group input:focus{border-color:#4a9a6a}
   .field-group input.changed{border-color:#f4c64a}
-  .card-actions{display:flex;gap:8px;align-items:center}
-  .save-note{font-size:11px;color:#4a9a6a;margin-left:8px}
-  .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
-  .status-dot.ok{background:#2a9a5a}
-  .status-dot.warn{background:#f4c64a}
+  .field-group .hint{font-size:10px;color:#4a7a5a;margin-top:4px}
+
+  /* visibility toggle */
+  .visibility-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 12px;background:#061a12;border:1px solid #1a4a2e;border-radius:8px}
+  .visibility-row label{font-size:12px;color:#a0c0a0;cursor:pointer;display:flex;align-items:center;gap:8px;flex:1}
+  .toggle{position:relative;width:38px;height:22px;flex-shrink:0}
+  .toggle input{opacity:0;width:0;height:0}
+  .toggle-slider{position:absolute;inset:0;background:#1a4a2e;border-radius:22px;cursor:pointer;transition:.2s}
+  .toggle-slider:before{content:"";position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#4a7a5a;border-radius:50%;transition:.2s}
+  .toggle input:checked + .toggle-slider{background:#1a5c3f}
+  .toggle input:checked + .toggle-slider:before{transform:translateX(16px);background:#4ae49a}
+
+  /* section divider inside card */
+  .card-section-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#4a7a5a;font-weight:800;margin:16px 0 10px;padding-top:14px;border-top:1px solid #1a4a2e}
+
+  .card-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .save-note{font-size:11px;color:#4a9a6a;margin-left:4px}
   .club-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
   .badge{font-size:10px;padding:3px 8px;border-radius:99px;font-weight:700;letter-spacing:.06em}
   .badge.live{background:#1a5c3f;color:#4ae49a}
-  .add-club-card{background:#0a1f15;border:1.5px dashed #1a4a2e;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:.15s}
-  .add-club-card:hover{border-color:#4a9a6a;background:#0e2d1e}
-  .add-club-card p{font-size:13px;color:#4a7a5a;margin-top:6px}
+  .badge.hidden{background:#3a2a0a;color:#c09a5a}
   .warning{background:#2a1a0a;border:1px solid #7a4a1a;border-radius:10px;padding:12px 14px;font-size:12px;color:#c09a5a;margin-bottom:20px}
   .loading{text-align:center;padding:40px;color:#4a7a5a;font-size:14px}
+
+  /* icon preview */
+  .icon-preview{font-size:28px;text-align:center;padding:8px;background:#061a12;border:1.5px solid #1a4a2e;border-radius:8px;min-width:52px}
 </style>
 </head>
 <body>
@@ -152,10 +171,43 @@ async function loadAllClubs(){
     card.innerHTML = `
       <div class="club-header">
         <h2>${cfg.label}</h2>
-        <span class="badge live">LIVE</span>
+        <span class="badge live" id="${slug}_badge">LIVE</span>
       </div>
       <div class="club-url">🔗 ${BASE_URL}/${slug}</div>
-      <div class="fields">
+
+      <!-- Landing Page Display -->
+      <div class="card-section-label">Landing Page Display</div>
+      <div class="visibility-row">
+        <label>
+          <span class="toggle">
+            <input type="checkbox" id="${slug}_visible" checked onchange="updateBadge('${slug}')">
+            <span class="toggle-slider"></span>
+          </span>
+          Show this club on the landing page
+        </label>
+      </div>
+      <div class="fields cols-2" style="margin-bottom:14px">
+        <div class="field-group">
+          <label>Club Display Name</label>
+          <input type="text" id="${slug}_displayName" placeholder="e.g. Cress Creek CC" oninput="markChanged(this)">
+          <div class="hint">Shown on the landing club picker</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div class="field-group" style="flex:1">
+            <label>Icon (emoji)</label>
+            <input type="text" id="${slug}_icon" placeholder="⛳" maxlength="4" oninput="markChanged(this);updateIconPreview('${slug}')">
+            <div class="hint">Single emoji recommended</div>
+          </div>
+          <div class="field-group" style="flex-shrink:0;margin-top:0">
+            <label>&nbsp;</label>
+            <div class="icon-preview" id="${slug}_iconPreview">⛳</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Access Codes -->
+      <div class="card-section-label">Access Codes</div>
+      <div class="fields cols-3">
         <div class="field-group">
           <label>Master Code</label>
           <input type="text" id="${slug}_master" placeholder="Calcutta#Admin" oninput="markChanged(this)">
@@ -169,6 +221,7 @@ async function loadAllClubs(){
           <input type="text" id="${slug}_player" placeholder="Player" oninput="markChanged(this)">
         </div>
       </div>
+
       <div class="card-actions">
         <button class="btn small" onclick="saveClub('${slug}')">Save Changes</button>
         <button class="btn ghost small" onclick="copyUrl('${slug}')">Copy URL</button>
@@ -179,18 +232,52 @@ async function loadAllClubs(){
   }
 }
 
+function updateIconPreview(slug){
+  const val = document.getElementById(slug+'_icon').value || '⛳';
+  document.getElementById(slug+'_iconPreview').textContent = val;
+}
+
+function updateBadge(slug){
+  const visible = document.getElementById(slug+'_visible').checked;
+  const card = document.getElementById('club-'+slug);
+  const badge = document.getElementById(slug+'_badge');
+  if(visible){
+    card.classList.remove('hidden-club');
+    badge.className = 'badge live';
+    badge.textContent = 'LIVE';
+  } else {
+    card.classList.add('hidden-club');
+    badge.className = 'badge hidden';
+    badge.textContent = 'HIDDEN';
+  }
+}
+
 async function loadClubSettings(slug){
   const root = getRoot(slug);
   if(!root) return;
   try {
     const snap = await root.child('settings').once('value');
     const s = snap.val() || {};
+
+    // Access codes
     const masterEl = document.getElementById(slug+'_master');
     const adminEl  = document.getElementById(slug+'_admin');
     const playerEl = document.getElementById(slug+'_player');
     if(masterEl) masterEl.value = s.masterCode || '';
     if(adminEl)  adminEl.value  = s.adminCode  || '';
     if(playerEl) playerEl.value = s.playerCode || '';
+
+    // Landing display
+    const nameEl    = document.getElementById(slug+'_displayName');
+    const iconEl    = document.getElementById(slug+'_icon');
+    const visibleEl = document.getElementById(slug+'_visible');
+    if(nameEl)    nameEl.value    = s.landingName || '';
+    if(iconEl)    iconEl.value    = s.landingIcon || '';
+    if(visibleEl) visibleEl.checked = s.landingVisible !== false; // default true
+
+    updateIconPreview(slug);
+    updateBadge(slug);
+
   } catch(e){
     showNote(slug, '⚠ Could not load — check Firebase rules', true);
   }
@@ -199,22 +286,33 @@ async function loadClubSettings(slug){
 async function saveClub(slug){
   const root = getRoot(slug);
   if(!root){ alert('Firebase not configured for '+slug); return; }
-  const master = document.getElementById(slug+'_master').value.trim();
-  const admin  = document.getElementById(slug+'_admin').value.trim();
-  const player = document.getElementById(slug+'_player').value.trim();
+
+  const master      = document.getElementById(slug+'_master').value.trim();
+  const admin       = document.getElementById(slug+'_admin').value.trim();
+  const player      = document.getElementById(slug+'_player').value.trim();
+  const displayName = document.getElementById(slug+'_displayName').value.trim();
+  const icon        = document.getElementById(slug+'_icon').value.trim();
+  const visible     = document.getElementById(slug+'_visible').checked;
+
   try {
     const snap = await root.child('settings').once('value');
     const existing = snap.val() || {};
     const updates = {...existing};
+
+    // Access codes
     if(master) updates.masterCode = master; else delete updates.masterCode;
     if(admin)  updates.adminCode  = admin;
     if(player) updates.playerCode = player;
+
+    // Landing display
+    if(displayName) updates.landingName = displayName; else delete updates.landingName;
+    if(icon)        updates.landingIcon = icon;        else delete updates.landingIcon;
+    updates.landingVisible = visible;
+
     await root.child('settings').set(updates);
+
     // clear changed highlights
-    [slug+'_master', slug+'_admin', slug+'_player'].forEach(id => {
-      const el = document.getElementById(id);
-      if(el) el.classList.remove('changed');
-    });
+    document.querySelectorAll('#club-'+slug+' input.changed').forEach(el => el.classList.remove('changed'));
     showNote(slug, '✅ Saved');
   } catch(e){
     showNote(slug, '❌ Save failed: '+e.message, true);

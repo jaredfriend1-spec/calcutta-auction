@@ -4683,16 +4683,8 @@ function enterDemoMode(asAdmin){
   if(b)b.firstChild.textContent=asAdmin?'Demo Mode · Organizer View · Sample Data Only ':'Demo Mode · Player View · Sample Data Only ';
 }
 function exitDemoToLive(){
-  if(!DEMO_MODE){ showLanding(); return; }
-  restoreSnapshot(LIVE_SNAPSHOT);
-  LIVE_SNAPSHOT=null;
-  DEMO_MODE=false;
-  document.body.classList.remove('demo');
-  ADMIN=false;
-  showPage('dash');
-  applyMode();
-  renderCurrent();
-  showLanding();
+  /* Always return to main landing page (club picker) not the club gate */
+  window.location.href = '/';
 }
 function exitDemoReload(){ exitDemoToLive(); }
 

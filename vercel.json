@@ -2,9 +2,9 @@
   "rewrites": [
     { "source": "/", "destination": "/landing.html" },
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/mcc", "destination": "/index.html" },
-    { "source": "/mcc/(.*)", "destination": "/index.html" },
-    { "source": "/club1", "destination": "/index.html" },
-    { "source": "/club1/(.*)", "destination": "/index.html" }
+    { "source": "/mcc", "destination": "/app.html" },
+    { "source": "/mcc/(.*)", "destination": "/app.html" },
+    { "source": "/club1", "destination": "/app.html" },
+    { "source": "/club1/(.*)", "destination": "/app.html" }
   ]
 }
